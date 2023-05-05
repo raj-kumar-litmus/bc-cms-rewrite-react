@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "NODE_ENV=development vite",
     "prod": "NODE_ENV=production vite",
-    "build": "vite build",
+    "build": "NODE_ENV=development vite build",
     "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "lint-fix": "eslint src --fix",
     "postcss": "postcss src/index.css --no-map --dir public --watch",
