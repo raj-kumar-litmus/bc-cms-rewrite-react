@@ -7,8 +7,5 @@ export default defineConfig({
   plugins: [react()],
   server : {
     port: 3000,
-  },
-  ...(process.env.NODE_ENV === "production" && {
-    root: path.join(__dirname, "dist")
-  }),
+  }
 })
