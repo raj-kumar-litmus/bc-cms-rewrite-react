@@ -13,7 +13,7 @@ const configurations = {
   },
   staging: {
     hostnameClient: "https://bc-cms-rewrite-react.vercel.app",
-    hostnameServer: "bc-cms-rewrite-node-ms.vercel.app",
+    hostnameServer: "https://bc-cms-rewrite-node-ms.vercel.app",
     msGraphHostName: "https://graph.microsoft.com/v1.0",
     msLoginHostName: "https://login.microsoftonline.com",
     tenantId: "420b9f05-caaa-4e33-9309-3eeb115514fd",
@@ -24,8 +24,8 @@ const configurations = {
     }
   },
   production: { // todo. copy of staging config; to be changed later;
-    hostnameClient: "http://localhost:3000",
-    hostnameServer: "http://localhost:3010",
+    hostnameClient: "https://bc-cms-rewrite-react.vercel.app",
+    hostnameServer: "https://bc-cms-rewrite-node-ms.vercel.app",
     msGraphHostName: "https://graph.microsoft.com/v1.0",
     msLoginHostName: "https://login.microsoftonline.com",
     tenantId: "420b9f05-caaa-4e33-9309-3eeb115514fd",
