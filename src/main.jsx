@@ -1,10 +1,31 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import App from "./App.jsx";
-import "../public/index.css";
+import { createRoot } from "react-dom/client";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+import "../public/index.css";
+import App from "./App";
+import SSOLogin from "./components/sso";
+import Token from "./components/token";
+import MenuChooser from "./components/menuChooser";
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <App />
+  },
+  {
+    path: "sso",
+    element: <SSOLogin />
+  },
+  {
+    path: "menuChooser",
+    element: <MenuChooser />
+  },
+  {
+    path: "redirect/web",
+    element: <Token />
+  }
+]);
+
+createRoot(document.getElementById("root")).render(
+  <RouterProvider router={router} />
 );

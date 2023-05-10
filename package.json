@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "NODE_ENV=development vite",
+    "staging": "NODE_ENV=staging vite",
     "prod": "NODE_ENV=production vite",
     "build": "vite build",
     "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
@@ -14,6 +15,7 @@
   },
   "browserslist": [
     "last 2 versions",
+    "last 2 Chrome versions",
     "not dead",
     ">1%"
   ],
@@ -42,8 +44,14 @@
     ]
   },
   "dependencies": {
+    "jsonwebtoken": "^9.0.0",
+    "jwks-rsa": "^3.0.1",
+    "msal": "^1.4.18",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-aad-msal": "^2.3.5",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.11.1",
+    "regenerator-runtime": "^0.13.11"
   },
   "devDependencies": {
     "@types/react": "^18.0.28",
