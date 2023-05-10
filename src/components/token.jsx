@@ -17,7 +17,7 @@ function Token() {
   const [memberGroups, setMemberGroups] = useState(null);
   const { search } = useLocation();
 
-  const { msGraphHostName, hostnameClient, hostnameServer } =
+  const { msGraphHostName, hostnameServer } =
     configurations[process.env.NODE_ENV];
 
   const fetchUserId = (token) => {
@@ -91,12 +91,10 @@ function Token() {
   }, [userId, accessToken]);
 
   useEffect(() => {
-    if (memberGroups && hostnameClient) {
-      window.location.replace(
-        `${hostnameClient}/menuChooser?groups=${memberGroups.toString()}`
-      );
+    if (memberGroups) {
+      window.location.href = `/menuChooser?groups=${groups.toString()}`;
     }
-  }, [memberGroups, hostnameClient]);
+  }, [memberGroups]);
 
   useEffect(() => {
     const code = new URLSearchParams(search).get("code");

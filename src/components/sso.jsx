@@ -33,9 +33,7 @@ function SSOLogin() {
 
       if (groups?.length > 0) {
         // redirect to chooser page.
-        window.location.replace(
-          `${hostnameClient}/menuChooser?groups=${groups.toString()}`
-        );
+        window.location.href = `/menuChooser?groups=${groups.toString()}`;
       }
     }
   }, [account, tenantId, clientId, hostnameClient]);
