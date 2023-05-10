@@ -6,7 +6,7 @@ function App() {
     <div className="m-[40px]">
       <p>
         <Link to="sso">Log in with SSO</Link>
-        <p>Environment: ${env}</p>
+        <p>Environment: {env}</p>
       </p>
     </div>
   );
