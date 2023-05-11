@@ -57,7 +57,7 @@ function NavBar() {
                   </div>
 
                   <div>
-                  <button onClick={()=>navigate('/')}> 
+                  <button> 
                     <div className="bg-white text-black text-sm rounded border m-2 p-1">Logout</div>  
                   </button>
                   </div>
