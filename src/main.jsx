@@ -6,6 +6,11 @@ import App from "./App";
 import SSOLogin from "./components/sso";
 import Token from "./components/token";
 import MenuChooser from "./components/menuChooser";
+import NavBar from "./components/NavBar";
+import NormalizationDashboard from './components/NormalizationDashboard';
+import ManualWorkFlowDashboard from './components/ManualWorkFlowDashboard'
+
+
 
 const router = createBrowserRouter([
   {
@@ -17,8 +22,28 @@ const router = createBrowserRouter([
     element: <SSOLogin />
   },
   {
-    path: "menuChooser",
-    element: <MenuChooser />
+    path: "/menuChooser",
+    element: (
+    <>
+    <NavBar />
+    <MenuChooser />
+    </>)
+  },
+  {
+    path: "/normalizationDashBoard",
+    element: (
+    <>
+    <NavBar />
+    <NormalizationDashboard />
+    </>)
+  },
+  {
+    path: "/manualWorkFlowDashboard",
+    element: (
+    <>
+    <NavBar />
+    <ManualWorkFlowDashboard />
+    </>)
   },
   {
     path: "redirect/web",
