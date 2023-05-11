@@ -7,6 +7,7 @@ import { AzureAD, AuthenticationState } from "react-aad-msal";
 
 import authProvider from "./authProvider";
 import configurations from "../config";
+import Loader from "./loader";
 
 function SSOLogin() {
   const [account, setAccountInfo] = useState(null);
@@ -78,7 +79,7 @@ function SSOLogin() {
                 </div>
               );
             case AuthenticationState.InProgress:
-              return <p>Authenticating...</p>;
+              return <Loader />;
             default:
               return <p>Something went wrong. Please try again.</p>;
           }
