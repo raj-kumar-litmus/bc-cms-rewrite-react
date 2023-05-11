@@ -11,8 +11,7 @@ const { clientId, hostnameClient, tenantId } =
 const config = {
   auth: {
     authority: `https://login.microsoftonline.com/${tenantId}`,
-    clientId,
-    redirectUri: hostnameClient
+    clientId
   },
   cache: {
     cacheLocation: "localStorage",
