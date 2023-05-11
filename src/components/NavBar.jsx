@@ -29,7 +29,7 @@ function NavBar() {
             </div>)}
        
             {location.pathname !== '/menuChooser' && (<div className='mr-2'>
-             <button onClick={()=> navigate('/sizing-app-dashBoard')}> 
+             <button> 
                 <img
                   className="px-1 py-1 h-31 w-31"
                   src={NavBarSwitchingIcon}
