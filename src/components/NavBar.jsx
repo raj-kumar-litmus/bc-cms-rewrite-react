@@ -2,11 +2,13 @@ import { useState } from 'react';
 import BackcountryLogo from '../logos/backcountry-logo-with-text.svg';
 import NavBarSwitchingIcon from '../logos/NavBarSwitchingIcon.svg';
 import { useNavigate, useLocation } from 'react-router-dom';
+import useSessionStorage from "../hooks/useSessionStorage";
 
 function NavBar() {
     const navigate = useNavigate();
     const location = useLocation();
     const [showPopup, setShowpopup] = useState(false)
+    const [name] = useSessionStorage("userName");
     const handlPopup=()=>{
         setShowpopup(!showPopup)
     }
@@ -39,7 +41,7 @@ function NavBar() {
 
            <div className='mr-2'>
             <button onClick={handlPopup}> 
-                <div className="bg-white text-black text-sm rounded-full border h-8 w-8 px-1 py-1 font-bold">D</div>  
+                <div className="bg-white text-black text-sm rounded-full border h-8 w-8 px-1 py-1 font-bold">{name.charAt(0)}</div>  
             </button>
             </div>
                  {showPopup && 
@@ -48,12 +50,12 @@ function NavBar() {
                  <div className='m-2'>
                   <div className='mb-1'>
                      <button> 
-                        <div className="bg-white font-bold text-black text-sm rounded-full border h-6 w-6">D</div>  
+                        <div className="bg-white font-bold text-black text-sm rounded-full border h-6 w-6">{name.charAt(0)}</div>  
                      </button>
                   </div>
                   
                   <div className='mb-1'>
-                    <p className="text-sm font-semibold">David John</p>
+                    <p className="text-sm font-semibold">{name}</p>
                   </div>
 
                   <div>

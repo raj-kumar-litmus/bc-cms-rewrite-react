@@ -4,7 +4,6 @@ import configurations from "../config";
 import NormalizationImg from "../logos/Normalization-img.svg";
 import SizingAppImg from "../logos/SizingApp-img.svg";
 import ChoosingAppArrow from "../logos/ChoosingApp-arrow.svg";
-import useSessionStorage from "../hooks/useSessionStorage";
 
 function MenuChooser() {
   const navigate = useNavigate();
@@ -13,7 +12,6 @@ function MenuChooser() {
     "Sizing app"
   ]);
   const { azureUserGroups } = configurations[process.env.NODE_ENV];
-  const [name] = useSessionStorage("userName");
   const [groups] = useSessionStorage("userGroups");
 
   useEffect(() => {
@@ -29,18 +27,11 @@ function MenuChooser() {
     }
   }, [azureUserGroups]);
 
-  console.log("memberGroups1>>", memberGroups);
-  console.log(
-    "memberGroups>>",
-    memberGroups.filter((item) => item == "Sizing app")
-  );
-
   return (
     <div className="text-center h-screen bg-bg">
       <h1 className="text-xs font-bold leading-tight tracking-tight text-gray-900 md:text-xs dark:text-white pt-10">
         Choose the Application
       </h1>
-      <p>Username : {name}</p>
       <p className="text-sm mt-4">
         You Have Permission to access Data Normalization and <br />
         Sizing app. You can select one from below
