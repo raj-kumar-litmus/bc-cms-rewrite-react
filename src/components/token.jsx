@@ -92,7 +92,7 @@ function Token() {
 
   useEffect(() => {
     if (memberGroups) {
-      window.location.href = `/menuChooser?groups=${groups.toString()}`;
+      window.location.href = `/menuChooser`;
     }
   }, [memberGroups]);
 

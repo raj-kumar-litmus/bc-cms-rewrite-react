@@ -2,12 +2,13 @@
 /* eslint-disable react/jsx-boolean-value */
 /* eslint-disable object-curly-newline */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, createContext } from "react";
 import { AzureAD, AuthenticationState } from "react-aad-msal";
 
 import authProvider from "./authProvider";
 import configurations from "../config";
 import Loader from "./loader";
+import useSessionStorage from "../hooks/useSessionStorage";
 
 function SSOLogin() {
   const [account, setAccountInfo] = useState(null);
@@ -34,31 +35,29 @@ function SSOLogin() {
 
       if (groups?.length > 0) {
         // redirect to chooser page.
-        window.location.href = `/menuChooser?groups=${groups.toString()}`;
+        window.location.href = `/menuChooser`;
       }
     }
   }, [account, tenantId, clientId, hostnameClient]);
 
   return (
     <>
-      {/* <AzureAD provider={authProvider}>
-        <span>Only authenticated users can see me.</span>
-      </AzureAD> */}
-
       <AzureAD provider={authProvider} forceLogin={true}>
         {({ login, logout, authenticationState, error, accountInfo }) => {
           setAccountInfo(accountInfo);
           switch (authenticationState) {
             case AuthenticationState.Authenticated:
-              return (
-                <p>
-                  <span>{accountInfo?.jwtIdToken}</span>
-                  <button type="button" onClick={logout}>
-                    Logout
-                  </button>
-                  {/* <button type="button" onClick={getAccessToken}>GET access token</button> */}
-                </p>
-              );
+              if (accountInfo) {
+                useSessionStorage(
+                  "userGroups",
+                  accountInfo?.account?.idToken?.groups
+                );
+                useSessionStorage(
+                  "userName",
+                  accountInfo?.account?.idToken?.name
+                );
+              }
+              return;
             case AuthenticationState.Unauthenticated:
               return (
                 <div>
