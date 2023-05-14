@@ -1,11 +1,8 @@
-import ChoosingAppArrow from '../logos/ChoosingApp-arrow.svg'
+import React from 'react'
 import UnAssigned from '../logos/UnAssigned.svg';
 import Assigned from '../logos/Assigned.svg';
 import InProgress from '../logos/InProgress.svg';
 import Completed from '../logos/Completed.svg';
-
-
-
 
 function StatusBarsForNormalization() {
     return (

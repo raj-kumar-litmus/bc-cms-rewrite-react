@@ -1,5 +1,7 @@
+import React from 'react'
 function GlobalSearch() {
     return (
+        <div className="grid grid-cols-1 gap-2">
       <div className='m-2'>
           <form className="flex">   
       <div className="w-full">
@@ -9,6 +11,7 @@ function GlobalSearch() {
       <button className="text-white bg-black py-3.5 px-4 rounded ml-2">Search</button>
       </div>
   </form>
+      </div>
       </div>
     );
   }
