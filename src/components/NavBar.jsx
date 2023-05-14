@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState } from 'react';
 import BackcountryLogo from '../logos/backcountry-logo-with-text.svg';
 import NavBarSwitchingIcon from '../logos/NavBarSwitchingIcon.svg';
@@ -12,7 +13,7 @@ function NavBar() {
     const handlPopup=()=>{
         setShowpopup(!showPopup)
     }
-
+    
     return (
     <nav className="bg-white mt-2 mb-2">
     <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
@@ -23,10 +24,8 @@ function NavBar() {
     </div>
         <div className="flex items-center mr-10">
            {location.pathname !== '/menuChooser' && (<div className='mr-2'>
-            <button onClick={()=> navigate('/manualWorkFlowDashboard')}> 
-                <button> 
+                <button data-testid="manualflow-button" onClick={()=> navigate('/manualWorkFlowDashboard')}> 
                 <div className="bg-black text-white text-sm rounded-full border h-8 w-8 px-1 py-1"> + </div>  
-            </button>
             </button>
             </div>)}
        
@@ -41,7 +40,7 @@ function NavBar() {
 
            <div className='mr-2'>
             <button onClick={handlPopup}> 
-                <div className="bg-white text-black text-sm rounded-full border h-8 w-8 px-1 py-1 font-bold">{name.charAt(0)}</div>  
+                <div className="bg-white text-black text-sm rounded-full border h-8 w-8 px-1 py-1 font-bold">{name?.charAt(0)}</div>  
             </button>
             </div>
                  {showPopup && 
@@ -49,8 +48,8 @@ function NavBar() {
                   <div className="bg-white shadow dark:border absolute text-center w-auto h-auto">
                  <div className='m-2'>
                   <div className='mb-1'>
-                     <button> 
-                        <div className="bg-white font-bold text-black text-sm rounded-full border h-6 w-6">{name.charAt(0)}</div>  
+                     <button data-testid="show-popup-button"> 
+                        <div className="bg-white font-bold text-black text-sm rounded-full border h-6 w-6">{name?.charAt(0)}</div>  
                      </button>
                   </div>
                   

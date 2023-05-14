@@ -9,6 +9,7 @@ import MenuChooser from "./components/menuChooser";
 import NavBar from "./components/NavBar";
 import NormalizationDashboard from "./components/NormalizationDashboard";
 import ManualWorkFlowDashboard from "./components/ManualWorkFlowDashboard";
+import "primereact/resources/themes/lara-light-indigo/theme.css"; 
 
 const root = createRoot(document.getElementById("root"));
 
@@ -30,10 +31,10 @@ root.render(
       <Route
         path="/normalizationDashBoard"
         element={
-          <>
+          <div className="h-screen">
             <NavBar />
             <NormalizationDashboard />
-          </>
+          </div>
         }
       />
       <Route

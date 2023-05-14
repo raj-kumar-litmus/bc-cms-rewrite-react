@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useSessionStorage from "../hooks/useSessionStorage";
@@ -40,7 +41,7 @@ function MenuChooser() {
               </div>
               <div>
                 <h1 className="text-xs font-bold leading-tight tracking-tight text-gray-900 md:text-xs dark:text-white">
-                  Data Normalization App
+                 Writer Interphase App
                 </h1>
                 <p className="text-sm m-6">
                   Lorem ipsum dolor sit amet, <br />
@@ -92,3 +93,4 @@ function MenuChooser() {
   );
 }
 export default MenuChooser;
+
