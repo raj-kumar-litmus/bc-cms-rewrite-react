@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import configurations from "../config";
@@ -5,24 +6,24 @@ import { useNavigate } from 'react-router-dom';
 import NormalizationImg from '../logos/Normalization-img.svg';
 import SizingAppImg from '../logos/SizingApp-img.svg';
 import ChoosingAppArrow from '../logos/ChoosingApp-arrow.svg'
+import useSessionStorage from "../hooks/useSessionStorage";
 
 function MenuChooser() {
   const navigate = useNavigate();
-  const { search } = useLocation();
-  const [memberGroups, setGroups] = useState(['Data Normalization app','Sizing app']);
-  const { azureUserGroups } = configurations[process.env.NODE_ENV];
+  const [memberGroups, setGroups] = useState();
+  const [groups] = useSessionStorage("userGroups");
+  const azureUserGroups = configurations[process.env.NODE_ENV];
 
   useEffect(() => {
-    if (azureUserGroups && search) {
-      const groups = new URLSearchParams(search).get("groups").split(",");
+    if (azureUserGroups?.azureUserGroups) {
       const groupsToAccess = groups
-        .filter((groupId) => !!azureUserGroups[groupId])
-        .map((id) => azureUserGroups[id]);
+        .filter((groupId) => !!azureUserGroups?.azureUserGroups[groupId])
+        .map((id) => azureUserGroups?.azureUserGroups[id]);
       if (groupsToAccess) {
-        // setGroups(groupsToAccess);
+        setGroups(groupsToAccess);
       }
     }
-  }, [azureUserGroups, search]);
+  }, [azureUserGroups?.azureUserGroups]);
 
 
   return (
@@ -31,12 +32,12 @@ function MenuChooser() {
       <p className="text-sm mt-4">You Have Permission to access Data Normalization and <br/>Sizing app. You can select one from below</p>
       <div className="flex flex-row justify-center items-center">
       
-      {memberGroups.filter((item)=> item == "Data Normalization app").length == 1 && <div className="bg-white rounded-lg shadow dark:border md:m-10">
-      <button onClick={()=> navigate('/normalizationDashBoard')}>
+      <div className="bg-white rounded-lg shadow dark:border md:m-10">
+      <button data-testid="data-normalization-app" onClick={()=> navigate('/normalizationDashBoard')}>
           <div className="p-6 space-y-4 md:space-y-6 sm:p-4">
               <img
                  src={NormalizationImg}
-                 alt="SizingAppImg SVG" />
+                 alt="SizingAppImg SVG"/>
           </div>
           <div>
           <h1 className="text-xs font-bold leading-tight tracking-tight text-gray-900 md:text-xs dark:text-white">Data Normalization App</h1>
@@ -50,10 +51,11 @@ function MenuChooser() {
               alt="ChoosingAppArrow SVG" />
           </div>
           </button>
-      </div>}
+      </div>
 
-      {memberGroups.filter((item)=> item == "Sizing app").length == 1 && <div className="bg-white rounded-lg shadow dark:border md:m-10">
-      <button onClick={()=> navigate('/sizing-app-dashBoard')}>
+
+      <div className="bg-white rounded-lg shadow dark:border md:m-10">
+      <button data-testid="Sizing-app" onClick={()=> navigate('/sizing-app-dashBoard')}>
           <div className="p-6 space-y-4 md:space-y-6 sm:p-4">
           <img
               src={SizingAppImg}
@@ -72,7 +74,7 @@ function MenuChooser() {
               alt="ChoosingAppArrow SVG" />
           </div>
            </button>
-      </div>}
+      </div>
       <div>
       </div>
   </div>
@@ -80,3 +82,4 @@ function MenuChooser() {
   );
 }
 export default MenuChooser;
+

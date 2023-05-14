@@ -1,3 +1,4 @@
+import React from 'react'
 import BackcountryLogo from '../src/logos/BackCountry-logo.svg'
 import { useNavigate } from 'react-router-dom';
 
@@ -15,7 +16,7 @@ function App() {
           </div>
                 <div className="m-[40px]">
                     <div className="relative z-0 px-2 w-full">
-                      <button type="submit" onClick={()=> navigate('/sso')} className="w-full text-white bg-black hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 rounded font-medium text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Log in with SSO</button>
+                      <button type="submit" data-testid="button-click" onClick={()=> navigate('/sso')} className="w-full text-white bg-black hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 rounded font-medium text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Log in with SSO</button>
                     </div>
                 </div>
           </div>
