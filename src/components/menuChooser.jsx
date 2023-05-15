@@ -60,7 +60,7 @@ function MenuChooser() {
               </div>
             </button>
           </div>
-        )}
+         )} 
 
         {canAccessSizingApp && (
           <div className="bg-white rounded-lg shadow dark:border md:m-10">
