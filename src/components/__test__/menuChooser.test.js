@@ -5,6 +5,7 @@ import {BrowserRouter} from 'react-router-dom';
 
 describe("<menuChooser />", () => {
     // const OLD_ENV = process.env;
+
     it('render menuChooser page',()=>{
         render(<MenuChooser/>, {wrapper: BrowserRouter})
     })

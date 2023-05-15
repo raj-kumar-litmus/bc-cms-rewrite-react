@@ -18,8 +18,8 @@ function WriterDashBoardTabs() {
     }
 
     return (
-        <div class="text-sm border-b dark:border-bg">
-      <div class="flex">
+        <div className="text-sm border-b dark:border-bg">
+      <div className="flex">
         <button data-testid="Unassigned" onClick={(e)=>handleTabEvents(e)} className={currentTab == "Unassigned"  ? "py-2 px-8 font-bold border-b-2" :  "py-2 px-8"}>
             Unassigned
         </button>
