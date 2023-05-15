@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState, useEffect } from "react";
 import useSessionStorage from "../hooks/useSessionStorage";
 
@@ -26,8 +27,8 @@ function WriterDashBoardTabs() {
   }, [ADMIN_GROUP_ID, setIsAdmin]);
 
   return (
-    <div class="text-sm border-b dark:border-bg">
-      <div class="flex">
+    <div className="text-sm border-b dark:border-bg">
+      <div className="flex">
         {isAdmin && (
           <button
             onClick={(e) => handleTabEvents(e)}
