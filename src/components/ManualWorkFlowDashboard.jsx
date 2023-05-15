@@ -6,8 +6,7 @@ function ManualWorkFlowDashboard() {
     return (
        <div className='bg-bg h-screen bg-bg'>
         <button onClick={()=> navigate(-1)} className="text-sm ml-12 px-1 py-1 font-bold" > 
-         <span>{`<`}</span>
-         <span> Back</span>
+         <span>{`<`}Back</span>
         </button>
         <div className="mt-4 text-center">
           <h1 className="text-xs font-bold leading-tight tracking-tight text-gray-900 md:text-xs">Create Workflows</h1>
