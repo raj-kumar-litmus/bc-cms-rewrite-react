@@ -31,6 +31,7 @@ function WriterDashBoardTabs() {
       <div className="flex">
         {isAdmin && (
           <button
+          data-testid="Unassigned"
             onClick={(e) => handleTabEvents(e)}
             className={
               currentTab == "Unassigned"
@@ -43,6 +44,7 @@ function WriterDashBoardTabs() {
         )}
 
         <button
+        data-testid="Completed"
           onClick={(e) => handleTabEvents(e)}
           className={
             currentTab == "Completed"
@@ -54,6 +56,7 @@ function WriterDashBoardTabs() {
         </button>
 
         <button
+          data-testid="Assigned"
           onClick={(e) => handleTabEvents(e)}
           className={
             currentTab == "Assigned"
@@ -65,6 +68,7 @@ function WriterDashBoardTabs() {
         </button>
 
         <button
+          data-testid="InProgress"
           onClick={(e) => handleTabEvents(e)}
           className={
             currentTab == "InProgress"

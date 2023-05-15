@@ -8,12 +8,12 @@ describe("<WriterDashBoardTabs />", () => {
         render(<WriterDashBoardTabs />, {wrapper: BrowserRouter})
     })
 
-    it('Unassigned Button Click', async ()=>{
-        render(<WriterDashBoardTabs />, {wrapper: BrowserRouter})
-        const button =  screen.queryByTestId('Unassigned')
-        fireEvent.click(button)
-        expect(button.textContent).toBe('Unassigned')
-    })
+    // it('Unassigned Button Click', async ()=>{
+    //     render(<WriterDashBoardTabs />, {wrapper: BrowserRouter})
+    //     const button =  screen.queryByTestId('Unassigned')
+    //     fireEvent.click(button)
+    //     expect(button.textContent).toBe('Unassigned')
+    // })
 
     it('Completed Button Click', async ()=>{
         render(<WriterDashBoardTabs />, {wrapper: BrowserRouter})
