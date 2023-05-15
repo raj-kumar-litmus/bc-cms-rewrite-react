@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useSessionStorage from "../hooks/useSessionStorage";
@@ -8,14 +8,13 @@ import ChoosingAppArrow from "../logos/ChoosingApp-arrow.svg";
 const {
   VITE_SIZING_APP_GROUP_ID: SIZING_APP_GROUP_ID,
   VITE_DATA_NORMALIZATION_GROUP_ID: DATA_NORMALIZATION_GROUP_ID
-} = import.meta.env;
+} = process.env;
 
 function MenuChooser() {
   const navigate = useNavigate();
   const [canAccessSizingApp, setAccessSizingApp] = useState(false);
   const [canAccessWorkBenchApp, setAccessWorkBenchApp] = useState(false);
   const [groups] = useSessionStorage("userGroups");
- 
 
   useEffect(() => {
     setAccessSizingApp(groups?.includes(SIZING_APP_GROUP_ID));
@@ -32,7 +31,7 @@ function MenuChooser() {
           You Have Permission to access Data Normalization and <br />
           Sizing app. You can select one from below
         </p>
-       )}
+      )}
       <div className="flex flex-row justify-center items-center">
         {canAccessWorkBenchApp && (
           <div className="bg-white rounded-lg shadow dark:border md:m-10">
@@ -42,7 +41,7 @@ function MenuChooser() {
               </div>
               <div>
                 <h1 className="text-xs font-bold leading-tight tracking-tight text-gray-900 md:text-xs dark:text-white">
-                 Writer Interphase App
+                  Writer Interphase App
                 </h1>
                 <p className="text-sm m-6">
                   Lorem ipsum dolor sit amet, <br />
@@ -59,7 +58,7 @@ function MenuChooser() {
               </div>
             </button>
           </div>
-         )} 
+        )}
 
         {canAccessSizingApp && (
           <div className="bg-white rounded-lg shadow dark:border md:m-10">
@@ -87,11 +86,10 @@ function MenuChooser() {
               </div>
             </button>
           </div>
-         )}
+        )}
         <div></div>
       </div>
     </div>
   );
 }
 export default MenuChooser;
-
