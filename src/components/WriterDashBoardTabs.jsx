@@ -4,7 +4,7 @@ import useSessionStorage from "../hooks/useSessionStorage";
 function WriterDashBoardTabs() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [groups] = useSessionStorage("userGroups");
-  const { VITE_ADMIN_GROUP_ID: ADMIN_GROUP_ID } = import.meta.env;
+  const { VITE_ADMIN_GROUP_ID: ADMIN_GROUP_ID } = process;
   const [currentTab, setCurrentTab] = useState("Unassigned");
   const handleTabEvents = (tab) => {
     if (tab.target.innerText === "Unassigned") {
