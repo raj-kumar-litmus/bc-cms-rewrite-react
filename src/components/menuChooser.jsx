@@ -19,6 +19,8 @@ function MenuChooser() {
   useEffect(() => {
     setAccessSizingApp(groups?.includes(SIZING_APP_GROUP_ID));
     setAccessWorkBenchApp(groups?.includes(DATA_NORMALIZATION_GROUP_ID));
+    console.log("groups?.includes(SIZING_APP_GROUP_ID)", groups?.includes(SIZING_APP_GROUP_ID))
+
   }, [groups, setAccessSizingApp, setAccessWorkBenchApp]);
 
   return (
@@ -26,14 +28,14 @@ function MenuChooser() {
       <h1 className="text-xs font-bold text-black md:text-xs pt-10">
         Choose the Application
       </h1>
-      {/* {canAccessWorkBenchApp && canAccessSizingApp && ( */}
+      {canAccessWorkBenchApp && canAccessSizingApp && (
         <p className="text-sm mt-4">
           You Have Permission to access Data Normalization and <br />
           Sizing app. You can select one from below
         </p>
-      {/* )} */}
+       )}
       <div className="flex flex-row justify-center items-center">
-        {/* {canAccessWorkBenchApp && ( */}
+        {canAccessWorkBenchApp && (
           <div className="bg-white rounded-lg shadow dark:border md:m-10">
             <button onClick={() => navigate("/normalizationDashBoard")}>
               <div className="p-6 space-y-4 md:space-y-6 sm:p-4">
@@ -58,9 +60,9 @@ function MenuChooser() {
               </div>
             </button>
           </div>
-        {/* )} */}
+        )}
 
-        {/* {canAccessSizingApp && ( */}
+        {canAccessSizingApp && (
           <div className="bg-white rounded-lg shadow dark:border md:m-10">
             <button onClick={() => navigate("/sizing-app-dashBoard")}>
               <div className="p-6 space-y-4 md:space-y-6 sm:p-4">
@@ -86,7 +88,7 @@ function MenuChooser() {
               </div>
             </button>
           </div>
-        {/* )} */}
+         )}
         <div></div>
       </div>
     </div>
