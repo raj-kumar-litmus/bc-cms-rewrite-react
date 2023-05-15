@@ -3,8 +3,8 @@ import React from "react";
 const Loader = () => {
   return (
     <>
-      <div class="flex flex-col h-screen justify-center items-center">
-        <div class="">
+      <div className="flex flex-col h-screen justify-center items-center">
+        <div className="">
           <svg
             version="1.1"
             id="loader-1"

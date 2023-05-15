@@ -5,22 +5,21 @@ import useSessionStorage from "../hooks/useSessionStorage";
 import NormalizationImg from "../logos/Normalization-img.svg";
 import SizingAppImg from "../logos/SizingApp-img.svg";
 import ChoosingAppArrow from "../logos/ChoosingApp-arrow.svg";
+const {
+  VITE_SIZING_APP_GROUP_ID: SIZING_APP_GROUP_ID,
+  VITE_DATA_NORMALIZATION_GROUP_ID: DATA_NORMALIZATION_GROUP_ID
+} = import.meta.env;
 
 function MenuChooser() {
   const navigate = useNavigate();
   const [canAccessSizingApp, setAccessSizingApp] = useState(false);
   const [canAccessWorkBenchApp, setAccessWorkBenchApp] = useState(false);
   const [groups] = useSessionStorage("userGroups");
-  const {
-    VITE_SIZING_APP_GROUP_ID: SIZING_APP_GROUP_ID,
-    VITE_DATA_NORMALIZATION_GROUP_ID: DATA_NORMALIZATION_GROUP_ID
-  } = import.meta.env;
+ 
 
   useEffect(() => {
     setAccessSizingApp(groups?.includes(SIZING_APP_GROUP_ID));
     setAccessWorkBenchApp(groups?.includes(DATA_NORMALIZATION_GROUP_ID));
-    console.log("groups?.includes(SIZING_APP_GROUP_ID)", groups?.includes(SIZING_APP_GROUP_ID))
-
   }, [groups, setAccessSizingApp, setAccessWorkBenchApp]);
 
   return (
