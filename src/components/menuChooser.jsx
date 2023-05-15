@@ -40,7 +40,7 @@ function MenuChooser() {
                  alt="SizingAppImg SVG"/>
           </div>
           <div>
-          <h1 className="text-xs font-bold leading-tight tracking-tight text-gray-900 md:text-xs dark:text-white">Data Normalization App</h1>
+          <h1 className="text-xs font-bold leading-tight tracking-tight text-gray-900 md:text-xs dark:text-white">Writer Interphase App</h1>
           <p className="text-sm m-6">Lorem ipsum dolor sit amet, <br/>consectetur adipiscing</p>
           </div>
 
