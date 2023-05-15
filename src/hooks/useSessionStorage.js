@@ -8,8 +8,11 @@ const useSessionStorage = (keyName, defaultValue) => {
       if (value) {
         return JSON.parse(value);
       } else {
-        window.sessionStorage.setItem(keyName, JSON.stringify(defaultValue));
-        return defaultValue;
+        if(defaultValue) {
+          window.sessionStorage.setItem(keyName, JSON.stringify(defaultValue));
+          return defaultValue;
+        }
+        return;
       }
     } catch (err) {
       return defaultValue;

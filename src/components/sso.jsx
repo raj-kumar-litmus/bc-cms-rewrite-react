@@ -1,89 +1,65 @@
-/* eslint-disable indent */
-/* eslint-disable react/jsx-boolean-value */
-/* eslint-disable object-curly-newline */
-
-import { useState, useEffect, createContext } from "react";
-import { AzureAD, AuthenticationState } from "react-aad-msal";
-
-import authProvider from "./authProvider";
-import configurations from "../config";
-import Loader from "./loader";
+import React, { useEffect, useState } from "react";
+import { EventType } from "@azure/msal-browser";
+import { useNavigate } from "react-router-dom";
+import msalInstance from "./authInitialize";
 import useSessionStorage from "../hooks/useSessionStorage";
 
 function SSOLogin() {
-  const [account, setAccountInfo] = useState(null);
-  const { clientId, hostnameClient, tenantId } =
-    configurations[process.env.NODE_ENV];
-
-  // const getAccessToken = async () => {
-  //   const token = await authProvider.getAccessToken();
-  // };
+  const navigate = useNavigate();
+  const [accountDetails, setAccountDetails] = useState(null);
+  const [userGroups, setUserGroups] = useSessionStorage("userGroups");
+  const [userName, setUserName] = useSessionStorage("userName");
 
   useEffect(() => {
-    if (account) {
-      const groups = account?.account?.idToken?.groups;
-      if (!groups) {
-        // oauth doesn't returns groups related information; call graph api to explicitly fetch the details;
-        window.location.href = `/${tenantId}/oauth2/authorize?client_id=${clientId}&response_type=code&jwt=${account?.jwtIdToken}&redirect_uri=${hostnameClient}/redirect/web/&response_mode=query&state=12345`;
-      }
-
-      if (groups.length === 0) {
-        // new page which says you dont have access to the app
-        // or redirect elsewhere.
-        window.location.href = "/";
-      }
-
-      if (groups?.length > 0) {
-        // redirect to chooser page.
-        window.location.href = `/menuChooser`;
-      }
+    if (accountDetails) {
+      setUserGroups(accountDetails?.idTokenClaims?.groups);
+      setUserName(accountDetails?.idTokenClaims?.name);
+      navigate("/menuChooser");
     }
-  }, [account, tenantId, clientId, hostnameClient]);
+  }, [accountDetails]);
 
+  useEffect(() => {
+    // Account selection logic is app dependent. Adjust as needed for different use cases.
+    // Set active acccount on page load
+    const accounts = msalInstance.getAllAccounts();
+    if (accounts.length > 0) {
+      msalInstance.setActiveAccount(accounts[0]);
+    }
+
+    msalInstance.addEventCallback(
+      (event) => {
+        // set active account after redirect
+        if (
+          event.eventType === EventType.LOGIN_SUCCESS &&
+          event.payload.account
+        ) {
+          const account = event.payload.account;
+          msalInstance.setActiveAccount(account);
+        }
+      },
+      (error) => {
+        console.log("error", error);
+      }
+    );
+
+    msalInstance
+      .handleRedirectPromise()
+      .then((authResult) => {
+        // Check if user signed in
+        const account = msalInstance.getActiveAccount();
+        setAccountDetails(account);
+        if (!account) {
+          // redirect anonymous user to login page
+          msalInstance.loginRedirect();
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
   return (
     <>
-      <AzureAD provider={authProvider} forceLogin={true}>
-        {({ login, logout, authenticationState, error, accountInfo }) => {
-          setAccountInfo(accountInfo);
-          switch (authenticationState) {
-            case AuthenticationState.Authenticated:
-              if (accountInfo) {
-                useSessionStorage(
-                  "userGroups",
-                  accountInfo?.account?.idToken?.groups
-                );
-                useSessionStorage(
-                  "userName",
-                  accountInfo?.account?.idToken?.name
-                );
-              }
-              return;
-            case AuthenticationState.Unauthenticated:
-              return (
-                <div>
-                  {error && (
-                    <p>
-                      <span>
-                        An error occured during authentication, please try
-                        again!
-                      </span>
-                    </p>
-                  )}
-                  <p>
-                    <span>Hey stranger, you look new!</span>
-                    <button type="button" onClick={login}>
-                      Login
-                    </button>
-                  </p>
-                </div>
-              );
-            case AuthenticationState.InProgress:
-              return <Loader />;
-            default:
-              return <p>Something went wrong. Please try again.</p>;
-          }
-        }}
-      </AzureAD>
+      <p>Logging you in !!!</p>
     </>
   );
 }

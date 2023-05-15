@@ -21,15 +21,7 @@ const config = {
 
 // Authentication Parameters
 const authenticationParameters = {
-  scopes: [
-    "user.read",
-    "offline_access",
-    "profile",
-    "openid",
-    "https://rajkumartestingorg.onmicrosoft.com/f7fdabfa-274a-4401-852d-b448a62f70d6/Users.read",
-    "https://rajkumartestingorg.onmicrosoft.com/f7fdabfa-274a-4401-852d-b448a62f70d6/Group.read",
-    "https://rajkumartestingorg.onmicrosoft.com/f7fdabfa-274a-4401-852d-b448a62f70d6/Group.Read.All"
-  ]
+  scopes: ["user.read", "offline_access", "profile", "openid"]
 };
 
 // Options
