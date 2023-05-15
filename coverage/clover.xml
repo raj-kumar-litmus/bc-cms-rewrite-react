@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1684152565618" clover="3.2.0">
-  <project timestamp="1684152565618" name="All files">
+<coverage generated="1684154492991" clover="3.2.0">
+  <project timestamp="1684154492991" name="All files">
     <metrics statements="78" coveredstatements="63" conditionals="35" coveredconditionals="22" methods="24" coveredmethods="18" elements="137" coveredelements="103" complexity="0" loc="78" ncloc="78" packages="4" files="19" classes="19"/>
     <package name="src">
       <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2"/>
@@ -88,7 +88,7 @@
       <metrics statements="16" coveredstatements="9" conditionals="4" coveredconditionals="2" methods="3" coveredmethods="2"/>
       <file name="useSessionStorage.js" path="C:\Users\deepthi\Desktop\Back country\bc-cms-rewrite-react\src\hooks\useSessionStorage.js">
         <metrics statements="16" coveredstatements="9" conditionals="4" coveredconditionals="2" methods="3" coveredmethods="2"/>
-        <line num="3" count="5" type="stmt"/>
+        <line num="3" count="4" type="stmt"/>
         <line num="4" count="13" type="stmt"/>
         <line num="5" count="7" type="stmt"/>
         <line num="6" count="7" type="stmt"/>
