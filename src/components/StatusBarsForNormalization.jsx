@@ -8,7 +8,7 @@ function StatusBarsForNormalization() {
     return (
        <div className="grid grid-cols-4 gap-2">
           <div className="justify-center items-center">
-         <div className="bg-white rounded-lg shadow dark:border md:m-10">
+         <div className="bg-white rounded-lg shadow md:m-10">
         <div>
             <div className='flex flex-row'>
               <div className='mt-6 m-4'> 
@@ -27,7 +27,7 @@ function StatusBarsForNormalization() {
           </div>
 
           <div className="justify-center items-center">
-         <div className="bg-white rounded-lg shadow dark:border md:m-10">
+         <div className="bg-white rounded-lg shadow md:m-10">
         <div>
         <div className='flex flex-row'>
               <div className='mt-6 m-4'> 
@@ -47,7 +47,7 @@ function StatusBarsForNormalization() {
 
           
           <div className="justify-center items-center">
-         <div className="bg-white rounded-lg shadow dark:border md:m-10">
+         <div className="bg-white rounded-lg shadow md:m-10">
         <div>
         <div className='flex flex-row'>
               <div className='mt-6 m-4'> 
@@ -66,7 +66,7 @@ function StatusBarsForNormalization() {
           </div>
 
           <div className="justify-center items-center">
-         <div className="bg-white rounded-lg shadow dark:border md:m-10">
+         <div className="bg-white rounded-lg shadow md:m-10">
         <div>
         <div className='flex flex-row'>
               <div className='mt-6 m-4'> 

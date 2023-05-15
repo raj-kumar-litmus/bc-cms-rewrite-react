@@ -45,7 +45,7 @@ function NavBar() {
             </div>
                  {showPopup && 
                 <div className='relative right-14 top-4'> 
-                  <div className="bg-white shadow dark:border absolute text-center w-auto h-auto">
+                  <div className="bg-white shadow absolute text-center w-auto h-auto">
                  <div className='m-2'>
                   <div className='mb-1'>
                      <button data-testid="show-popup-button"> 

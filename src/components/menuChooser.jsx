@@ -34,13 +34,13 @@ function MenuChooser() {
       )}
       <div className="flex flex-row justify-center items-center">
         {canAccessWorkBenchApp && (
-          <div className="bg-white rounded-lg shadow dark:border md:m-10">
+          <div className="bg-white rounded-lg shadow md:m-10">
             <button onClick={() => navigate("/normalizationDashBoard")}>
               <div className="p-6 space-y-4 md:space-y-6 sm:p-4">
                 <img src={NormalizationImg} alt="SizingAppImg SVG" />
               </div>
               <div>
-                <h1 className="text-xs font-bold leading-tight tracking-tight text-gray-900 md:text-xs dark:text-white">
+                <h1 className="text-xs font-bold leading-tight tracking-tight text-gray-900 md:text-xs">
                   Writer Interphase App
                 </h1>
                 <p className="text-sm m-6">
@@ -61,14 +61,14 @@ function MenuChooser() {
         )}
 
         {canAccessSizingApp && (
-          <div className="bg-white rounded-lg shadow dark:border md:m-10">
+          <div className="bg-white rounded-lg shadow md:m-10">
             <button onClick={() => navigate("/sizing-app-dashBoard")}>
               <div className="p-6 space-y-4 md:space-y-6 sm:p-4">
                 <img src={SizingAppImg} alt="SizingAppImg SVG" />
               </div>
 
               <div>
-                <h1 className="text-xs font-bold leading-tight tracking-tight text-gray-900 md:text-xs dark:text-white">
+                <h1 className="text-xs font-bold leading-tight tracking-tight text-gray-900 md:text-xs">
                   Sizing App
                 </h1>
                 <p className="text-sm m-6">

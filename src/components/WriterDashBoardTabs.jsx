@@ -27,7 +27,7 @@ function WriterDashBoardTabs() {
   }, [ADMIN_GROUP_ID, setIsAdmin]);
 
   return (
-    <div className="text-sm border-b dark:border-bg">
+    <div className="text-sm border-b">
       <div className="flex">
         {isAdmin && (
           <button
