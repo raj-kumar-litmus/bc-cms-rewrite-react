@@ -3,7 +3,7 @@ import UnAssigned from '../logos/UnAssigned.svg';
 import Assigned from '../logos/Assigned.svg';
 import InProgress from '../logos/InProgress.svg';
 import Completed from '../logos/Completed.svg';
-import StatusBarTail from './StatusBarTail';
+import StatusBarTail from './StatusBar';
 
 function StatusBarsForNormalization() {
     return (
@@ -12,6 +12,7 @@ function StatusBarsForNormalization() {
              <StatusBarTail
              title={"Unassigned"}
              img={UnAssigned}
+             count={"250"}
              />
           </div>
 
@@ -19,6 +20,7 @@ function StatusBarsForNormalization() {
              <StatusBarTail
              title={"Assigned"}
              img={Assigned}
+             count={"250"}
              />
           </div>
 
@@ -26,6 +28,7 @@ function StatusBarsForNormalization() {
              <StatusBarTail
              title={"In-progress"}
              img={InProgress}
+             count={"250"}
              />
             </div>
 
@@ -33,6 +36,7 @@ function StatusBarsForNormalization() {
              <StatusBarTail
              title={"Completed"}
              img={Completed}
+             count={"250"}
              />
             </div>
        </div>

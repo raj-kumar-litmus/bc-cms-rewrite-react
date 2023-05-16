@@ -11,7 +11,8 @@ function NormalizationDashboard() {
         <StatusBarsForNormalization/>
        </div>
        <div className='m-10'>
-        <GlobalSearch/>
+        <GlobalSearch
+        serachString={"Search"}/>
        </div>
        <div className='m-10'>
         <WriterDashBoardTabs/>

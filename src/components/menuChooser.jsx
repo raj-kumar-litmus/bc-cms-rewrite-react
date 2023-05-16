@@ -5,7 +5,7 @@ import useSessionStorage from "../hooks/useSessionStorage";
 import NormalizationImg from "../logos/Normalization-img.svg";
 import SizingAppImg from "../logos/SizingApp-img.svg";
 import ChoosingAppArrow from "../logos/ChoosingApp-arrow.svg";
-import MenuChooserTail from "./MenuChooserTail";
+import MenuChooserTail from "./MenuChooserAppDeatils";
 const {
   VITE_SIZING_APP_GROUP_ID: SIZING_APP_GROUP_ID,
   VITE_DATA_NORMALIZATION_GROUP_ID: DATA_NORMALIZATION_GROUP_ID
@@ -24,7 +24,7 @@ function MenuChooser() {
 
   return (
     <div className="text-center h-screen bg-bg">
-      <h1 className="text-xs font-bold text-black md:text-xs pt-10">
+      <h1 className="text-xs font-bold text-black pt-10">
         Choose the Application
       </h1>
       
@@ -41,6 +41,7 @@ function MenuChooser() {
           img={NormalizationImg}
           title={"Writer Interphase App"}
           ChoosingAppArrow={ChoosingAppArrow}
+          DisplayContent={<div>Lorem ipsum dolor sit amet,<br/>consectetur adipiscing</div>}
           />
         )}
 
@@ -49,6 +50,7 @@ function MenuChooser() {
           img={SizingAppImg}
           title={"Sizing App"}
           ChoosingAppArrow={ChoosingAppArrow}
+          DisplayContent={<div>Lorem ipsum dolor sit amet,<br/>consectetur adipiscing</div>}
           />
         )}
       </div>

@@ -4,7 +4,6 @@ const Loader = () => {
   return (
     <>
       <div className="flex flex-col h-screen justify-center items-center">
-        <div className="">
           <svg
             version="1.1"
             id="loader-1"
@@ -33,7 +32,6 @@ const Loader = () => {
             </path>
           </svg>
         </div>
-      </div>
     </>
   );
 };

@@ -1,6 +1,6 @@
 import { createRoot } from "react-dom/client";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
-
+import "primereact/resources/themes/lara-light-indigo/theme.css"; 
 import "../public/index.css";
 import App from "./App";
 import SSOLogin from "./components/sso";
@@ -9,7 +9,6 @@ import MenuChooser from "./components/menuChooser";
 import NavBar from "./components/NavBar";
 import NormalizationDashboard from "./components/NormalizationDashboard";
 import ManualWorkFlowDashboard from "./components/ManualWorkFlowDashboard";
-import "primereact/resources/themes/lara-light-indigo/theme.css"; 
 
 const root = createRoot(document.getElementById("root"));
 
@@ -42,7 +41,10 @@ root.render(
         element={
           <>
             <NavBar />
-            <ManualWorkFlowDashboard />
+            <ManualWorkFlowDashboard backButtonString={"<Back"}
+             SearchTest={"Search"}
+             testInsideTheAlert={"Style DGET233 and FWPT1Y3 are doesn’t exist"}
+            />
           </>
         }
       />
