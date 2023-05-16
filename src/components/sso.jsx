@@ -3,6 +3,7 @@ import { EventType } from "@azure/msal-browser";
 import { useNavigate } from "react-router-dom";
 import msalInstance from "./authInitialize";
 import useSessionStorage from "../hooks/useSessionStorage";
+import Loader from "./loader";
 
 function SSOLogin() {
   const navigate = useNavigate();
@@ -57,11 +58,7 @@ function SSOLogin() {
         console.log(err);
       });
   }, []);
-  return (
-    <>
-      <p>Logging you in !!!</p>
-    </>
-  );
+  return <Loader />;
 }
 
 export default SSOLogin;

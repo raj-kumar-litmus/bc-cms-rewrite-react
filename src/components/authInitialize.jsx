@@ -9,7 +9,14 @@ const msalConfig = {
   }
 };
 
-const msalInstance = new msal.PublicClientApplication(msalConfig);
-await msalInstance.initialize();
+let msalInstance;
+
+const msalInitialize = async () => {
+  msalInstance = new msal.PublicClientApplication(msalConfig);
+  await msalInstance.initialize();
+  return;
+};
+
+await msalInitialize();
 
 export default msalInstance;
