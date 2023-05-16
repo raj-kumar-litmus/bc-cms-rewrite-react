@@ -1,6 +1,6 @@
 import { createRoot } from "react-dom/client";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
-import "primereact/resources/themes/lara-light-indigo/theme.css"; 
+import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "../public/index.css";
 import App from "./App";
 import SSOLogin from "./components/sso";
@@ -15,8 +15,7 @@ const root = createRoot(document.getElementById("root"));
 root.render(
   <BrowserRouter>
     <Routes>
-      <Route path="/" element={<App />} />
-      <Route path="/sso" element={<SSOLogin />} />
+      <Route path="/" element={<SSOLogin />} />
       <Route path="/redirect/web" element={<Token />} />
       <Route
         path="/menuChooser"
@@ -41,10 +40,13 @@ root.render(
         element={
           <>
             <NavBar />
-            <ManualWorkFlowDashboard backButtonString={"<Back"}
-             searchTest={"Search"}
-             alertText={"Style DGET233 and FWPT1Y3 are doesn’t exist"}
-             displayTest={"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et d"}
+            <ManualWorkFlowDashboard
+              backButtonString={"<Back"}
+              searchTest={"Search"}
+              alertText={"Style DGET233 and FWPT1Y3 are doesn’t exist"}
+              displayTest={
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et d"
+              }
             />
           </>
         }
