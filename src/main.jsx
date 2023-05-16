@@ -2,7 +2,6 @@ import { createRoot } from "react-dom/client";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "../public/index.css";
-import App from "./App";
 import SSOLogin from "./components/sso";
 import Token from "./components/token";
 import MenuChooser from "./components/menuChooser";
