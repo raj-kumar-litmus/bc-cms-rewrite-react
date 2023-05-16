@@ -17,6 +17,6 @@ const msalInitialize = async () => {
   return;
 };
 
-await msalInitialize();
+msalInitialize();
 
 export default msalInstance;
