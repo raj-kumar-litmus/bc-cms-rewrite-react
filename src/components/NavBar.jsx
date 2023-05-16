@@ -1,8 +1,8 @@
 import React from 'react';
 import { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import BackcountryLogo from '../logos/backcountry-logo-with-text.svg';
 import NavBarSwitchingIcon from '../logos/NavBarSwitchingIcon.svg';
-import { useNavigate, useLocation } from 'react-router-dom';
 import useSessionStorage from "../hooks/useSessionStorage";
 
 function NavBar() {
