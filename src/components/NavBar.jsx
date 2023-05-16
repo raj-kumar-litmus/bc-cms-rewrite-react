@@ -24,23 +24,30 @@ function NavBar() {
        src={BackcountryLogo} alt="Backcountry SVG"/>
     </div>
         <div className="flex items-center mr-10">
-           {location.pathname !== '/menuChooser' && (<div className='mr-2'>
-                <Button dataTestId="manualflow-button" onClick={()=> navigate('/manualWorkFlowDashboard')}> 
-                <div className="bg-black text-white text-sm rounded-full border h-8 w-8 px-1 py-1"> + </div>
-                </Button>
-            </div>)}
-       
-            {location.pathname !== '/menuChooser' && (<div className='mr-2'>
-            <Button> <img
-                  className="px-1 py-1 h-31 w-31"
-                  src={NavBarSwitchingIcon}
-                  alt="NavBarSwitchingIcon SVG"/> </Button>
-           </div>)}
+            {location.pathname !== '/menuChooser' && (
+              <div className='flex flex-row'>
+                 <div className='mr-2 mt-2'>
+                  <Button dataTestId="manualflow-button" onClick={()=> navigate('/manualWorkFlowDashboard')}> 
+                   <div className="bg-black text-white text-sm rounded-full border h-8 w-8 px-1 py-1"> + </div>
+                  </Button>
+                 </div>
+
+                <div className='mr-2'>
+                  <Button> 
+                    <img
+                      className="px-1 py-1 h-31 w-31"
+                      src={NavBarSwitchingIcon}
+                      alt="NavBarSwitchingIcon SVG"/> 
+                  </Button>
+                </div>
+           </div>
+           )}
 
            <div className='mr-2'>
             <Button  onClick={handlPopup}> 
             <div className="bg-white text-black text-sm rounded-full border h-8 w-8 px-1 py-1 font-bold">{name?.charAt(0)}</div>
             </Button>
+            
             </div>
                  {showPopup && 
                 <div className='relative right-14 top-4'> 
