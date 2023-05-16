@@ -35,13 +35,11 @@ function WriterDashBoardTabs() {
         > Completed
         </Button>
 
-
        <Button
         onClick={handleTabEvents}
         currentTab={currentTab}
         className={currentTab == "Assigned" ? "py-2 px-8 font-bold border-b-2" : "py-2 px-8"}
         > Assigned </Button>
-
 
       <Button
         onClick={handleTabEvents}
