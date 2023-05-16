@@ -1,14 +1,14 @@
 
 import React from 'react';
 
-function Button({content, onClick, className, dataTestId}) {
+function Button({onClick, className, dataTestId, children}) {
   return (
              <button
                onClick={onClick}
                className={className}
                data-testid={dataTestId}
              >
-              {content}
+              {children}
              </button>
   );
 }

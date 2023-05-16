@@ -23,32 +23,31 @@ function WriterDashBoardTabs() {
       {isAdmin && (
         <Button
         onClick={handleTabEvents}
-        content={"Unassigned"}
         currentTab={currentTab}
         className={currentTab == "Unassigned" ? "py-2 px-8 font-bold border-b-2" : "py-2 px-8"}
-        />
+        > Unassigned </Button>
       )}
 
       <Button
-        content={"Completed"}
         onClick={handleTabEvents}
         currentTab={currentTab}
         className={currentTab == "Completed" ? "py-2 px-8 font-bold border-b-2" : "py-2 px-8"}
-        />
+        > Completed
+        </Button>
+
 
        <Button
-        content={"Assigned"}
         onClick={handleTabEvents}
         currentTab={currentTab}
         className={currentTab == "Assigned" ? "py-2 px-8 font-bold border-b-2" : "py-2 px-8"}
-        />
+        > Assigned </Button>
+
 
       <Button
-        content={"InProgress"}
         onClick={handleTabEvents}
         currentTab={currentTab}
         className={currentTab == "InProgress" ? "py-2 px-8 font-bold border-b-2" : "py-2 px-8"}
-        />
+        > InProgress </Button>
     </div>
   </div>
   );

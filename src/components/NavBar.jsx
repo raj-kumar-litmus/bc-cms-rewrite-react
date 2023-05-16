@@ -25,25 +25,31 @@ function NavBar() {
     </div>
         <div className="flex items-center mr-10">
            {location.pathname !== '/menuChooser' && (<div className='mr-2'>
-                <Button dataTestId="manualflow-button" onClick={()=> navigate('/manualWorkFlowDashboard')} content={<div className="bg-black text-white text-sm rounded-full border h-8 w-8 px-1 py-1"> + </div>}/>
+                <Button dataTestId="manualflow-button" onClick={()=> navigate('/manualWorkFlowDashboard')}> 
+                <div className="bg-black text-white text-sm rounded-full border h-8 w-8 px-1 py-1"> + </div>
+                </Button>
             </div>)}
        
             {location.pathname !== '/menuChooser' && (<div className='mr-2'>
-            <Button  content={<img
+            <Button> <img
                   className="px-1 py-1 h-31 w-31"
                   src={NavBarSwitchingIcon}
-                  alt="NavBarSwitchingIcon SVG"/>}/>
+                  alt="NavBarSwitchingIcon SVG"/> </Button>
            </div>)}
 
            <div className='mr-2'>
-            <Button  onClick={handlPopup} content={<div className="bg-white text-black text-sm rounded-full border h-8 w-8 px-1 py-1 font-bold">{name?.charAt(0)}</div>}/>
+            <Button  onClick={handlPopup}> 
+            <div className="bg-white text-black text-sm rounded-full border h-8 w-8 px-1 py-1 font-bold">{name?.charAt(0)}</div>
+            </Button>
             </div>
                  {showPopup && 
                 <div className='relative right-14 top-4'> 
                   <div className="bg-white shadow absolute text-center w-auto h-auto">
                  <div className='m-2'>
                   <div className='mb-1'>
-                  <Button  dataTestId={show-popup-button} onClick={handlPopup} content={<div className="bg-white font-bold text-black text-sm rounded-full border h-6 w-6">{name?.charAt(0)}</div>}/>
+                  <Button  dataTestId={show-popup-button} onClick={handlPopup}>
+                  <div className="bg-white font-bold text-black text-sm rounded-full border h-6 w-6">{name?.charAt(0)}</div> 
+                  </Button>
                   </div>
                   
                   <div className='mb-1'>
@@ -51,7 +57,7 @@ function NavBar() {
                   </div>
 
                   <div>
-                    <Button className={className} content={Logout}/>
+                    <Button className={className}>Logout </Button>
                   </div>
                   </div>
                 </div>
