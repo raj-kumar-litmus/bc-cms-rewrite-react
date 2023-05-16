@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import BackcountryLogo from '../logos/backcountry-logo-with-text.svg';
 import NavBarSwitchingIcon from '../logos/NavBarSwitchingIcon.svg';
 import useSessionStorage from "../hooks/useSessionStorage";
+import Button from './Button';
 
 function NavBar() {
     const navigate = useNavigate();
@@ -24,33 +25,25 @@ function NavBar() {
     </div>
         <div className="flex items-center mr-10">
            {location.pathname !== '/menuChooser' && (<div className='mr-2'>
-                <button data-testid="manualflow-button" onClick={()=> navigate('/manualWorkFlowDashboard')}> 
-                <div className="bg-black text-white text-sm rounded-full border h-8 w-8 px-1 py-1"> + </div>  
-            </button>
+                <Button dataTestId="manualflow-button" onClick={()=> navigate('/manualWorkFlowDashboard')} content={<div className="bg-black text-white text-sm rounded-full border h-8 w-8 px-1 py-1"> + </div>}/>
             </div>)}
        
             {location.pathname !== '/menuChooser' && (<div className='mr-2'>
-             <button> 
-                <img
+            <Button  content={<img
                   className="px-1 py-1 h-31 w-31"
                   src={NavBarSwitchingIcon}
-                  alt="NavBarSwitchingIcon SVG"/>   
-             </button>
+                  alt="NavBarSwitchingIcon SVG"/>}/>
            </div>)}
 
            <div className='mr-2'>
-            <button onClick={handlPopup}> 
-                <div className="bg-white text-black text-sm rounded-full border h-8 w-8 px-1 py-1 font-bold">{name?.charAt(0)}</div>  
-            </button>
+            <Button  onClick={handlPopup} content={<div className="bg-white text-black text-sm rounded-full border h-8 w-8 px-1 py-1 font-bold">{name?.charAt(0)}</div>}/>
             </div>
                  {showPopup && 
                 <div className='relative right-14 top-4'> 
                   <div className="bg-white shadow absolute text-center w-auto h-auto">
                  <div className='m-2'>
                   <div className='mb-1'>
-                     <button data-testid="show-popup-button"> 
-                        <div className="bg-white font-bold text-black text-sm rounded-full border h-6 w-6">{name?.charAt(0)}</div>  
-                     </button>
+                  <Button  dataTestId={show-popup-button} onClick={handlPopup} content={<div className="bg-white font-bold text-black text-sm rounded-full border h-6 w-6">{name?.charAt(0)}</div>}/>
                   </div>
                   
                   <div className='mb-1'>
@@ -58,9 +51,7 @@ function NavBar() {
                   </div>
 
                   <div>
-                  <button> 
-                    <div className="bg-white text-black text-sm rounded border m-2 p-1">Logout</div>  
-                  </button>
+                    <Button className={className} content={Logout}/>
                   </div>
                   </div>
                 </div>

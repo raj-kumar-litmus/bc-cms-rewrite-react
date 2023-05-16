@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState, useEffect } from "react";
 import useSessionStorage from "../hooks/useSessionStorage";
-import TabsDetails from './TabsDetails';
+import Button from './Button';
 
 function WriterDashBoardTabs() {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -21,29 +21,33 @@ function WriterDashBoardTabs() {
     <div className="text-sm border-b dark:border-bg">
     <div className="flex">
       {isAdmin && (
-        <TabsDetails
-        handleTabEvents={handleTabEvents}
-        tabName={"Unassigned"}
+        <Button
+        onClick={handleTabEvents}
+        content={"Unassigned"}
         currentTab={currentTab}
+        className={currentTab == "Unassigned" ? "py-2 px-8 font-bold border-b-2" : "py-2 px-8"}
         />
       )}
 
-      <TabsDetails
-        tabName={"Completed"}
-        handleTabEvents={handleTabEvents}
+      <Button
+        content={"Completed"}
+        onClick={handleTabEvents}
         currentTab={currentTab}
+        className={currentTab == "Completed" ? "py-2 px-8 font-bold border-b-2" : "py-2 px-8"}
         />
 
-       <TabsDetails
-        tabName={"Assigned"}
-        handleTabEvents={handleTabEvents}
+       <Button
+        content={"Assigned"}
+        onClick={handleTabEvents}
         currentTab={currentTab}
+        className={currentTab == "Assigned" ? "py-2 px-8 font-bold border-b-2" : "py-2 px-8"}
         />
 
-      <TabsDetails
-        tabName={"InProgress"}
-        handleTabEvents={handleTabEvents}
+      <Button
+        content={"InProgress"}
+        onClick={handleTabEvents}
         currentTab={currentTab}
+        className={currentTab == "InProgress" ? "py-2 px-8 font-bold border-b-2" : "py-2 px-8"}
         />
     </div>
   </div>

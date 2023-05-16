@@ -5,14 +5,13 @@ import useSessionStorage from "../hooks/useSessionStorage";
 import NormalizationImg from "../logos/Normalization-img.svg";
 import SizingAppImg from "../logos/SizingApp-img.svg";
 import ChoosingAppArrow from "../logos/ChoosingApp-arrow.svg";
-import MenuChooserTail from "./MenuChooserAppDeatils";
+import MenuChooserAppDetails from "./MenuChooserAppDetails";
 const {
   VITE_SIZING_APP_GROUP_ID: SIZING_APP_GROUP_ID,
   VITE_DATA_NORMALIZATION_GROUP_ID: DATA_NORMALIZATION_GROUP_ID
 } = process.env;
 
 function MenuChooser() {
-  const navigate = useNavigate();
   const [canAccessSizingApp, setAccessSizingApp] = useState(false);
   const [canAccessWorkBenchApp, setAccessWorkBenchApp] = useState(false);
   const [groups] = useSessionStorage("userGroups");
@@ -21,6 +20,7 @@ function MenuChooser() {
     setAccessSizingApp(groups?.includes(SIZING_APP_GROUP_ID));
     setAccessWorkBenchApp(groups?.includes(DATA_NORMALIZATION_GROUP_ID));
   }, [groups, setAccessSizingApp, setAccessWorkBenchApp]);
+
 
   return (
     <div className="text-center h-screen bg-bg">
@@ -37,20 +37,20 @@ function MenuChooser() {
 
       <div className="flex flex-row justify-center items-center">
         {canAccessWorkBenchApp && (
-          <MenuChooserTail
+          <MenuChooserAppDetails
           img={NormalizationImg}
           title={"Writer Interphase App"}
-          ChoosingAppArrow={ChoosingAppArrow}
-          DisplayContent={<div>Lorem ipsum dolor sit amet,<br/>consectetur adipiscing</div>}
+          choosingAppArrow={ChoosingAppArrow}
+          displayContent={"Lorem ipsum dolor sit amet,consectetur adipiscing"}
           />
         )}
 
         {canAccessSizingApp && (
-          <MenuChooserTail
+          <MenuChooserAppDetails
           img={SizingAppImg}
           title={"Sizing App"}
-          ChoosingAppArrow={ChoosingAppArrow}
-          DisplayContent={<div>Lorem ipsum dolor sit amet,<br/>consectetur adipiscing</div>}
+          choosingAppArrow={ChoosingAppArrow}
+          displayContent={"Lorem ipsum dolor sit amet,consectetur adipiscing"}
           />
         )}
       </div>

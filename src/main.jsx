@@ -42,8 +42,9 @@ root.render(
           <>
             <NavBar />
             <ManualWorkFlowDashboard backButtonString={"<Back"}
-             SearchTest={"Search"}
-             testInsideTheAlert={"Style DGET233 and FWPT1Y3 are doesn’t exist"}
+             searchTest={"Search"}
+             alertText={"Style DGET233 and FWPT1Y3 are doesn’t exist"}
+             displayTest={"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et d"}
             />
           </>
         }

@@ -12,7 +12,7 @@ function NormalizationDashboard() {
        </div>
        <div className='m-10'>
         <GlobalSearch
-        serachString={"Search"}/>
+        searchString={"Search"}/>
        </div>
        <div className='m-10'>
         <WriterDashBoardTabs/>
