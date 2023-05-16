@@ -2,7 +2,7 @@ import React from 'react'
 function StatusBarTail({img,title, count }) {
     return (
           <div className="justify-center items-center">
-          <div className="bg-white rounded-lg shadow">
+          <div className="bg-white rounded-lg shadow m-10">
              <div className='flex flex-row'>
                <div className='mt-6 m-4'> 
                  <img
