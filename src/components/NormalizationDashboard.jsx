@@ -37,7 +37,7 @@ function NormalizationDashboard() {
         <Table currentTab={currentTab} setCustomers={setCustomers} isAdmin={isAdmin} customers={customers} preText={"< Prev"} nextText={"Next >"} currentPage={currentPage} setCurrentPage={setCurrentPage}/>
       </div>
       </div>
-    </div>
+      </div>
   );
 }
 export default NormalizationDashboard;
