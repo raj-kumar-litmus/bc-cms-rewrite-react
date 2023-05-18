@@ -5,7 +5,8 @@ function ManualWorkFlowDashboard({backButtonString, alertText, searchTest, displ
     let navigate = useNavigate();
 
     return (
-       <div className='bg-bg h-screen' >
+       <div className='bg-grey-40 h-screen' >
+        <div className='mx-[139px]'>
         <Button onClick={()=> navigate(-1)} className={"text-sm ml-12 px-1 py-1 font-bold"}> {backButtonString} </Button>
         <div className="mt-4 text-center">
           <h1 className="text-xs font-bold leading-tight tracking-tight text-gray-900">Create Workflows</h1>
@@ -26,6 +27,7 @@ function ManualWorkFlowDashboard({backButtonString, alertText, searchTest, displ
               <span className="text-sm">{alertText}</span>
             </div>
             </div>
+          </div>
           </div>
        </div>
     );

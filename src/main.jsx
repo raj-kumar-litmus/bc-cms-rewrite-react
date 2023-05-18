@@ -28,7 +28,7 @@ root.render(
       <Route
         path="/normalizationDashBoard"
         element={
-          <div className="h-screen">
+          <div>
             <NavBar />
             <NormalizationDashboard />
           </div>

@@ -23,7 +23,7 @@ function MenuChooser() {
 
 
   return (
-    <div className="text-center h-screen bg-bg">
+    <div className="bg-grey-40 h-screen text-center">
       <h1 className="text-xs font-bold text-black pt-10">
         Choose the Application
       </h1>
