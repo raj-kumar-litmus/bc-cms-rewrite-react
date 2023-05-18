@@ -1,0 +1,1 @@
+export const workFlowsCountUrl = "https://bc-cms-rewrite-node-ms-git-apis-raj-kumar-litmus-s-team.vercel.app/api/v1/workflows/counts"
