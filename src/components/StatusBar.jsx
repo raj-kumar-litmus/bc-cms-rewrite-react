@@ -1,4 +1,5 @@
 import React from "react";
+import Loader from '../components/loader'
 function StatusBarTail({ img, title, count, className }) {
   return (
     <div className="bg-white rounded-lg shadow flex flex-row w-[260px] h-[123px] items-center pl-[25px] mt-[64px]">
@@ -7,7 +8,9 @@ function StatusBarTail({ img, title, count, className }) {
     </div>
     <div className="m-3 mx-8">
         <p className="text-sm">{title}</p>
+        {count ?
         <h2 className="font-bold text-[34px] w-[60px]">{`${(count)/1000}K`}</h2>
+        : <Loader/>}
     </div>
 </div>
   );
