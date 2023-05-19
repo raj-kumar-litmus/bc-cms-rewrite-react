@@ -7,7 +7,7 @@ function StatusBarTail({ img, title, count, className }) {
     </div>
     <div className="m-3 mx-8">
         <p className="text-sm">{title}</p>
-        <h2 className="font-bold text-[34px]">{`${(count)/1000}k`}</h2>
+        <h2 className="font-bold text-[34px] w-[60px]">{`${(count)/1000}K`}</h2>
     </div>
 </div>
   );
