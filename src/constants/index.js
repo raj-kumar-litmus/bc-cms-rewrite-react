@@ -1,3 +1,3 @@
-const { VITE_LOCAL_URL: LOCAL_URL } = process.env;
+const { VITE_HOST_NAME: HOST_NAME } = process.env;
 
-export const workFlowsCountUrl = `${LOCAL_URL}/workflows/counts`
+export const workFlowsCountUrl = `${HOST_NAME}/workflows/counts`
