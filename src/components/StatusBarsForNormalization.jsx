@@ -4,7 +4,7 @@ import Assigned from "../logos/Assigned.svg";
 import InProgress from "../logos/InProgress.svg";
 import Completed from "../logos/Completed.svg";
 import StatusBar from "./StatusBar";
-import {workFlowsCountUrl} from '../api/index'
+import {workFlowsCountUrl} from '../constants/index'
 
 function StatusBarsForNormalization() {
   const [statusBarData, setStatusBarData] = useState([]);
