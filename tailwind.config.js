@@ -9,7 +9,7 @@ export default {
   theme: {
     colors: {
       'black': '#1c1c1c',
-      'borders': "#DDDDDD",
+      'grey-30': "#DDDDDD",
       'gray-10':'#F3F5F7',
       'danger-red': '#FC555619',
       'pink-100': "#F7C2D2",
@@ -18,6 +18,7 @@ export default {
       'green-100': "#A1EDB1",
       'gray-20':'#4D4D4D',
       'white': '#ffffff',
+      "grey-40":"#F4F6F8"
     },
     fontSize: {
       'sm': '0.8rem',

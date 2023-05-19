@@ -29,7 +29,9 @@
     "collectCoverage": true,
     "coverageDirectory": "coverage",
     "testEnvironment": "jsdom",
-    "setupFiles": ["./someModuleForTest"],
+    "setupFiles": [
+      "./someModuleForTest"
+    ],
     "coverageThreshold": {
       "global": {
         "lines": 100,

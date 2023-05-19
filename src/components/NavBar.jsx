@@ -16,19 +16,18 @@ function NavBar() {
   };
 
   return (
-    <nav className="bg-white mt-2 mb-2">
-      <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
-        <div className="flex items-center ml-15">
+    <nav className="bg-white">
+      <div className="flex flex-wrap justify-between items-center mx-[139px] h-[70px]">
+        <div className="flex items-center">
           <img
-            className="ml-8 px-1 py-1 h-26 w-147"
             src={BackcountryLogo}
             alt="Backcountry SVG"
           />
         </div>
-        <div className="flex items-center mr-10">
+        <div className="flex">
           {location.pathname !== "/menuChooser" && (
             <div className="flex flex-row">
-              <div className="mr-2 mt-2">
+              <div className="mr-2">
                 <Button
                   dataTestId="manualflow-button"
                   onClick={() => navigate("/manualWorkFlowDashboard")}
@@ -43,7 +42,7 @@ function NavBar() {
               <div className="mr-2">
                 <Button>
                   <img
-                    className="px-1 py-1 h-31 w-31"
+                    className="px-1 h-31 w-31"
                     src={NavBarSwitchingIcon}
                     alt="NavBarSwitchingIcon SVG"
                   />
@@ -60,12 +59,12 @@ function NavBar() {
             </Button>
           </div>
           {showPopup && (
-            <div className="relative right-14 top-4">
+            <div className="relative right-14 top-11">
               <div className="bg-white shadow absolute text-center w-auto h-auto">
                 <div className="m-2">
                   <div className="mb-1">
                     <Button
-                      dataTestId={show - popup - button}
+                      dataTestId={"show-popup-button"}
                       onClick={handlPopup}
                     >
                       <div className="bg-white font-bold text-black text-sm rounded-full border h-6 w-6">
@@ -79,7 +78,7 @@ function NavBar() {
                   </div>
 
                   <div>
-                    <Button className={className}>Logout </Button>
+                    <Button className={"bg-white text-black text-sm rounded border m-2 p-1"}>Logout </Button>
                   </div>
                 </div>
               </div>

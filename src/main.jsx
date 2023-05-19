@@ -28,10 +28,10 @@ root.render(
       <Route
         path="/normalizationDashBoard"
         element={
-          <div className="h-screen">
+          <>
             <NavBar />
             <NormalizationDashboard />
-          </div>
+          </>
         }
       />
       <Route
