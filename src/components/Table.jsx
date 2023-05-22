@@ -263,18 +263,6 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
         </span> 
     )
 }
-{/* <span>
-<button onClick={() => setShowFilters(!showFilters)}>
-     {!showFilters ? <div className="bg-black text-white text-sm rounded-full border h-8 w-8 flex justify-center items-center"> 
-     <img alt={`${FilterIcon} svg`} src={FilterIcon}  style={{ fontSize: '0.6rem', color: '#708090'}} onClick={handleEditIcon}/>
-     </div> :
-     <div className="bg-white text-black text-sm rounded-full border h-8 w-8 flex justify-center items-center"> 
-     <img alt={`${FilterIcon} svg`} src={FilterIcon}  style={{ fontSize: '0.6rem', color: '#708090'}} onClick={handleEditIcon}/>
-     </div>}
-</button>                
-</span>  */}
-
-
     const handleAssigneeSort=()=>{
         setCurrentSort("assigneeSort")
         setAssigneeSort(assigneeSort == "desc" ? "asc" : "desc")
