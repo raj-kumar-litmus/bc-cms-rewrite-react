@@ -1,22 +1,8 @@
 import React from "react";
-import { useState, useEffect } from "react";
-import useSessionStorage from "../hooks/useSessionStorage";
 import Button from "./Button";
 
-function WriterDashBoardTabs() {
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [groups] = useSessionStorage("userGroups");
-  const { VITE_ADMIN_GROUP_ID: ADMIN_GROUP_ID } = process.env;
-  const [currentTab, setCurrentTab] = useState("Unassigned");
-
-  useEffect(() => {
-    setIsAdmin(groups?.includes(ADMIN_GROUP_ID));
-  }, [ADMIN_GROUP_ID, setIsAdmin]);
-
-  const handleTabEvents = (tab) => {
-    setCurrentTab(tab.target.innerText);
-  };
-
+function WriterDashBoardTabs({handleTabEvents, currentTab, isAdmin}) {
+ 
   return (
     <div className="text-sm border-b border-grey-30">
       <div className="flex">
@@ -33,7 +19,7 @@ function WriterDashBoardTabs() {
             {" "}
             Unassigned{" "}
           </Button>
-        )}
+        )} 
 
         <Button
           onClick={handleTabEvents}

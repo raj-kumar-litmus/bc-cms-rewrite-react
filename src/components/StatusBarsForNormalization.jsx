@@ -4,13 +4,13 @@ import Assigned from "../logos/Assigned.svg";
 import InProgress from "../logos/InProgress.svg";
 import Completed from "../logos/Completed.svg";
 import StatusBar from "./StatusBar";
-import {workFlowsCountUrl} from '../constants/index'
+import {workFlowsUrl} from '../constants/index'
 
-function StatusBarsForNormalization() {
+function StatusBarsForNormalization({isAdmin}) {
   const [statusBarData, setStatusBarData] = useState([]);
 
  useEffect(() => {
-        fetch(workFlowsCountUrl,{
+        fetch(`${workFlowsUrl}/counts`,{
             method:"get",
            })
             .then(response => response.json())
@@ -19,32 +19,34 @@ function StatusBarsForNormalization() {
     }, []);
 
   return (
-    <div className="flex gap-4">
+    <div className={isAdmin? "grid grid-cols-4 gap-2" : "grid grid-cols-3 gap-2"}>
+   {isAdmin && (
     <StatusBar
        title={"Unassigned"}
        img={UnAssigned}
-       count={statusBarData.unassigned}
+       count={statusBarData?.unassigned}
        className="bg-pink-100"
     />
+   )}
 
     <StatusBar
        title={"Assigned"}
        img={Assigned}
-       count={statusBarData.assigned}
+       count={statusBarData?.assigned}
        className="bg-blue-100"
     />
 
     <StatusBar
        title={"In-progress"}
        img={InProgress}
-       count={statusBarData.inProgress}
+       count={statusBarData?.inProgress}
        className="bg-yellow-100"
     />
 
     <StatusBar
        title={"Completed"}
        img={Completed}
-       count={statusBarData.completed}
+       count={statusBarData?.completed}
        className="bg-green-100"
     />
  </div>
