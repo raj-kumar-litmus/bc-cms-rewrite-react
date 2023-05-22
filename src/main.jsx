@@ -19,7 +19,7 @@ root.render(
       <Route path="/" element={<SSOLogin />} />
       <Route
         path="/styleDetails"
-        element={<StyleDetails styleId="CGHD23Y" />}
+        element={<StyleDetails quickFix={false} styleId="CGHD23Y" />}
       />
       <Route path="/redirect/web" element={<Token />} />
       <Route

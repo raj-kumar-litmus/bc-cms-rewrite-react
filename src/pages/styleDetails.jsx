@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
+import { useLocation } from "react-router-dom";
 import BasicDropDown from "../components/BasicDropdown";
 import Button from "../components/Button";
 import NavBar from "../components/NavBar";
@@ -7,7 +8,11 @@ import Textarea from "../components/InputTextarea";
 import RichTextEditor from "../components/RichTextEditor";
 import BackLogo from "../logos/chevron-down.svg";
 
-export default function StyleDetails({ styleId }) {
+export default function StyleDetails({ quickFix = false, styleId }) {
+  const location = useLocation();
+  const { quickFix: quickFixFromLink, styleId: styleIdFromQuickFix } =
+    location.state;
+  const quick = quickFixFromLink || quickFix;
   return (
     <>
       <NavBar />
@@ -19,7 +24,7 @@ export default function StyleDetails({ styleId }) {
         <div className="border-solid border border-gray-300 rounded-xl pt-[50px] pb-[50px] px-[50px] mt-[20px]">
           <div className="flex justify-between">
             <div className="flex-column">
-              <p className="text-2xl">{styleId}</p>
+              <p className="text-2xl">{styleIdFromQuickFix || styleId}</p>
               <p className="text-xl font-light">
                 FlyWeight Access Wet Wading shoe
               </p>
@@ -268,21 +273,35 @@ export default function StyleDetails({ styleId }) {
                 className={"h-[250px] pb-[50px] mt-[10px]"}
               />
             </div>
+
             <div className="flex justify-center mt-[50px]">
-              <Button
-                className={
-                  "border rounded border-gray-800 w-[150px] h-[50px] mr-[20px]"
-                }
-              >
-                Save for later
-              </Button>
-              <Button
-                className={
-                  "bg-gray-900 border text-white rounded border-gray-800 w-[150px] h-[50px]"
-                }
-              >
-                Submit
-              </Button>
+              {quick && (
+                <Button
+                  className={
+                    "bg-gray-900 border text-white rounded border-gray-800 w-[150px] h-[50px]"
+                  }
+                >
+                  Publish
+                </Button>
+              )}
+              {!quick && (
+                <>
+                  <Button
+                    className={
+                      "border rounded border-gray-800 w-[150px] h-[50px] mr-[20px]"
+                    }
+                  >
+                    Save for later
+                  </Button>
+                  <Button
+                    className={
+                      "bg-gray-900 border text-white rounded border-gray-800 w-[150px] h-[50px]"
+                    }
+                  >
+                    Submit
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </div>

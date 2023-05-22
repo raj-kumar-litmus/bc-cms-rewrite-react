@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import { Toast } from "primereact/toast";
+import { Link } from "react-router-dom";
 import StatusBarsForNormalization from "./StatusBarsForNormalization.jsx";
 import GlobalSearch from "./GlobalSearch.jsx";
 import WriterDashBoardTabs from "./WriterDashBoardTabs.jsx";
@@ -86,6 +87,7 @@ function NormalizationDashboard() {
       <div>
         <button
           aria-label="temp-assign-button"
+          className="ml-[20px]"
           onClick={() => {
             setIsModalVisible(!isModalVisible);
             setAssigneeType("writers");
@@ -95,6 +97,7 @@ function NormalizationDashboard() {
         </button>
         <button
           aria-label="temp-assign-button"
+          className="ml-[20px] mr-[20px]"
           onClick={() => {
             setIsModalVisible(!isModalVisible);
             setAssigneeType("editors");
@@ -102,6 +105,12 @@ function NormalizationDashboard() {
         >
           Assign to Editor
         </button>
+        <Link
+          to={"/styleDetails"}
+          state={{ quickFix: true, styleId: "CGHD23YYZZ" }}
+        >
+          Quick Fix
+        </Link>
         {isModalVisible && (
           <AssignStyle
             styles={styles}
