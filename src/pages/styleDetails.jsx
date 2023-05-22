@@ -11,7 +11,7 @@ import BackLogo from "../logos/chevron-down.svg";
 export default function StyleDetails({ quickFix = false, styleId }) {
   const location = useLocation();
   const { quickFix: quickFixFromLink, styleId: styleIdFromQuickFix } =
-    location.state;
+    location.state || {};
   const quick = quickFixFromLink || quickFix;
   return (
     <>
