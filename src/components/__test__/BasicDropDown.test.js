@@ -4,7 +4,7 @@ import { screen, render, fireEvent } from "@testing-library/react";
 import BasicDropDown from "../BasicDropdown";
 
 export async function selectItem(label) {
-  // Focus and enable the dropdown of options
+  // Focus and enable the dropdown of optionss
   fireEvent.keyDown(screen.getByLabelText("dropdown"), {
     keyCode: 40
   });
