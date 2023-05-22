@@ -33,79 +33,72 @@ function NavBar() {
   };
 
   return (
-    <nav className="bg-white shadow border-b border-grey-30">
-      <div className="flex flex-wrap justify-between items-center mx-[5%] h-[70px]">
-        <div className="flex items-center">
-          <img src={BackcountryLogo} alt="Backcountry SVG" />
-        </div>
-        <div className="flex">
-          {(location.pathname !== "/menuChooser"  && isAdmin)&& (
-            <div className="flex flex-row">
-              <div className="mr-2">
-                <Button
-                  dataTestId="manualflow-button"
-                  onClick={() => navigate("/manualWorkFlowDashboard")}
-                >
-                  <div className="bg-black text-white text-sm rounded-full border h-8 w-8 px-1 py-1">
-                    {" "}
-                    +{" "}
-                  </div>
-                </Button>
-              </div>
+    <nav className="bg-white mt-2 mb-2 shadow-lg shadow-gray-200 h-[70px] flex flex-wrap">
+      <div className="flex items-center ml-[10%]">
+        <img
+          className="ml-8 px-1 py-1 h-26 w-147"
+          src={BackcountryLogo}
+          alt="Backcountry SVG"
+        />
+      </div>
 
-              <div className="mr-2">
-                <Button>
-                  <img
-                    className="px-1 h-31 w-31"
-                    src={NavBarSwitchingIcon}
-                    alt="NavBarSwitchingIcon SVG"
-                  />
-                </Button>
-              </div>
-            </div>
-          )}
-
-          <div className="mr-2">
-            <Button onClick={handlPopup}>
-              <div className="bg-white text-black text-sm rounded-full border h-8 w-8 px-1 py-1 font-bold">
-                {name?.charAt(0)}
+      <div className="flex items-center ml-[56%] space-x-8">
+        {location.pathname !== "/menuChooser" && (
+          <>
+            <Button
+              dataTestId="manualflow-button"
+              onClick={() => navigate("/manualWorkFlowDashboard")}
+            >
+              <div className="bg-black text-white text-2xl rounded-full border h-12 w-12">
+                {" "}
+                +{" "}
               </div>
             </Button>
+
+            <Button>
+              <img
+                className="px-1 py-1 h-31 w-31"
+                src={NavBarSwitchingIcon}
+                alt="NavBarSwitchingIcon SVG"
+              />
+            </Button>
+          </>
+        )}
+
+        <Button onClick={handlPopup}>
+          <div className="bg-white text-black text-xl font-normal rounded-full border h-12 w-12 px-1 py-1.5 font-bold">
+            {name?.charAt(0)}
           </div>
-          {showPopup && (
-            <div className="relative right-14 top-11">
-              <div className="bg-white shadow absolute text-center w-auto h-auto">
-                <div className="m-2">
-                  <div className="mb-1">
-                    <Button
-                      dataTestId={"show-popup-button"}
-                      onClick={handlPopup}
-                    >
-                      <div className="bg-white font-bold text-black text-sm rounded-full border h-6 w-6">
-                        {name?.charAt(0)}
-                      </div>
-                    </Button>
-                  </div>
+        </Button>
 
-                  <div className="mb-1">
-                    <p className="text-sm font-semibold">{name}</p>
-                  </div>
+        {showPopup && (
+          <div className="relative right-14 top-4">
+            <div className="bg-white shadow absolute text-center w-auto h-auto">
+              <div className="m-2">
+                <div className="mb-1">
+                  <Button
+                    dataTestId={show - popup - button}
+                    onClick={handlPopup}
+                  >
+                    <div className="bg-white font-bold text-black text-sm rounded-full border h-6 w-6">
+                      {name?.charAt(0)}
+                    </div>
+                  </Button>
+                </div>
 
-                  <div>
-                    <Button
-                      onClick={signOut}
-                      className={
-                        "bg-white text-black text-sm rounded border m-2 p-1"
-                      }
-                    >
-                      Logout
-                    </Button>
-                  </div>
+                <div className="mb-1">
+                  <p className="text-sm font-semibold">{name}</p>
+                </div>
+
+                <div>
+                  <Button onClick={signOut} className={className}>
+                    Logout{" "}
+                  </Button>
                 </div>
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </nav>
   );

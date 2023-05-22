@@ -8,7 +8,7 @@ const useSessionStorage = (keyName, defaultValue) => {
       if (value) {
         return JSON.parse(value);
       } else {
-        if(defaultValue) {
+        if (defaultValue) {
           window.sessionStorage.setItem(keyName, JSON.stringify(defaultValue));
           return defaultValue;
         }
@@ -19,7 +19,7 @@ const useSessionStorage = (keyName, defaultValue) => {
     }
   });
 
-  const setValue = newValue => {
+  const setValue = (newValue) => {
     try {
       window.sessionStorage.setItem(keyName, JSON.stringify(newValue));
     } catch (err) {}

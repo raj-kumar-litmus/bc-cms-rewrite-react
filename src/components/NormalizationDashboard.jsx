@@ -1,26 +1,73 @@
-import { useState, useEffect} from "react";
+import React, { useState, useRef } from "react";
+import { Toast } from "primereact/toast";
 import StatusBarsForNormalization from "./StatusBarsForNormalization.jsx";
 import GlobalSearch from "./GlobalSearch.jsx";
 import WriterDashBoardTabs from "./WriterDashBoardTabs.jsx";
-import Table from "./Table.jsx";
-import useSessionStorage from "../hooks/useSessionStorage";
-import {workFlowsUrl} from '../constants/index';
+import AssignStyle from "../pages/assignStyle.jsx";
+import GreenTick from "../logos/green-tick.svg";
 
 function NormalizationDashboard() {
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [currentTab, setCurrentTab] = useState(isAdmin? "Unassigned":"Completed");
-  const [customers, setCustomers] = useState();
-  const [currentPage, setCurrentPage] = useState(1);
-  const [groups] = useSessionStorage("userGroups");
-  const { VITE_ADMIN_GROUP_ID: ADMIN_GROUP_ID } = process.env;
+  const toastBR = useRef(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [styleAssigned, setStyleAssigned] = useState(false);
+  const [assigneeType, setAssigneeType] = useState("writers");
 
-  useEffect(() => {
-    setIsAdmin(groups?.includes(ADMIN_GROUP_ID));
-  }, [ADMIN_GROUP_ID, setIsAdmin]);
-
-  const handleTabEvents = (tab) => {
-    setCurrentTab(tab.target.innerText)
+  const Summary = () => {
+    return (
+      <div className="flex">
+        <div>
+          <img src={GreenTick} alt="GreenTick SVG" />
+        </div>
+        <div className="flex flex-col ml-[20px]">
+          <p>Succesfully Assigned</p>
+          <p>David John assigned as the editor for WUSJ903</p>
+        </div>
+      </div>
+    );
   };
+  const showTopCenter = () => {
+    toastBR.current.show({
+      severity: "info",
+      content: <Summary />,
+      sticky: true
+    });
+    setStyleAssigned(false);
+  };
+
+  const styleAssignedHandler = () => {
+    setStyleAssigned(true);
+    setIsModalVisible(false);
+  };
+
+  const styles = [
+    "BHNJ234",
+    "CGHD23Y",
+    "WUSJ903",
+    "DFWY126",
+    "DJEKI973",
+    "JSNJF274",
+    "OGDT23Y",
+    "SUWJ948",
+    "DHFY117",
+    "BHNJ234",
+    "CGHD23Y",
+    "WUSJ903",
+    "DFWY126",
+    "DJEKI973",
+    "JSNJF274",
+    "OGDT23Y",
+    "SUWJ948",
+    "DHFY117",
+    "BHNJ234",
+    "CGHD23Y",
+    "WUSJ903",
+    "DFWY126",
+    "DJEKI973",
+    "JSNJF274",
+    "OGDT23Y",
+    "SUWJ948",
+    "DHFY117"
+  ];
 
   return (
     <div className="bg-white pb-[20px]">
@@ -36,6 +83,39 @@ function NormalizationDashboard() {
       <div className="mt-[49px]">
         <Table currentTab={currentTab} setCustomers={setCustomers} isAdmin={isAdmin} customers={customers} preText={"< Prev"} nextText={"Next >"} currentPage={currentPage} setCurrentPage={setCurrentPage}/>
       </div>
+      <div>
+        <button
+          aria-label="temp-assign-button"
+          onClick={() => {
+            setIsModalVisible(!isModalVisible);
+            setAssigneeType("writers");
+          }}
+        >
+          Assign to Writer
+        </button>
+        <button
+          aria-label="temp-assign-button"
+          onClick={() => {
+            setIsModalVisible(!isModalVisible);
+            setAssigneeType("editors");
+          }}
+        >
+          Assign to Editor
+        </button>
+        {isModalVisible && (
+          <AssignStyle
+            styles={styles}
+            userGroup={assigneeType}
+            isModalVisible={isModalVisible}
+            setIsModalVisible={setIsModalVisible}
+            setStyleAssigned={styleAssignedHandler}
+          />
+        )}
+        <Toast ref={toastBR} position="top-center" />
+        {styleAssigned && showTopCenter()}
+      </div>
+      <div className="m-10">
+        <GlobalSearch searchString={"Search"} />
       </div>
       </div>
   );

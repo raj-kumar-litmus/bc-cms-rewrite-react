@@ -20,7 +20,6 @@ function SSOLogin() {
   }, [accountDetails]);
 
   useEffect(() => {
-    // Account selection logic is app dependent. Adjust as needed for different use cases.
     // Set active acccount on page load
     const accounts = msalInstance.getAllAccounts();
     if (accounts.length > 0) {

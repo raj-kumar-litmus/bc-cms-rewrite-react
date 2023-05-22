@@ -1,3 +1,55 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.multi-dropdown__multi-value {
+  @apply border border-solid border-gray-500 font-light text-[12px] !bg-white
+}
+.multi-dropdown__multi-value__remove {
+  @apply text-[#4D4D4D]
+}
+.multi-dropdown__option--is-focused, .assign-writer__option--is-focused {
+  @apply !bg-[#F3F5F7]
+}
+.assign-writer__option--is-selected {
+  @apply !bg-[#F3F5F7] !text-gray-600
+}
+.multi-dropdown__control--is-focused, .assign-writer__control--is-focused {
+  @apply !border-[#D3D3D3] !shadow-none
+}
+.multi-dropdown__placeholder {
+  @apply text-[8px] sm:text-[10px] md:text-[12px] xl:text-[14px]
+}
+.p-dialog-header {
+  @apply !pb-0 !pt-[15px]
+}
+.p-dialog-content {
+  @apply overflow-y-visible
+}
+.p-checkbox-box {
+  @apply !border !border-solid !border-gray-300 !rounded-[3px]
+}
+.assign-writer__control--is-disabled .assign-writer__placeholder {
+  @apply text-gray-300
+}
+.p-checkbox-box.p-highlight {
+  @apply !bg-gray-900
+}
+.p-checkbox .p-checkbox-box {
+  @apply !shadow-none
+}
+.p-dialog-header-icon:focus {
+  @apply !shadow-none
+}
+.p-toast-message {
+  @apply !bg-white !border-green-600 !text-gray-800 !border-l-[10px] w-[500px]
+}
+.p-toast-message-content {
+  @apply border-none
+}
+.p-toast-icon-close {
+  @apply !text-gray-600
+}
+.p-toast-top-center {
+  @apply !top-[10%]
+}
