@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import BackcountryLogo from "../logos/backcountry-logo-with-text.svg";
 import NavBarSwitchingIcon from "../logos/NavBarSwitchingIcon.svg";
@@ -15,6 +15,16 @@ function NavBar() {
   const handlPopup = () => {
     setShowpopup(!showPopup);
   };
+  const [groups] = useSessionStorage("userGroups");
+
+  const [isAdmin, setIsAdmin] = useState(false);
+
+
+  const { VITE_ADMIN_GROUP_ID: ADMIN_GROUP_ID } = process.env;
+
+  useEffect(() => {
+    setIsAdmin(groups?.includes(ADMIN_GROUP_ID));
+  }, [ADMIN_GROUP_ID, setIsAdmin]);
 
   const signOut = () => {
     msalInstance
@@ -32,7 +42,7 @@ function NavBar() {
           <img src={BackcountryLogo} alt="Backcountry SVG" />
         </div>
         <div className="flex">
-          {location.pathname !== "/menuChooser" && (
+          {(location.pathname !== "/menuChooser"  && isAdmin)&& (
             <div className="flex flex-row">
               <div className="mr-2">
                 <Button
