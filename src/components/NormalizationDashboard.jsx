@@ -7,7 +7,7 @@ import useSessionStorage from "../hooks/useSessionStorage";
 import {workFlowsUrl} from '../constants/index';
 
 function NormalizationDashboard() {
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(true);
   const [currentTab, setCurrentTab] = useState(isAdmin? "Unassigned":"Completed");
   const [customers, setCustomers] = useState();
   const [currentPage, setCurrentPage] = useState(1);

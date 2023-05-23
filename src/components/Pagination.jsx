@@ -1,7 +1,7 @@
 import React from 'react';
 import Button from './Button';
 
-function Pagination({customers, preText, nextText, currentPage, setCurrentPage, className}) {
+function Pagination({customers, preText, nextText, currentPage, setCurrentPage}) {
   const pages = [];
   for(let i=1 ; i<=customers?.pagination?.pageCount; i++){
     pages.push(i);
@@ -13,30 +13,21 @@ function Pagination({customers, preText, nextText, currentPage, setCurrentPage, 
     if(currentPage > 1)
       setCurrentPage(parseInt(currentPage)-1);
    }
-
   const onNextClick = ()=>{
-    if(currentPage <= customers && customers?.pagination?.pageCount-1){
-        setCurrentPage(parseInt(currentPage)+1);
-    }
-    }
-        return (
-            <>
-             {pages.length >0 && <nav className='flex justify-center items-center'>
-            <ul className="inline-flex -space-x-px">
-              <li>
-                <a className="px-3 py-2 mr-2 leading-tight text-gray-500 bg-white" onClick={onPrevClick}>{preText}</a>
-              </li>
-              {pages?.map(item=>(
-                <li>
-                   <a className={item == currentPage ?  "px-3 py-2 mr-2 text-white bg-black border border-gray-300" : "px-3 py-2 mr-2 text-gray-500 bg-white border border-gray-300"} onClick={onPageChange}>{item}</a>
-                </li>
-              ))}
-              <li>
-                <a className="px-3 py-2 mr-2 leading-tight text-gray-500 bg-white" onClick={onNextClick}>{nextText}</a>
-              </li>
-            </ul>
+    if(customers?.pagination?.pageCount-1){
+        setCurrentPage(parseInt(currentPage) +1);
+    }}
+
+    return (
+            <div className='mt-3 mb-3'>
+             {pages.length >0 && 
+              <nav className='flex justify-center items-center'>
+               <Button className={"px-3 py-2 mr-2 leading-tight text-gray-500 bg-white"} onClick={onPrevClick}> {preText} </Button>
+                 {pages?.map(item=>(
+                   <Button className={item == currentPage ?  "px-3 py-2 mr-2 text-white bg-black border border-gray-300" : "px-3 py-2 mr-2 text-gray-500 bg-white border border-gray-300"} onClick={onPageChange}>{item}</Button>
+                  ))}
+                <Button className={"px-3 py-2 mr-2 leading-tight text-gray-500 bg-white"} onClick={onNextClick}> {nextText} </Button>
             </nav>}
-            </>
-          
+            </div>
         )}
     export default pagination
