@@ -36,8 +36,8 @@ function NavBar() {
   };
 
   return (
-    <nav className="bg-white">
-      <div className="flex flex-wrap justify-between items-center mx-[139px] h-[70px]">
+    <nav className="bg-white shadow border-b border-grey-30">
+      <div className="flex flex-wrap justify-between items-center mx-[5%] h-[70px]">
         <div className="flex items-center">
           <img src={BackcountryLogo} alt="Backcountry SVG" />
         </div>
