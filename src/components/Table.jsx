@@ -1,10 +1,8 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import "primereact/resources/themes/fluent-light/theme.css";
-import "primereact/resources/primereact.min.css";
-import 'primeicons/primeicons.css';
+import React, { useState, useEffect } from 'react';
+import 'primereact/resources/themes/fluent-light/theme.css';
+import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import debounce from 'lodash.debounce'
-import { FilterMatchMode } from 'primereact/api';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { InputText } from 'primereact/inputtext';
@@ -13,18 +11,25 @@ import { MultiSelect } from 'primereact/multiselect';
 import { Calendar } from 'primereact/calendar';
 import {workFlowsUrl} from '../constants/index';
 import Pagination from './Pagination';
+import AssigneEdit from '../logos/AssigneEdit.svg';
+import Edit from '../logos/Edit.svg';
+import ArrowSort from '../logos/ArrowSort.svg';
+import MoreIcons from '../logos/MoreIcons.svg';
+
+
 
 export default function Table({currentTab, setCustomers, customers, isAdmin, preText, nextText, currentPage, setCurrentPage}) {
-    const [loading, setLoading] = useState(false);
     const [searchByStyle, setSearchByStyle] = useState('');
     const [searchByTitle, setSearchByTitle] = useState('');
     const [searchByStatus, setSearchByStatus] = useState([]);
+    const [searchByAssignee, setSearchByAssignee] = useState('');
     const [searchByUpdatedBy, setsearchByUpdatedBy] = useState("");
     const [searchByUpdatedAt, setsearchByUpdatedAt] = useState(null);
     const [selectedBrand, setSelectedBrand] = useState([]);
     const [showFilters, setShowFilters] = useState(false);
     const [selectedProducts, setSelectedProducts] = useState([]);
     const [brands, setBrands] = useState([]);
+    const [assigneeList, setAssignee] = useState([]);
     const [statuses, setStatus] = useState([]);
     const [showEdit, setShowEdit] = useState(null);
     const [styleSort, setStyleSort] = useState('desc');
@@ -33,13 +38,10 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
     const [statusSort, setStatusSort] = useState('desc');
     const [updatedBySort, setUpdatedBySort] = useState('desc');
     const [updatedAtSort, setUpdatedAtSort] = useState('desc');
+    const [assigneeSort, setAssigneeSort] = useState('desc');
     const [currentSort, setCurrentSort] = useState('');
     const [isRowSelected, setIsRowSelected] = useState(false);
     const [isStatusSelected, setIsStatusSelected] = useState(false);
-
-
-
-
 
     useEffect(() => {
        fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage}&unique=brand`, {
@@ -51,6 +53,17 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
             .then(response => response.json())
             .then(result => setBrands(result?.data?.uniqueValues.filter(item=> item !== null).map(item=>({brand:item}))) );
     }, []);
+    useEffect(() => {
+        fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage}&unique=assignee`, {
+                 method: "POST",
+                 headers: {
+                     "Content-type": "application/json; charset=UTF-8"
+                 }
+             })
+             .then(response => response.json())
+             .then(result => setAssignee(result?.data?.uniqueValues.filter(item=> item !== null)));
+     }, []);
+
 
     useEffect(() => {
         const body = {
@@ -67,7 +80,6 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
                  headers: {
                      "Content-type": "application/json; charset=UTF-8"
                  }
-                 
              })
              .then(response => response.json())
             .then(result => setStatus(result?.data?.uniqueValues));
@@ -83,8 +95,9 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
                 "styleId":searchByStyle,
                 "title":searchByTitle,
                 "brand":newSelectedBrand,
-                "lastUpadtedBy":searchByUpdatedBy,
+                "lastUpdatedBy":searchByUpdatedBy,
                 "lastUpdateTs":finalDate,
+                "assignee":searchByAssignee,
                 "status": isStatusSelected ? [searchByStatus] : currentTab == "Unassigned" ? ["WAITING_FOR_WRITER"] : 
                 currentTab == "Completed"? ["WRITING_COMPLETE", "EDITING_COMPLETE"] : 
                 currentTab == "Assigned" ? ["ASSIGNED_TO_WRITER", "ASSIGNED_TO_EDITOR"] : 
@@ -95,7 +108,8 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
                 "title": titleSort,
                 "brand": brandSort,
                 "status": statusSort,
-                "lastUpadtedBy": updatedBySort,
+                "assignee": assigneeSort,
+                "lastUpdatedBy": updatedBySort,
                 "lastUpdateTs":updatedAtSort
             }
         }
@@ -103,14 +117,17 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
         searchByStyle == "" && delete body.filters.styleId
         searchByTitle == "" && delete body.filters.title
         selectedBrand.length == 0 && delete body.filters.brand
-        searchByUpdatedBy == "" && delete body.filters.lastUpadtedBy
+        searchByUpdatedBy == "" && delete body.filters.lastUpdatedBy
         searchByUpdatedAt == null && delete body.filters.lastUpdateTs
+        searchByAssignee == "" && delete body.filters.assignee
         currentSort !== "styleSort" &&  delete body.orderBy.styleId
         currentSort !== "titleSort" &&  delete body.orderBy.title
         currentSort !== "brandSort" &&  delete body.orderBy.brand
         currentSort !== "statusSort" &&  delete body.orderBy.status
-        currentSort !== "updatedBySort" &&  delete body.orderBy.lastUpadtedBy
+        currentSort !== "updatedBySort" &&  delete body.orderBy.lastUpdatedBy
         currentSort !== "updatedAtSort" &&  delete body.orderBy.lastUpdateTs
+        currentSort !== "assigneeSort" &&  delete body.orderBy.assignee
+
         
         fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage}`, {
             method: "POST",
@@ -124,7 +141,8 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
      }, [searchByStyle, 
         searchByTitle, 
         selectedBrand, 
-        searchByStatus, 
+        searchByStatus,
+        searchByAssignee, 
         searchByUpdatedBy,
         searchByUpdatedAt,
         styleSort,
@@ -133,6 +151,7 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
         statusSort, 
         updatedBySort,
         updatedAtSort,
+        assigneeSort,
         currentTab, 
         currentPage,
         isStatusSelected
@@ -155,11 +174,11 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
     const debouncedTitleHandler = debounce(handleTitleChange , 500);
     const debouncedUpdatedByHandler = debounce(handleUpdatedByChange , 500);
 
-
     const renderHeader = () => {
         return (
             <div className="flex flex-wrap justify-content-end gap-2">
-                {selectedProducts.length>1 && <button>
+                {selectedProducts.length>1 && 
+                <button>
                     <span className='bg-white text-black rounded-full border h-8 w-8 px-1 py-1'><i className="pi pi-user-plus" /></span>
                     <span> Assign</span>
                 </button>}
@@ -189,20 +208,16 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
     }
 
     const statusRowFilterTemplate = () => {
-        return (
-            <div className="w-[138px]">
-                <Dropdown value={searchByStatus} options={statuses} onChange={handleStatus} itemTemplate={statusItemTemplate} placeholder="status"/>
-            </div>
-         );
+        return (<Dropdown style={{width:"100px"}} value={searchByStatus} options={statuses} onChange={handleStatus} itemTemplate={statusItemTemplate} placeholder="Status"/>);
     };
 
     const assigneeRowFilterTemplate = () => {
-        return (
-            <div className="w-[110px]">
-                <Dropdown value={searchByStatus} onChange={handleStatus} itemTemplate={statusItemTemplate} placeholder="Select Status"/>
-            </div>
-         );
+        return (<Dropdown style={{width:"120px"}} value={searchByAssignee}  options={assigneeList}   onChange={handleAssign} itemTemplate={statusItemTemplate} placeholder="Assignee"/>);
     };
+
+    const handleAssign=(e)=>{
+        setSearchByAssignee(e.target.value)
+    }
 
     const handleStatus = (e) => {
         setIsStatusSelected(true)
@@ -210,65 +225,50 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
     }
 
     const titleRowFilterTemplate = () => {
-        return (
-            <div className="w-[197px]">
-                <span className="p-input-icon-left">
-                    <i className="pi pi-search" />
-                    <InputText onChange={debouncedTitleHandler} />
-                </span>
-            </div>
-
-        );
+        return (<span className="p-input-icon-left w-[100%] min-w-[80px]"><i className="pi pi-search" /><InputText onChange={debouncedTitleHandler} /></span>);
     };
 
     const brandRowFilterTemplate = () => {
         return (
-            <div className='w-[111px]'>
                 <MultiSelect
                 value={selectedBrand}
                 options={brands}
                 itemTemplate={representativesItemTemplate}
                 onChange={(e) => handleBrands(e.value)}
                 optionLabel="brand"
-                placeholder="brand"
+                placeholder="Brand"
                 maxSelectedLabels={1}
+                style={{width: "100px"}}
             />
-            </div>
         );
     };
 
     const updatedByFilterTemplate=()=>{
         return (
-            <div className="w-[114px]">
-                <span className="p-input-icon-left">
+                <span className="p-input-icon-left w-[100%] min-w-[80px]">
                     <i className="pi pi-search" />
-                    <InputText onClick={debouncedUpdatedByHandler}/>
+                    <InputText onChange={debouncedUpdatedByHandler}/>
                 </span>
-            </div>
         );
     }
 
     const styleRowFilterTemplate = () => {
         return (
-            <div className="w-[81px]">
-                <span className="p-input-icon-left">
+                <span className="p-input-icon-left w-[100%] min-w-[80px]">
                     <i className="pi pi-search" />
                     <InputText onChange={debouncedStyleHandler} />
                 </span>
-            </div>
-
         );
     };
 
     const dateFilterTemplate = () => {
         return (
-            <div className='w-[132px]'>
-                <span className="p-input-icon-left">
-                    <Calendar value={searchByUpdatedAt} onChange={handleCalanderChange} placeholder="dd/mm/yy" />
+                <span className="p-input-icon-left w-[100%] min-w-[80px]">
+                    <Calendar value={searchByUpdatedAt} onChange={handleCalanderChange} placeholder='dd/mm/yyy'/>
                 </span>
-            </div>
         )
     };
+
 
     const handleCalanderChange = (e) => {
         setsearchByUpdatedAt(e.target.value)
@@ -281,7 +281,7 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
     const formatDate = (value) => {
         var date = new Date(value);
         const newDate = date.toDateString().split(' ')
-        const finalDate = `${newDate[0]}${newDate[2]}${newDate[1]}`
+        const finalDate = `${newDate[0]} ${newDate[2]} ${newDate[1]}`
         return finalDate
     };
 
@@ -291,101 +291,126 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
 
     const handleStyleSortHeader=()=>{
         return (
-            <div className="flex justify-content-end">
-                <span className="p-input-icon-left mr-2">
+            <>
+                <span className="mr-2">
                     Style
                 </span>
                 <span>
-                   <button onClick={handleStyleSort}><i className="pi pi-sort-alt"/></button>
+                   <button onClick={handleStyleSort}>
+                    <img alt="ArrowSort icon" src={ArrowSort}  />
+                    </button>
                 </span>
-            </div>
+            </>
         );
     }
 
     const handleTitleSortHeader=()=>{
         return (
-            <div className="flex justify-content-end">
-                <span className="p-input-icon-left mr-2">
-                    Title
+            <>
+                <span className="mr-2">
+                Title
                 </span>
                 <span>
-                <button onClick={handleTitleSort}><i className="pi pi-sort-alt"/></button>
+                <button onClick={handleTitleSort}>
+                  <img alt="ArrowSort icon" src={ArrowSort}/>                    
+                </button>
                 </span>
-            </div>
+            </>
         );
     }
 
     const handleBrandSortHeader=()=>{
         return (
-            <div>
-                <span className="p-input-icon-left mr-2">
+            <>
+                <span className="mr-2">
                     Brand
                 </span>
                 <span>
-                <button onClick={handleBrandSort}><i className="pi pi-sort-alt"/></button>
+                <button onClick={handleBrandSort}>
+                 <img alt="ArrowSort icon" src={ArrowSort}/>                    
+                </button>
                 </span>
-            </div>
+            </>
         );
     }
 
     const handleStatusSortHeader=()=>{
         return (
-            <div className="flex justify-content-end">
-                <span className="p-input-icon-left mr-2">
+            <>
+                <span className="mr-2">
                     Status
                 </span>
                 <span>
-                <button onClick={handleStatusSort}><i className="pi pi-sort-alt"/></button>
+                <button onClick={handleStatusSort}>
+                    <img alt="ArrowSort icon" src={ArrowSort}/>                    
+                </button>
                 </span>
-            </div>
+            </>
         );
     }
 
     const handleAssigneeSortHeader=()=>{
         return (
-            <div className="flex justify-content-end">
-                <span className="p-input-icon-left mr-2">
+            <>
+                <span className="mr-2">
                     Assignee
                 </span>
                 <span>
-                <button><i className="pi pi-sort-alt"/></button>
+                <button onClick={handleAssigneeSort}>
+                    <img alt="ArrowSort icon" src={ArrowSort}/>                    
+                </button>
                 </span>
-            </div>
+            </>
         );
     }
 
     const handleUpdatedBySortHeader=()=>{
         return (
-            <div className="flex justify-content-end">
-                <span className="p-input-icon-left mr-2">
+            <>
+                <span className="mr-2">
                     Updated By
                 </span>
                 <span>
-                   <i className="pi pi-sort-alt" onClick={handleUpdatedBySort} />
+                <button onClick={handleUpdatedBySort}>
+                    <img alt="ArrowSort icon" src={ArrowSort}/>                    
+                </button>
                 </span>
-            </div>
+            </>
         );
     }
 
     const handleUpdatedAtSortHeader=()=>{
         return (
-            <div className="flex justify-content-end">
-                <span className="p-input-icon-left mr-2">
+            <>
+                <span className="mr-2">
                     Updated At
                 </span>
                 <span>
-                <button onClick={handleUpdatedAtSort}><i className="pi pi-sort-alt"/></button>
+                <button onClick={handleUpdatedAtSort}>
+                   <img alt="ArrowSort icon" src={ArrowSort}/>                    
+                </button>
                 </span>
-                <span>
-                <button onClick={() => setShowFilters(!showFilters)}>
-                 <div className="bg-black text-white text-sm rounded-full border h-8 w-8 flex justify-center items-center ml-3"> 
-                   <i className="pi pi-filter"/> 
-                 </div>
-                </button>                
-                </span>
-            </div>
+            </>
         );
+    }
+const handleFilterIcon=()=>{
+    return(
+        <span>
+            <button onClick={() => setShowFilters(!showFilters)}>
+                 {!showFilters ? <div className="bg-black text-white text-sm rounded-full border h-8 w-8 flex justify-center items-center"> 
+                   <i className="pi pi-filter" style={{fontSize: '0.8rem'}}/> 
+                 </div> :
+                 <div className="bg-white text-black text-sm rounded-full border h-8 w-8 flex justify-center items-center"> 
+                   <i className="pi pi-filter" style={{fontSize: '0.8rem'}}/> 
+                 </div>}
+            </button>                
+        </span> 
+    )
+}
 
+    const handleAssigneeSort=()=>{
+        setCurrentSort("assigneeSort")
+        setAssigneeSort(assigneeSort == "desc" ? "asc" : "desc")
     }
 
     const handleUpdatedAtSort=()=>{
@@ -423,15 +448,48 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
         return (
             <div className="flex justify-content-end">
                 <span>
-                {(rowData.id == showEdit && isRowSelected) && <i className="pi pi-pencil" onClick={handleEditIcon}/>}
+                {(rowData.id == showEdit && isRowSelected && isAdmin) && 
+                   <span className='bg-white flex rounded-full justify-center items-center border border-grey-30  h-[30px] w-[30px]'>  
+                     <img alt="Edit icon" src={Edit}  style={{ fontSize: '0.6rem', color: '#708090'}} onClick={handleEditIcon}/>
+                    </span>
+                }
                 </span>
             </div>
         );
     }
 
-    // const handleEditIcon=()=>{
+    const handleAssignForRow=(rowData)=>{
+        return (
+            <div className="flex justify-content-end">
+            <span>
+            {(rowData.id == showEdit && isRowSelected && isAdmin) && 
+             <span className='bg-white flex rounded-full justify-center items-center border border-grey-30  h-[30px] w-[30px]'>  
+               <img alt="AssigneEdit icon" src={AssigneEdit}  style={{ fontSize: '0.6rem', color: '#708090'}} onClick={handleEditIcon}/>
+             </span>
+            }
+            </span>
+        </div>
+        );
+    }
 
-    // }
+    const handleMoreIconForRow=(rowData)=>{
+        return (
+            <div className="flex justify-content-end">
+            <span>
+            {(rowData.id == showEdit && isRowSelected && isAdmin) && 
+             <span className='bg-white flex rounded-full justify-center items-center border border-grey-30  h-[30px] w-[30px]'>  
+               <img alt="MoreIcons icon" src={MoreIcons}  style={{ fontSize: '0.6rem', color: '#708090'}} onClick={handleEditIcon}/>
+             </span>
+            }
+            </span>
+        </div>
+        );
+    }
+    
+
+    const handleEditIcon=()=>{
+    // code for edit icon show go in this
+    }
 
     const footer=()=>{
         return(
@@ -445,7 +503,7 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
     };
 
     const onRowClick=(e)=>{
-        // debugger
+        // row click redirection code should go in this
     }
 
     const onRowSelect=(e)=>{
@@ -458,27 +516,30 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
     }
 
     return (
-        <div className="card">
+        <div className='border border-grey-30 text-sx'>
             <DataTable 
             value={customers?.workflows} 
             dataKey="id" 
+            rows={100}
             selection={selectedProducts} 
             filterDisplay={showFilters && "row"} 
-            loading={loading} 
+            onRowMouseEnter={onRowSelect}
+            onRowMouseLeave={onRowUnselect}
+            loading={customers?.workflows.length > 0 ? false : true} 
             header={ selectedProducts.length>1 && header}
             footer={footer}
                 onSelectionChange={onSelectionChange} 
                 emptyMessage="No customers found." 
-                onRowSelect={onRowSelect} 
-                onRowUnselect={onRowUnselect}
                 onRowClick={onRowClick}
                 >
-                {isAdmin && <Column selectionMode="multiple"></Column>}
+                {isAdmin && <Column selectionMode="multiple" style={{width: "3%"}}></Column>}
                 <Column field="styleId" 
                 header={handleStyleSortHeader} 
                 filter showFilterMenu={false} 
                 filterElement={styleRowFilterTemplate}
-                filterPlaceholder="Search by Style"/>
+                filterPlaceholder="Search by Style"
+                style={{width: "5%"}}
+                />
 
                 <Column 
                 field="title" 
@@ -486,31 +547,35 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
                 filter 
                 filterElement={titleRowFilterTemplate} 
                 showFilterMenu={false} 
-                filterPlaceholder="Search by Title"/>
+                filterPlaceholder="Search by Title"
+                style={{width: "22%"}}
+                />
 
                 <Column 
                 header={handleBrandSortHeader} 
                 field="brand" 
                 showFilterMenu={false}
-                // body={brandBodyTemplate} 
                 filter 
-                filterElement={brandRowFilterTemplate} />
+                filterElement={brandRowFilterTemplate}
+                style={{width: "10%"}}
+                 />
 
                 {currentTab !== "Unassigned" && <Column 
                 field="status" 
                 header={handleStatusSortHeader} 
                 showFilterMenu={false} 
-                // body={statusBodyTemplate} 
                 filter 
-                filterElement={statusRowFilterTemplate} />}
+                filterElement={statusRowFilterTemplate} 
+                style={{width: "18%"}}
+                />}
 
                 {(currentTab !== "Completed" && currentTab !== "Unassigned" && isAdmin)  && <Column 
-                field="" 
+                field="assignee" 
                 header={handleAssigneeSortHeader} 
                 showFilterMenu={false} 
-                // body={statusBodyTemplate} 
                 filter 
                 filterElement={assigneeRowFilterTemplate} 
+                style={{width: "13%"}}
                 />}
 
                 <Column 
@@ -518,6 +583,7 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
                 header={handleUpdatedBySortHeader} 
                 filter showFilterMenu={false} 
                  filterElement={updatedByFilterTemplate}
+                 style={{width: "15%"}}
                 />
 
                 <Column field="lastUpdateTs" 
@@ -525,10 +591,15 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
                 dataType="date" filter 
                 showFilterMenu={false} 
                 body={dateBodyTemplate} 
-                filterElement={dateFilterTemplate}/>
+                filterElement={dateFilterTemplate}
+                style={{width: "14%"}}
+                />
 
-                <Column body={handleEdit} />
-                <Column body={handleEdit} />
+                <Column header={handleFilterIcon} style={{width: "0%"}}/>
+                <Column body={handleEdit} style={{width: "0%"}}/>
+                <Column body={handleAssignForRow} style={{width: "0%"}} />
+                <Column body={handleMoreIconForRow} style={{width: "0%"}} />
+
               </DataTable>
            </div>
     );
