@@ -7,16 +7,16 @@ import useSessionStorage from "../hooks/useSessionStorage";
 import {workFlowsUrl} from '../constants/index';
 
 function NormalizationDashboard() {
-  const [isAdmin, setIsAdmin] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [currentTab, setCurrentTab] = useState(isAdmin? "Unassigned":"Completed");
   const [customers, setCustomers] = useState();
   const [currentPage, setCurrentPage] = useState(1);
   const [groups] = useSessionStorage("userGroups");
   const { VITE_ADMIN_GROUP_ID: ADMIN_GROUP_ID } = process.env;
 
-  // useEffect(() => {
-  //   setIsAdmin(groups?.includes(ADMIN_GROUP_ID));
-  // }, [ADMIN_GROUP_ID, setIsAdmin]);
+  useEffect(() => {
+    setIsAdmin(groups?.includes(ADMIN_GROUP_ID));
+  }, [ADMIN_GROUP_ID, setIsAdmin]);
 
   const handleTabEvents = (tab) => {
     setCurrentTab(tab.target.innerText)
