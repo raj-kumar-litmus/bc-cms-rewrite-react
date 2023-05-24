@@ -18,6 +18,8 @@ import FilterIcon from '../logos/Filter.svg';
 import CalendarIcon from '../logos/Calendar.svg';
 import FilterIconBlack from '../logos/FilterIconBlack.svg';
 import TableHeaders from './TableHeaders';
+import MoreIconPopUp from './MoreIcon';
+import Loader from '../components/loader'
 
 export default function Table({currentTab, setCustomers, customers, isAdmin, preText, nextText, currentPage, setCurrentPage}) {
     const [searchByStyle, setSearchByStyle] = useState('');
@@ -43,6 +45,7 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
     const [currentSort, setCurrentSort] = useState('');
     const [isRowSelected, setIsRowSelected] = useState(false);
     const [isStatusSelected, setIsStatusSelected] = useState(false);
+    const [showPopup, setShowPopup] = useState(false);
 
     useEffect(() => {
             fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage}&unique=brand`, {
@@ -305,11 +308,38 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
             <div className="flex justify-content-end">
                 <span>
                 {(rowData.id == showEdit && isRowSelected && isAdmin) && 
-                   <span className='bg-white flex rounded-full justify-center items-center border border-grey-30  h-[30px] w-[30px]'>  
-                     <img alt={`${imgPath} svg`} src={imgPath} onClick={handleEditIcon}/>
-                    </span>
+                   <button className='bg-white flex rounded-full justify-center items-center border border-grey-30  h-[30px] w-[30px]' onClick={handleEditIcon}>  
+                     <img alt={`${imgPath} svg`} src={imgPath} />
+                    </button>
                 }
                 </span>
+            </div>
+        );
+    }
+
+    const handleMoreIconClick=()=>{
+        setShowPopup(true)
+    }
+
+    const handleMoreIcon=(rowData)=>{
+        return (
+            <div className='relative'>
+            <div className="flex justify-content-end">
+                <span>
+                {(rowData.id == showEdit && isRowSelected && isAdmin) && 
+                <button onClick={handleMoreIconClick}>
+                   <span className='bg-white flex rounded-full justify-center items-center border border-grey-30  h-[30px] w-[30px]'>  
+                     <img alt={`${MoreIcons} svg`} src={MoreIcons}/>
+                    </span>
+                </button>
+                }
+                </span>
+            </div>
+             {(rowData.id == showEdit && showPopup) &&
+               <div className='absolute top-0 right-0'>
+                  <MoreIconPopUp/>
+                </div>
+             }
             </div>
         );
     }
@@ -340,11 +370,12 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
 
     const onRowUnselect=()=>{
         setIsRowSelected(false)
+        setShowPopup(false)
     }
 
     return (
         <div className='border border-grey-30 text-sx'>
-            <DataTable value={customers?.workflows} dataKey="id" rows={100} selection={selectedProducts} filterDisplay={showFilters && "row"} onRowMouseEnter={onRowSelect} onRowMouseLeave={onRowUnselect} header={selectedProducts.length>1 && renderHeader} footer={pagination} onSelectionChange={onSelectionChange} emptyMessage="No customers found." onRowClick={onRowClick}>
+            {customers?.workflows.length ? <DataTable value={customers?.workflows} dataKey="id" rows={100} selection={selectedProducts} filterDisplay={showFilters && "row"} onRowMouseEnter={onRowSelect} onRowMouseLeave={onRowUnselect} header={selectedProducts.length>1 && renderHeader} footer={pagination} onSelectionChange={onSelectionChange} emptyMessage="No customers found." onRowClick={onRowClick}>
                 {isAdmin && <Column selectionMode="multiple" style={{width: "3%"}}></Column>}
                 <Column field="styleId" header={<TableHeaders headerName={"Style"} sortIcon={ArrowSort} onClick={handleStyleSort}/>} filter showFilterMenu={false} filterElement={styleRowFilterTemplate} filterPlaceholder="Search by Style" style={{width: "5%"}}/>
                 <Column field="title" header={<TableHeaders headerName={"Title"} sortIcon={ArrowSort} onClick={handleTitleSort}/>} filter filterElement={titleRowFilterTemplate} showFilterMenu={false} filterPlaceholder="Search by Title" style={{width: "22%"}}/>
@@ -356,8 +387,9 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
                 <Column header={handleFilterIcon} style={{width: "0%"}}/>
                 <Column body={(e)=>handleRowSelectIcons(e, Edit)} style={{width: "0%"}}/>
                 <Column body={(e)=>handleRowSelectIcons(e, AssigneEdit)} style={{width: "0%"}} />
-                <Column body={(e)=>handleRowSelectIcons(e, MoreIcons)} style={{width: "0%"}} />
-              </DataTable>
+                <Column body={handleMoreIcon} style={{width: "0%"}} />
+              </DataTable>:
+              <Loader/>}
            </div>
     );
 }

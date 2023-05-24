@@ -20,7 +20,9 @@ export default {
       'white': '#ffffff',
       "grey-40":"#F4F6F8",
       "grey-50":"#f3f3f3",
-      "grey-60":"#ECEDEF"
+      "grey-60":"#ECEDEF",
+      "grey-60":"#ECEDEF",
+      "grey-70":"#3C3C3C0D"
     },
     fontSize: {
       'sm': '0.8rem',
