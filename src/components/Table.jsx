@@ -73,7 +73,6 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
             .then(result => setStatus(result?.data?.uniqueValues));
     }, [currentPage]);
 
-
      useEffect(() => {
         var date = new Date(searchByUpdatedAt);
         const newDate = date.toDateString().split(' ')
