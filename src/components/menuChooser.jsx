@@ -30,6 +30,12 @@ function MenuChooser() {
       <h1 className="text-xs font-bold text-black pt-10">
         Choose the Application
       </h1>
+      <p>
+        SIZING_APP_GROUP_NAME : {SIZING_APP_GROUP_NAME}
+        ADMIN_GROUP_NAME : {ADMIN_GROUP_NAME}
+        WRITER_GROUP_NAME : {WRITER_GROUP_NAME}
+        EDITOR_GROUP_NAME : {EDITOR_GROUP_NAME}
+      </p>
 
       {canAccessWorkBenchApp && canAccessSizingApp && (
         <p className="text-sm mt-4">
