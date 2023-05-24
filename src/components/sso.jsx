@@ -10,11 +10,13 @@ function SSOLogin() {
   const [accountDetails, setAccountDetails] = useState(null);
   const [userGroups, setUserGroups] = useSessionStorage("userGroups");
   const [userName, setUserName] = useSessionStorage("userName");
+  const [account, setAccount] = useSessionStorage("accountDetails");
 
   useEffect(() => {
     if (accountDetails) {
       setUserGroups(accountDetails?.idTokenClaims?.groups);
       setUserName(accountDetails?.idTokenClaims?.name);
+      setAccount(accountDetails);
       navigate("/menuChooser");
     }
   }, [accountDetails]);

@@ -14,7 +14,10 @@ export default function InputBox({ label, val, className, labelClassName }) {
           className={className}
           onChange={(e) => setValue(e.target.value)}
         />
-        <label className={labelClassName} htmlFor={label}>
+        <label
+          className={labelClassName || "!top-[22px] z-[1] bg-white"}
+          htmlFor={label}
+        >
           {label}
         </label>
       </span>

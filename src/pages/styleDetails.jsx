@@ -1,6 +1,7 @@
 import React from "react";
-import { useLocation } from "react-router-dom";
-import BasicDropDown from "../components/BasicDropdown";
+import { useLocation, useNavigate } from "react-router-dom";
+import DropDown from "../components/BasicDropdown";
+import MultiSelectDropDown from "../components/DropDown";
 import Button from "../components/Button";
 import NavBar from "../components/NavBar";
 import InputBox from "../components/InputBox";
@@ -10,14 +11,19 @@ import BackLogo from "../logos/chevron-down.svg";
 
 export default function StyleDetails({ quickFix = false, styleId }) {
   const location = useLocation();
+  const navigate = useNavigate();
   const { quickFix: quickFixFromLink, styleId: styleIdFromQuickFix } =
     location.state || {};
   const quick = quickFixFromLink || quickFix;
   return (
     <>
       <NavBar />
-      <div className="mx-[50px] md:mx-[100px] lg:mx-[150px] xl:mx-[200px] mb-[200px] mt-[40px]">
-        <p className="flex">
+      <div className="mx-[50px] md:mx-[100px] lg:mx-[150px] mb-[200px] mt-[40px]">
+        <p
+          aria-label="navigate-back"
+          className="flex cursor-pointer"
+          onClick={() => navigate(-1)}
+        >
           <img src={BackLogo} alt="Go-Back Icon" />
           <span className="ml-[7px]"> Back</span>
         </p>
@@ -81,71 +87,65 @@ export default function StyleDetails({ quickFix = false, styleId }) {
             <p className="text-xl">Category</p>
             <div className="flex mt-[5px]">
               <div className="mr-[20px] flex-1">
-                <BasicDropDown
+                <DropDown
+                  id="single-option-dropdown"
                   defaultValue={[{ value: "purple", label: "Purple" }]}
                   placeholder="Genus"
                 />
               </div>
               <div className="flex-1">
-                <BasicDropDown placeholder="Species" />
+                <DropDown
+                  id="single-option-dropdown"
+                  isClearable={true}
+                  placeholder="Species"
+                />
               </div>
             </div>
           </div>
           <div className="mt-[40px] flex-column">
             <p className="text-xl">Harmonizing Attributes</p>
-            <div className="grid grid-cols-4 gap-4 mt-[20px]">
-              <BasicDropDown
-                isClearable={true}
-                isMulti={true}
-                classNamePrefix={"multi-dropdown"}
-                defaultValue={[
-                  { value: "purple", label: "Purple" },
-                  { value: "orange", label: "Orange" }
-                ]}
-                placeholder="Activity"
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-[20px]">
+              <MultiSelectDropDown
+                labelClassName={"mb-[8px] text-[14px] text-[#4D4D4D]"}
+                className={"text-[14px] text-[#4D4D4D] font-light"}
+                placeholder={"Select Activity"}
+                label="Activity"
               />
-
-              <BasicDropDown
-                isClearable={true}
-                classNamePrefix={"multi-dropdown"}
-                isMulti={true}
-                placeholder="Features"
+              <MultiSelectDropDown
+                labelClassName={"mb-[8px] text-[14px] text-[#4D4D4D]"}
+                className={"text-[14px] text-[#4D4D4D] font-light"}
+                placeholder={"Select Features"}
+                label="Features"
               />
-              <BasicDropDown
-                isClearable={true}
-                isMulti={true}
-                classNamePrefix={"multi-dropdown"}
-                defaultValue={[
-                  { value: "red", label: "Red", color: "#FF5630" },
-                  { value: "orange", label: "Orange", color: "#FF8B00" }
-                ]}
-                placeholder="Fit"
+              <MultiSelectDropDown
+                labelClassName={"mb-[8px] text-[14px] text-[#4D4D4D]"}
+                className={"text-[14px] text-[#4D4D4D] font-light"}
+                placeholder={"Select Fit"}
+                label="Fit"
               />
-
-              <BasicDropDown
-                isClearable={true}
-                classNamePrefix={"multi-dropdown"}
-                isMulti={true}
-                placeholder="Sole"
+              <MultiSelectDropDown
+                labelClassName={"mb-[8px] text-[14px] text-[#4D4D4D]"}
+                className={"text-[14px] text-[#4D4D4D] font-light"}
+                placeholder={"Select Sole"}
+                label="Sole"
               />
-              <BasicDropDown
-                isClearable={true}
-                classNamePrefix={"multi-dropdown"}
-                isMulti={true}
-                placeholder="Style"
+              <MultiSelectDropDown
+                labelClassName={"mb-[8px] text-[14px] text-[#4D4D4D]"}
+                className={"text-[14px] text-[#4D4D4D] font-light"}
+                placeholder={"Select Style"}
+                label="Style"
               />
-
-              <BasicDropDown
-                isClearable={true}
-                classNamePrefix={"multi-dropdown"}
-                isMulti={true}
-                placeholder="Shop By"
+              <MultiSelectDropDown
+                labelClassName={"mb-[8px] text-[14px] text-[#4D4D4D]"}
+                className={"text-[14px] text-[#4D4D4D] font-light"}
+                placeholder={"Select Shop By"}
+                label="Shop By"
               />
-              <BasicDropDown
-                isClearable={true}
-                classNamePrefix={"multi-dropdown"}
-                isMulti={true}
-                placeholder="Special"
+              <MultiSelectDropDown
+                labelClassName={"mb-[8px] text-[14px] text-[#4D4D4D]"}
+                className={"text-[14px] text-[#4D4D4D] font-light"}
+                placeholder={"Select Special"}
+                label="Special"
               />
             </div>
           </div>
@@ -154,49 +154,41 @@ export default function StyleDetails({ quickFix = false, styleId }) {
             <div className="grid grid-cols-3 gap-3 mt-[20px]">
               <InputBox
                 className={"w-[100%] mt-[20px] rounded-sm"}
-                labelClassName={"!top-3"}
                 label="Material"
                 val="2.0mm full grain leather"
               />
               <InputBox
                 className={"w-[100%] mt-[20px] rounded-sm"}
-                labelClassName={"!top-3"}
                 label="Responsible Collection"
                 val="Hiking"
               />
               <InputBox
                 className={"w-[100%] mt-[20px] rounded-sm"}
-                labelClassName={"!top-3"}
                 label="Closure"
                 val="lace"
               />
               <InputBox
                 className={"w-[100%] mt-[20px] rounded-sm"}
-                labelClassName={"!top-3"}
                 label="Sole"
                 val="Vibram Fuga"
               />
               <InputBox
                 className={"w-[100%] mt-[20px] rounded-sm"}
-                labelClassName={"!top-3"}
                 label="Mid sole"
                 val="nylon shank"
               />
               <InputBox
                 className={"w-[100%] mt-[20px] rounded-sm"}
-                labelClassName={"!top-3"}
                 label="Footbed"
                 val="Ortholite"
               />
               <InputBox
                 className={"w-[100%] mt-[20px] rounded-sm"}
-                labelClassName={"!top-3"}
                 label="Manufacturer Warranty"
                 val="1 year"
               />
               <InputBox
                 className={"w-[100%] mt-[20px] rounded-sm"}
-                labelClassName={"!top-3"}
                 label="Activity"
                 val="Hiking"
               />
@@ -208,7 +200,6 @@ export default function StyleDetails({ quickFix = false, styleId }) {
               <div className="mr-[20px] flex-1">
                 <InputBox
                   className={"w-full mt-[20px] rounded-sm"}
-                  labelClassName={"!top-3"}
                   label="Product title"
                   val="Mountain 600 Full-Grain Hiking Boot - Men's"
                 />
@@ -216,7 +207,6 @@ export default function StyleDetails({ quickFix = false, styleId }) {
               <div className="flex-1">
                 <InputBox
                   className={"w-full mt-[20px] rounded-sm"}
-                  labelClassName={"!top-3"}
                   label="Top Line"
                   val="Lorem Ipsum dolor"
                 />
@@ -252,12 +242,18 @@ export default function StyleDetails({ quickFix = false, styleId }) {
             </div>
             <div className="flex">
               <div className="mr-[20px] flex-1 mt-[30px]">
-                <BasicDropDown isClearable={true} placeholder="Sizing Chart" />
+                <DropDown
+                  id="single-option-dropdown"
+                  isClearable={true}
+                  placeholder="Sizing Chart"
+                />
               </div>
               <div className="flex-1 mt-[25px]">
                 <InputBox
                   className={"w-full mt-[30px] rounded-sm h-[37px]"}
-                  labelClassName={"!top-3"}
+                  labelClassName={
+                    "!top-[34px] z-[1] bg-white !text-gray-900 !text-[10px]"
+                  }
                   label="Competitive Cyclist Top Lane"
                   val="Lorem Ipsum dolor"
                 />

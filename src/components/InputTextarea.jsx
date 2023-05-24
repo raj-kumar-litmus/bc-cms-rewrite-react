@@ -16,7 +16,10 @@ export default function Textarea({ label, val, className, labelClassName }) {
           rows={5}
           cols={30}
         />
-        <label className={labelClassName} htmlFor={label}>
+        <label
+          className={labelClassName || "!top-[2px] !left-[15px] z-1 bg-white"}
+          htmlFor={label}
+        >
           {label}
         </label>
       </span>

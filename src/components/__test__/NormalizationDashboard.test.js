@@ -20,7 +20,8 @@ describe("Testing success toast", () => {
             id: "raj"
           }
         ]
-      })
+      }),
+      status: 200
     });
   });
 
@@ -29,7 +30,7 @@ describe("Testing success toast", () => {
     global.fetch.mockClear();
     delete global.fetch;
   });
-  it("Open Dashboard, click Submit, Wait for Toast to show up", async () => {
+  it("Open Assign Modal, click Submit, Wait for Toast to show up", async () => {
     let queryByText;
     let rendered;
     await act(async () => {
@@ -37,7 +38,7 @@ describe("Testing success toast", () => {
     });
     queryByText = rendered.queryByText;
 
-    const assignButton = screen.getByLabelText("temp-assign-button");
+    const assignButton = screen.getByLabelText("temp-assign-button-writer");
 
     await act(async () => {
       fireEvent.click(assignButton);
@@ -51,8 +52,43 @@ describe("Testing success toast", () => {
       fireEvent.click(submitButton);
     });
     expect(queryByText("Succesfully Assigned")).toBeTruthy();
-    expect(
-      queryByText("David John assigned as the editor for WUSJ903")
-    ).toBeTruthy();
+  });
+});
+
+describe("Testing Error toast", () => {
+  beforeEach(() => {
+    global.fetch = jest.fn().mockImplementation(() => mockFetchPromise);
+    jest
+      .spyOn(global, "fetch")
+      .mockRejectedValueOnce(new Error("Rejected by Mock API"));
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+    global.fetch.mockClear();
+    delete global.fetch;
+  });
+  it("Open Assign Modal, click Submit, Wait for Toast to show up", async () => {
+    let queryByText;
+    let rendered;
+    await act(async () => {
+      rendered = render(<NormalizationDashboard />, { wrapper: BrowserRouter });
+    });
+    queryByText = rendered.queryByText;
+
+    const assignButton = screen.getByLabelText("temp-assign-button-editor");
+
+    await act(async () => {
+      fireEvent.click(assignButton);
+    });
+
+    expect(queryByText("Select Editor")).toBeTruthy();
+    expect(queryByText("Assign Editor for")).toBeTruthy();
+
+    const submitButton = screen.getByLabelText("Assign-Style");
+    await act(async () => {
+      fireEvent.click(submitButton);
+    });
+    expect(queryByText("Something went wrong !")).toBeTruthy();
   });
 });

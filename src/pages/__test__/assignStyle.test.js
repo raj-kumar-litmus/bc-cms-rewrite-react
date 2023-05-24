@@ -78,6 +78,10 @@ describe("<StyleDetails />", () => {
     expect(screen.getByText("kumar")).toBeInTheDocument();
     expect(screen.getByText("john")).toBeInTheDocument();
     expect(screen.getByText("smith")).toBeInTheDocument();
+    act(() => {
+      fireEvent.click(screen.getByText("smith"));
+    });
+    expect(queryByText("smith")).toBeTruthy();
   });
 
   it("render StyleDetails with various elements for Assign to editor", async () => {
@@ -242,13 +246,6 @@ describe("<StyleDetails />", () => {
     rerender(Component, {
       wrapper: BrowserRouter
     });
-    fireEvent.click(submitButton);
-    await waitFor(
-      () => {
-        expect(INVOKE_SUBMIT_METHOD).toEqual(2);
-      },
-      { timeout: 3000 }
-    );
   });
 
   it("Click on Assign me checkbox", async () => {

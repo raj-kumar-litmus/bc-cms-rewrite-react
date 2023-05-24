@@ -31,8 +31,11 @@ const CustomOption = (props) => {
   );
 };
 
-const BasicDropDown = ({
+const DropDown = ({
   placeholder,
+  id,
+  label,
+  onChange,
   defaultValue,
   options,
   isDisabled,
@@ -53,6 +56,7 @@ const BasicDropDown = ({
     }),
     placeholder: (provided, state) => ({
       ...provided,
+      display: state.hasValue ? "none" : "block",
       position: "absolute",
       top: state.hasValue || state.selectProps.inputValue ? -25 : "15%",
       left: "0%",
@@ -63,20 +67,29 @@ const BasicDropDown = ({
 
   const props = {
     isClearable,
+    id,
     placeholder: `Select ${placeholder}`,
     "aria-label": "dropdown",
     isSearchable: true,
     isDisabled,
+    onChange,
     isLoading,
     defaultValue,
     blurInputOnSelect: true,
     isMulti,
     classNamePrefix,
-    options,
+    options: options || [
+      { value: "purple", label: "Purple" },
+      { value: "orange", label: "Orange" },
+      { value: "yellow", label: "Yellow" },
+      { value: "blue", label: "Blue" },
+      { value: "green", label: "Green" },
+      { value: "pink", label: "Pink" }
+    ],
     styles: { ...tempStyles }
   };
 
-  return hasCustomOption ? (
+  const dropdown = hasCustomOption ? (
     <Select
       {...props}
       components={{
@@ -92,6 +105,14 @@ const BasicDropDown = ({
       }}
     />
   );
+  return (
+    <>
+      <span className="text-[10px] ml-[12px] relative top-[10px] z-[1] bg-white color-gray-100">
+        {label || placeholder}
+      </span>
+      {dropdown}
+    </>
+  );
 };
 
-export default BasicDropDown;
+export default DropDown;

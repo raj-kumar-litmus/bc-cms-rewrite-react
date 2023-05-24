@@ -42,14 +42,23 @@
   @apply !shadow-none
 }
 .p-toast-message {
-  @apply !bg-white !border-green-600 !text-gray-800 !border-l-[10px] w-[500px]
+  @apply !bg-white !text-gray-800 !border-l-[10px] w-[500px]
 }
 .p-toast-message-content {
-  @apply border-none
+  @apply border-none justify-between
 }
 .p-toast-icon-close {
   @apply !text-gray-600
 }
 .p-toast-top-center {
   @apply !top-[10%]
+}
+.custom-drop-down .selected input[type="checkbox"] {
+  @apply !accent-gray-900
+}
+.custom-drop-down .dropdown-content {
+  @apply !z-[2]
+}
+#single-option-dropdown {
+  @apply mt-0
 }
