@@ -18,7 +18,9 @@ export default {
       'green-100': "#A1EDB1",
       'gray-20':'#4D4D4D',
       'white': '#ffffff',
-      "grey-40":"#F4F6F8"
+      "grey-40":"#F4F6F8",
+      "grey-50":"#f3f3f3",
+      "grey-60":"#ECEDEF"
     },
     fontSize: {
       'sm': '0.8rem',
