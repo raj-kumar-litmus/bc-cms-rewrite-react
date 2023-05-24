@@ -80,7 +80,7 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
         const newDate = date.toDateString().split(' ')
         const finalDate = `${newDate[3]}-${newDate[1]}-${newDate[2]}`
         const newSelectedBrand = selectedBrand.map(item => item.brand)
-            let status = []
+            const status = []
             switch(currentTab){
                 case "Unassigned" :
                       status.push("WAITING_FOR_WRITER")
