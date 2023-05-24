@@ -46,6 +46,7 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
     const [isRowSelected, setIsRowSelected] = useState(false);
     const [isStatusSelected, setIsStatusSelected] = useState(false);
     const [showPopup, setShowPopup] = useState(false);
+    const [loader, setLoader] = useState(true);
 
     useEffect(() => {
             fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage}&unique=brand`, {
@@ -118,6 +119,7 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
                      ...(currentSort == "updatedAtSort" && {lastUpdateTs:updatedAtSort }),
                 }
             }
+            setLoader(true)
         fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage}`, {
             method: "POST",
             body:JSON.stringify(body),
@@ -126,7 +128,10 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
             }
         })
             .then(response => response.json())
-            .then(result => setCustomers(result?.data));
+            .then((result) => {
+                setCustomers(result?.data);
+                setLoader(false);
+              })
      }, [searchByStyle, searchByTitle, selectedBrand, searchByStatus,searchByAssignee, searchByUpdatedBy,searchByUpdatedAt,styleSort,titleSort, brandSort, statusSort, updatedBySort,updatedAtSort,assigneeSort,currentTab, currentPage,isStatusSelected]);
 
 
@@ -375,7 +380,7 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
 
     return (
         <div className='border border-grey-30 text-sx'>
-            {customers?.workflows.length ? <DataTable value={customers?.workflows} dataKey="id" rows={100} selection={selectedProducts} filterDisplay={showFilters && "row"} onRowMouseEnter={onRowSelect} onRowMouseLeave={onRowUnselect} header={selectedProducts.length>1 && renderHeader} footer={pagination} onSelectionChange={onSelectionChange} emptyMessage="No customers found." onRowClick={onRowClick}>
+            {!loader ? <DataTable value={customers?.workflows} dataKey="id" rows={100} selection={selectedProducts} filterDisplay={showFilters && "row"} onRowMouseEnter={onRowSelect} onRowMouseLeave={onRowUnselect} header={selectedProducts.length>1 && renderHeader} footer={pagination} onSelectionChange={onSelectionChange} emptyMessage="No customers found." onRowClick={onRowClick}>
                 {isAdmin && <Column selectionMode="multiple" style={{width: "3%"}}></Column>}
                 <Column field="styleId" header={<TableHeaders headerName={"Style"} sortIcon={ArrowSort} onClick={handleStyleSort}/>} filter showFilterMenu={false} filterElement={styleRowFilterTemplate} filterPlaceholder="Search by Style" style={{width: "5%"}}/>
                 <Column field="title" header={<TableHeaders headerName={"Title"} sortIcon={ArrowSort} onClick={handleTitleSort}/>} filter filterElement={titleRowFilterTemplate} showFilterMenu={false} filterPlaceholder="Search by Title" style={{width: "22%"}}/>
