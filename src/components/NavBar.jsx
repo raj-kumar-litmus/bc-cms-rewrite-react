@@ -15,7 +15,6 @@ function NavBar() {
     setShowpopup(!showPopup);
   };
   const [groups] = useSessionStorage("userGroups");
-
   const [isAdmin, setIsAdmin] = useState(false);
 
 
