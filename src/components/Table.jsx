@@ -15,6 +15,7 @@ import AssigneEdit from '../logos/AssigneEdit.svg';
 import Edit from '../logos/Edit.svg';
 import ArrowSort from '../logos/ArrowSort.svg';
 import MoreIcons from '../logos/MoreIcons.svg';
+import TableHeaders from './TableHeaders';
 
 
 
@@ -44,52 +45,40 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
     const [isStatusSelected, setIsStatusSelected] = useState(false);
 
     useEffect(() => {
-       fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage}&unique=brand`, {
+            fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage}&unique=brand`, {
                 method: "POST",
                 headers: {
                     "Content-type": "application/json; charset=UTF-8"
                 }
             })
             .then(response => response.json())
-            .then(result => setBrands(result?.data?.uniqueValues.filter(item=> item !== null).map(item=>({brand:item}))) );
-    }, []);
-    useEffect(() => {
-        fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage}&unique=assignee`, {
-                 method: "POST",
-                 headers: {
-                     "Content-type": "application/json; charset=UTF-8"
-                 }
-             })
-             .then(response => response.json())
-             .then(result => setAssignee(result?.data?.uniqueValues.filter(item=> item !== null)));
-     }, []);
+            .then(result => setBrands(result?.data?.uniqueValues.filter(item=> item !== null).map(item=>({brand:item}))));
 
-
-    useEffect(() => {
-        const body = {
-            "filters": {
-                "status":currentTab == "Unassigned" ? ["WAITING_FOR_WRITER"] : 
-                currentTab == "Completed"? ["WRITING_COMPLETE", "EDITING_COMPLETE"] : 
-                currentTab == "Assigned" ? ["ASSIGNED_TO_WRITER", "ASSIGNED_TO_EDITOR"] : 
-                currentTab == "InProgress" && ["WRITING_IN_PROGRESS", "EDITING_IN_PROGRESS"]
-            }
-        }
-        fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage}&unique=status`, {
-                 method: "POST",
-                 body:JSON.stringify(body),
-                 headers: {
-                     "Content-type": "application/json; charset=UTF-8"
-                 }
-             })
-             .then(response => response.json())
+            fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage}&unique=assignee`, {
+                method: "POST",
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8"
+                }
+            })
+            .then(response => response.json())
+            .then(result => setAssignee(result?.data?.uniqueValues.filter(item=> item !== null)));
+            
+            fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage}&unique=status`, {
+                method: "POST",
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8"
+                }
+            })
+            .then(response => response.json())
             .then(result => setStatus(result?.data?.uniqueValues));
-     }, [currentTab]);
+    }, [currentPage]);
 
      useEffect(() => {
         var date = new Date(searchByUpdatedAt);
         const newDate = date.toDateString().split(' ')
         const finalDate = `${newDate[3]}-${newDate[1]}-${newDate[2]}`
         const newSelectedBrand = selectedBrand.map(item => item.brand)
+  
         const body = {
             "filters": {
                 "styleId":searchByStyle,
@@ -138,24 +127,7 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
         })
             .then(response => response.json())
             .then(result => setCustomers(result?.data));
-     }, [searchByStyle, 
-        searchByTitle, 
-        selectedBrand, 
-        searchByStatus,
-        searchByAssignee, 
-        searchByUpdatedBy,
-        searchByUpdatedAt,
-        styleSort,
-        titleSort,
-        brandSort, 
-        statusSort, 
-        updatedBySort,
-        updatedAtSort,
-        assigneeSort,
-        currentTab, 
-        currentPage,
-        isStatusSelected
-    ]);
+     }, [searchByStyle, searchByTitle, selectedBrand, searchByStatus,searchByAssignee, searchByUpdatedBy,searchByUpdatedAt,styleSort,titleSort, brandSort, statusSort, updatedBySort,updatedAtSort,assigneeSort,currentTab, currentPage,isStatusSelected]);
 
 
      const handleStyleChanges = (e) => {
@@ -285,116 +257,8 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
         return finalDate
     };
 
-
-    const header = renderHeader();
-
-
-    const handleStyleSortHeader=()=>{
-        return (
-            <>
-                <span className="mr-2">
-                    Style
-                </span>
-                <span>
-                   <button onClick={handleStyleSort}>
-                    <img alt="ArrowSort icon" src={ArrowSort}  />
-                    </button>
-                </span>
-            </>
-        );
-    }
-
-    const handleTitleSortHeader=()=>{
-        return (
-            <>
-                <span className="mr-2">
-                Title
-                </span>
-                <span>
-                <button onClick={handleTitleSort}>
-                  <img alt="ArrowSort icon" src={ArrowSort}/>                    
-                </button>
-                </span>
-            </>
-        );
-    }
-
-    const handleBrandSortHeader=()=>{
-        return (
-            <>
-                <span className="mr-2">
-                    Brand
-                </span>
-                <span>
-                <button onClick={handleBrandSort}>
-                 <img alt="ArrowSort icon" src={ArrowSort}/>                    
-                </button>
-                </span>
-            </>
-        );
-    }
-
-    const handleStatusSortHeader=()=>{
-        return (
-            <>
-                <span className="mr-2">
-                    Status
-                </span>
-                <span>
-                <button onClick={handleStatusSort}>
-                    <img alt="ArrowSort icon" src={ArrowSort}/>                    
-                </button>
-                </span>
-            </>
-        );
-    }
-
-    const handleAssigneeSortHeader=()=>{
-        return (
-            <>
-                <span className="mr-2">
-                    Assignee
-                </span>
-                <span>
-                <button onClick={handleAssigneeSort}>
-                    <img alt="ArrowSort icon" src={ArrowSort}/>                    
-                </button>
-                </span>
-            </>
-        );
-    }
-
-    const handleUpdatedBySortHeader=()=>{
-        return (
-            <>
-                <span className="mr-2">
-                    Updated By
-                </span>
-                <span>
-                <button onClick={handleUpdatedBySort}>
-                    <img alt="ArrowSort icon" src={ArrowSort}/>                    
-                </button>
-                </span>
-            </>
-        );
-    }
-
-    const handleUpdatedAtSortHeader=()=>{
-        return (
-            <>
-                <span className="mr-2">
-                    Updated At
-                </span>
-                <span>
-                <button onClick={handleUpdatedAtSort}>
-                   <img alt="ArrowSort icon" src={ArrowSort}/>                    
-                </button>
-                </span>
-            </>
-        );
-    }
-const handleFilterIcon=()=>{
-    return(
+   const handleFilterIcon=()=>{
+      return(
         <span>
             <button onClick={() => setShowFilters(!showFilters)}>
                  {!showFilters ? <div className="bg-black text-white text-sm rounded-full border h-8 w-8 flex justify-center items-center"> 
@@ -407,6 +271,8 @@ const handleFilterIcon=()=>{
         </span> 
     )
 }
+
+
 
     const handleAssigneeSort=()=>{
         setCurrentSort("assigneeSort")
@@ -443,14 +309,13 @@ const handleFilterIcon=()=>{
         setStyleSort(styleSort == "desc" ? "asc" : "desc")
     }
 
-
-    const handleEdit=(rowData)=>{
+    const handleRowSelectIcons=(rowData, imgPath)=>{
         return (
             <div className="flex justify-content-end">
                 <span>
                 {(rowData.id == showEdit && isRowSelected && isAdmin) && 
                    <span className='bg-white flex rounded-full justify-center items-center border border-grey-30  h-[30px] w-[30px]'>  
-                     <img alt="Edit icon" src={Edit}  style={{ fontSize: '0.6rem', color: '#708090'}} onClick={handleEditIcon}/>
+                     <img alt={`${imgPath} svg`} src={imgPath}  style={{ fontSize: '0.6rem', color: '#708090'}} onClick={handleEditIcon}/>
                     </span>
                 }
                 </span>
@@ -458,42 +323,13 @@ const handleFilterIcon=()=>{
         );
     }
 
-    const handleAssignForRow=(rowData)=>{
-        return (
-            <div className="flex justify-content-end">
-            <span>
-            {(rowData.id == showEdit && isRowSelected && isAdmin) && 
-             <span className='bg-white flex rounded-full justify-center items-center border border-grey-30  h-[30px] w-[30px]'>  
-               <img alt="AssigneEdit icon" src={AssigneEdit}  style={{ fontSize: '0.6rem', color: '#708090'}} onClick={handleEditIcon}/>
-             </span>
-            }
-            </span>
-        </div>
-        );
-    }
-
-    const handleMoreIconForRow=(rowData)=>{
-        return (
-            <div className="flex justify-content-end">
-            <span>
-            {(rowData.id == showEdit && isRowSelected && isAdmin) && 
-             <span className='bg-white flex rounded-full justify-center items-center border border-grey-30  h-[30px] w-[30px]'>  
-               <img alt="MoreIcons icon" src={MoreIcons}  style={{ fontSize: '0.6rem', color: '#708090'}} onClick={handleEditIcon}/>
-             </span>
-            }
-            </span>
-        </div>
-        );
-    }
-    
-
     const handleEditIcon=()=>{
     // code for edit icon show go in this
     }
 
-    const footer=()=>{
+    const pagination=()=>{
         return(
-           <Pagination customers={customers} preText={preText} nextText={nextText} currentPage={currentPage} setCurrentPage={setCurrentPage}/>
+           <Pagination customers={customers} preText={preText} nextText={nextText} currentPage={currentPage} setCurrentPage={setCurrentPage} className={"px-3 py-2 mr-2 leading-tight text-gray-500 bg-white"}/>
         )
     }
 
@@ -517,89 +353,19 @@ const handleFilterIcon=()=>{
 
     return (
         <div className='border border-grey-30 text-sx'>
-            <DataTable 
-            value={customers?.workflows} 
-            dataKey="id" 
-            rows={100}
-            selection={selectedProducts} 
-            filterDisplay={showFilters && "row"} 
-            onRowMouseEnter={onRowSelect}
-            onRowMouseLeave={onRowUnselect}
-            loading={customers?.workflows.length > 0 ? false : true} 
-            header={ selectedProducts.length>1 && header}
-            footer={footer}
-                onSelectionChange={onSelectionChange} 
-                emptyMessage="No customers found." 
-                onRowClick={onRowClick}
-                >
+            <DataTable value={customers?.workflows} dataKey="id" rows={100} selection={selectedProducts} filterDisplay={showFilters && "row"} onRowMouseEnter={onRowSelect} onRowMouseLeave={onRowUnselect} loading={!customers?.workflows.length ? true : false} header={ selectedProducts.length>1 && renderHeader} footer={pagination} onSelectionChange={onSelectionChange} emptyMessage="No customers found." onRowClick={onRowClick}>
                 {isAdmin && <Column selectionMode="multiple" style={{width: "3%"}}></Column>}
-                <Column field="styleId" 
-                header={handleStyleSortHeader} 
-                filter showFilterMenu={false} 
-                filterElement={styleRowFilterTemplate}
-                filterPlaceholder="Search by Style"
-                style={{width: "5%"}}
-                />
-
-                <Column 
-                field="title" 
-                header={handleTitleSortHeader} 
-                filter 
-                filterElement={titleRowFilterTemplate} 
-                showFilterMenu={false} 
-                filterPlaceholder="Search by Title"
-                style={{width: "22%"}}
-                />
-
-                <Column 
-                header={handleBrandSortHeader} 
-                field="brand" 
-                showFilterMenu={false}
-                filter 
-                filterElement={brandRowFilterTemplate}
-                style={{width: "10%"}}
-                 />
-
-                {currentTab !== "Unassigned" && <Column 
-                field="status" 
-                header={handleStatusSortHeader} 
-                showFilterMenu={false} 
-                filter 
-                filterElement={statusRowFilterTemplate} 
-                style={{width: "18%"}}
-                />}
-
-                {(currentTab !== "Completed" && currentTab !== "Unassigned" && isAdmin)  && <Column 
-                field="assignee" 
-                header={handleAssigneeSortHeader} 
-                showFilterMenu={false} 
-                filter 
-                filterElement={assigneeRowFilterTemplate} 
-                style={{width: "13%"}}
-                />}
-
-                <Column 
-                field="lastUpdatedBy" 
-                header={handleUpdatedBySortHeader} 
-                filter showFilterMenu={false} 
-                 filterElement={updatedByFilterTemplate}
-                 style={{width: "15%"}}
-                />
-
-                <Column field="lastUpdateTs" 
-                header={handleUpdatedAtSortHeader} 
-                dataType="date" filter 
-                showFilterMenu={false} 
-                body={dateBodyTemplate} 
-                filterElement={dateFilterTemplate}
-                style={{width: "14%"}}
-                />
-
+                <Column field="styleId" header={<TableHeaders headerName={"Style"} sortIcon={ArrowSort} onClick={handleStyleSort}/>} filter showFilterMenu={false} filterElement={styleRowFilterTemplate} filterPlaceholder="Search by Style" style={{width: "5%"}}/>
+                <Column field="title" header={<TableHeaders headerName={"Title"} sortIcon={ArrowSort} onClick={handleTitleSort}/>} filter filterElement={titleRowFilterTemplate} showFilterMenu={false} filterPlaceholder="Search by Title" style={{width: "22%"}}/>
+                <Column header={<TableHeaders headerName={"Brand"} sortIcon={ArrowSort} onClick={handleBrandSort}/>} field="brand" showFilterMenu={false} filter filterElement={brandRowFilterTemplate} style={{width: "10%"}}/>
+                {currentTab !== "Unassigned" && <Column field="status" header={<TableHeaders headerName={"Status"} sortIcon={ArrowSort} onClick={handleStatusSort}/>} showFilterMenu={false} filter filterElement={statusRowFilterTemplate} style={{width: "18%"}}/>}
+                {(currentTab !== "Completed" && currentTab !== "Unassigned" && isAdmin)  && <Column field="assignee" header={<TableHeaders headerName={"Assignee"} sortIcon={ArrowSort} onClick={handleAssigneeSort}/>} showFilterMenu={false} filter filterElement={assigneeRowFilterTemplate} style={{width: "13%"}}/>}
+                <Column field="lastUpdatedBy" header={<TableHeaders headerName={"Updated BY"} sortIcon={ArrowSort} onClick={handleUpdatedBySort}/>} filter showFilterMenu={false} filterElement={updatedByFilterTemplate} style={{width: "15%"}}/>
+                <Column field="lastUpdateTs" header={<TableHeaders headerName={"Updated At"} sortIcon={ArrowSort} onClick={handleUpdatedAtSort}/>} dataType="date" filter showFilterMenu={false} body={dateBodyTemplate} filterElement={dateFilterTemplate} style={{width: "14%"}}/>
                 <Column header={handleFilterIcon} style={{width: "0%"}}/>
-                <Column body={handleEdit} style={{width: "0%"}}/>
-                <Column body={handleAssignForRow} style={{width: "0%"}} />
-                <Column body={handleMoreIconForRow} style={{width: "0%"}} />
-
+                <Column body={(e)=>handleRowSelectIcons(e, Edit)} style={{width: "0%"}}/>
+                <Column body={(e)=>handleRowSelectIcons(e, AssigneEdit)} style={{width: "0%"}} />
+                <Column body={(e)=>handleRowSelectIcons(e, MoreIcons)} style={{width: "0%"}} />
               </DataTable>
            </div>
     );
