@@ -16,10 +16,9 @@ import Edit from '../logos/Edit.svg';
 import ArrowSort from '../logos/ArrowSort.svg';
 import MoreIcons from '../logos/MoreIcons.svg';
 import FilterIcon from '../logos/Filter.svg';
+import CalendarIcon from '../logos/Calendar.svg';
 import FilterIconBlack from '../logos/FilterIconBlack.svg';
 import TableHeaders from './TableHeaders';
-
-
 
 export default function Table({currentTab, setCustomers, customers, isAdmin, preText, nextText, currentPage, setCurrentPage}) {
     const [searchByStyle, setSearchByStyle] = useState('');
@@ -230,8 +229,9 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
 
     const dateFilterTemplate = () => {
         return (
-                <span className="p-input-icon-left w-[100%] min-w-[80px]">
-                    <Calendar value={searchByUpdatedAt} onChange={handleCalanderChange} placeholder='dd/mm/yyy'/>
+                <span className="w-[100%] min-w-[80px] relative">
+                    <img alt={`${CalendarIcon} svg`} src={CalendarIcon} className='absolute right-2 top-4 z-10' />
+                    <Calendar value={searchByUpdatedAt} onChange={handleCalanderChange} className={Boolean && "p-calendar p-component p-inputwrapper"}/>
                 </span>
         )
     };
