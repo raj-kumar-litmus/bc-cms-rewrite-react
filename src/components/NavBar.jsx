@@ -16,8 +16,6 @@ function NavBar() {
   };
   const [groups] = useSessionStorage("userGroups");
   const [isAdmin, setIsAdmin] = useState(false);
-
-
   const { VITE_ADMIN_GROUP_ID: ADMIN_GROUP_ID } = process.env;
 
   useEffect(() => {

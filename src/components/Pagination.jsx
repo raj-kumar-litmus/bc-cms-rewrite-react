@@ -14,7 +14,7 @@ function Pagination({customers, preText, nextText, currentPage, setCurrentPage, 
       setCurrentPage(parseInt(currentPage)-1);
    }
   const onNextClick = ()=>{
-    if(customers?.pagination?.pageCount-1){
+    if(customers?.pagination?.pageCount > currentPage ){
         setCurrentPage(parseInt(currentPage) +1);
     }}
 
@@ -24,7 +24,7 @@ function Pagination({customers, preText, nextText, currentPage, setCurrentPage, 
               <nav className='flex justify-center items-center'>
                <Button className={className} onClick={onPrevClick}> {preText} </Button>
                  {pages?.map(item=>(
-                   <Button className={item == currentPage ?  "px-3 py-2 mr-2 text-white bg-black border border-gray-300" : "px-3 py-2 mr-2 text-gray-500 bg-white border border-gray-300"} onClick={onPageChange}>{item}</Button>
+                   <Button className={`px-3 py-2 mr-2 border border-gray-300 ${item == currentPage ? "text-white bg-black" : "text-gray-500 bg-white" }`} onClick={onPageChange}>{item}</Button>
                   ))}
                 <Button className={className} onClick={onNextClick}> {nextText} </Button>
             </nav>}
