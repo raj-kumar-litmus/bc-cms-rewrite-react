@@ -15,6 +15,8 @@ import AssigneEdit from '../logos/AssigneEdit.svg';
 import Edit from '../logos/Edit.svg';
 import ArrowSort from '../logos/ArrowSort.svg';
 import MoreIcons from '../logos/MoreIcons.svg';
+import FilterIcon from '../logos/Filter.svg';
+import FilterIconBlack from '../logos/FilterIconBlack.svg';
 import TableHeaders from './TableHeaders';
 
 
@@ -52,7 +54,7 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
                 }
             })
             .then(response => response.json())
-            .then(result => setBrands(result?.data?.uniqueValues.filter(item=> item !== null).map(item=>({brand:item}))));
+            .then(result => setBrands(result?.data?.uniqueValues.filter(Boolean).map(item=>({brand:item}))));
 
             fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage}&unique=assignee`, {
                 method: "POST",
@@ -61,7 +63,7 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
                 }
             })
             .then(response => response.json())
-            .then(result => setAssignee(result?.data?.uniqueValues.filter(item=> item !== null)));
+            .then(result => setAssignee(result?.data?.uniqueValues.filter(Boolean)));
             
             fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage}&unique=status`, {
                 method: "POST",
@@ -73,51 +75,45 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
             .then(result => setStatus(result?.data?.uniqueValues));
     }, [currentPage]);
 
+
      useEffect(() => {
         var date = new Date(searchByUpdatedAt);
         const newDate = date.toDateString().split(' ')
         const finalDate = `${newDate[3]}-${newDate[1]}-${newDate[2]}`
         const newSelectedBrand = selectedBrand.map(item => item.brand)
-  
-        const body = {
-            "filters": {
-                "styleId":searchByStyle,
-                "title":searchByTitle,
-                "brand":newSelectedBrand,
-                "lastUpdatedBy":searchByUpdatedBy,
-                "lastUpdateTs":finalDate,
-                "assignee":searchByAssignee,
-                "status": isStatusSelected ? [searchByStatus] : currentTab == "Unassigned" ? ["WAITING_FOR_WRITER"] : 
-                currentTab == "Completed"? ["WRITING_COMPLETE", "EDITING_COMPLETE"] : 
-                currentTab == "Assigned" ? ["ASSIGNED_TO_WRITER", "ASSIGNED_TO_EDITOR"] : 
-                currentTab == "InProgress" && ["WRITING_IN_PROGRESS", "EDITING_IN_PROGRESS"] 
-            },
-            "orderBy": {
-                "styleId": styleSort,
-                "title": titleSort,
-                "brand": brandSort,
-                "status": statusSort,
-                "assignee": assigneeSort,
-                "lastUpdatedBy": updatedBySort,
-                "lastUpdateTs":updatedAtSort
+            const status = []
+            switch(currentTab){
+                case "Unassigned" :
+                      status.push("WAITING_FOR_WRITER")
+                case "Completed" :
+                      status.push("WRITING_COMPLETE", "EDITING_COMPLETE")
+                case "Assigned" :
+                    status.push("ASSIGNED_TO_WRITER", "ASSIGNED_TO_EDITOR")
+                case "InProgress" :
+                    status.push("WRITING_IN_PROGRESS", "EDITING_IN_PROGRESS")
+                default: status
             }
-        }
-        
-        searchByStyle == "" && delete body.filters.styleId
-        searchByTitle == "" && delete body.filters.title
-        selectedBrand.length == 0 && delete body.filters.brand
-        searchByUpdatedBy == "" && delete body.filters.lastUpdatedBy
-        searchByUpdatedAt == null && delete body.filters.lastUpdateTs
-        searchByAssignee == "" && delete body.filters.assignee
-        currentSort !== "styleSort" &&  delete body.orderBy.styleId
-        currentSort !== "titleSort" &&  delete body.orderBy.title
-        currentSort !== "brandSort" &&  delete body.orderBy.brand
-        currentSort !== "statusSort" &&  delete body.orderBy.status
-        currentSort !== "updatedBySort" &&  delete body.orderBy.lastUpdatedBy
-        currentSort !== "updatedAtSort" &&  delete body.orderBy.lastUpdateTs
-        currentSort !== "assigneeSort" &&  delete body.orderBy.assignee
 
-        
+            const body = {
+                "filters": {
+                     ...(searchByStyle && {styleId:searchByStyle }),
+                     ...(searchByTitle && {title:searchByTitle }),
+                     ...(newSelectedBrand.length && {brand:newSelectedBrand }),
+                     ...(searchByUpdatedBy && {lastUpdatedBy:searchByUpdatedBy }),
+                     ...(searchByAssignee && {assignee:searchByAssignee }),
+                     ...(searchByUpdatedAt && {lastUpdateTs:finalDate }),
+                    "status": isStatusSelected ? [searchByStatus] : status
+                },
+                "orderBy": {
+                    ...(currentSort == "styleSort" && {styleId:styleSort }),
+                     ...(currentSort == "titleSort" && {title:titleSort }),
+                     ...(currentSort == "brandSort" && {brand:brandSort }),
+                     ...(currentSort == "updatedBySort" && {lastUpdatedBy:updatedBySort }),
+                     ...(currentSort == "assigneeSort" && {lastUpdatedBy:assigneeSort }),
+                     ...(currentSort == "statusSort" && {status:statusSort }),
+                     ...(currentSort == "updatedAtSort" && {lastUpdateTs:updatedAtSort }),
+                }
+            }
         fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage}`, {
             method: "POST",
             body:JSON.stringify(body),
@@ -131,20 +127,16 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
 
 
      const handleStyleChanges = (e) => {
-        setSearchByStyle(e.target.value)
+        setTimeout(()=>{setSearchByStyle(e.target.value)}, 1000)
     }
 
     const handleTitleChange = (e) => {
-        setSearchByTitle(e.target.value)
+        setTimeout(()=>{setSearchByTitle(e.target.value)}, 2000)
     }
 
     const handleUpdatedByChange = (e) => {
-        setsearchByUpdatedBy(e.target.value)
+        setTimeout(()=>{setsearchByUpdatedBy(e.target.value)}, 1000)
     }
-
-    const debouncedStyleHandler = debounce(handleStyleChanges, 500);
-    const debouncedTitleHandler = debounce(handleTitleChange , 500);
-    const debouncedUpdatedByHandler = debounce(handleUpdatedByChange , 500);
 
     const renderHeader = () => {
         return (
@@ -152,7 +144,7 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
                 {selectedProducts.length>1 && 
                 <button>
                     <span className='bg-white text-black rounded-full border h-8 w-8 px-1 py-1'><i className="pi pi-user-plus" /></span>
-                    <span> Assign</span>
+                    <span>Assign</span>
                 </button>}
             </div>
         );
@@ -197,7 +189,7 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
     }
 
     const titleRowFilterTemplate = () => {
-        return (<span className="p-input-icon-left w-[100%] min-w-[80px]"><i className="pi pi-search" /><InputText onChange={debouncedTitleHandler} /></span>);
+        return (<span className="p-input-icon-left w-[100%] min-w-[80px]"><i className="pi pi-search" /><InputText onChange={handleTitleChange} /></span>);
     };
 
     const brandRowFilterTemplate = () => {
@@ -219,7 +211,7 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
         return (
                 <span className="p-input-icon-left w-[100%] min-w-[80px]">
                     <i className="pi pi-search" />
-                    <InputText onChange={debouncedUpdatedByHandler}/>
+                    <InputText onChange={handleUpdatedByChange}/>
                 </span>
         );
     }
@@ -228,7 +220,7 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
         return (
                 <span className="p-input-icon-left w-[100%] min-w-[80px]">
                     <i className="pi pi-search" />
-                    <InputText onChange={debouncedStyleHandler} />
+                    <InputText  onChange={handleStyleChanges} />
                 </span>
         );
     };
@@ -262,16 +254,25 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
         <span>
             <button onClick={() => setShowFilters(!showFilters)}>
                  {!showFilters ? <div className="bg-black text-white text-sm rounded-full border h-8 w-8 flex justify-center items-center"> 
-                   <i className="pi pi-filter" style={{fontSize: '0.8rem'}}/> 
+                     <img alt={`${FilterIcon} svg`} src={FilterIcon}/>
                  </div> :
                  <div className="bg-white text-black text-sm rounded-full border h-8 w-8 flex justify-center items-center"> 
-                   <i className="pi pi-filter" style={{fontSize: '0.8rem'}}/> 
+                    <img alt={`${FilterIconBlack} svg`} src={FilterIconBlack}/>
                  </div>}
             </button>                
         </span> 
     )
 }
-
+{/* <span>
+<button onClick={() => setShowFilters(!showFilters)}>
+     {!showFilters ? <div className="bg-black text-white text-sm rounded-full border h-8 w-8 flex justify-center items-center"> 
+     <img alt={`${FilterIcon} svg`} src={FilterIcon}  style={{ fontSize: '0.6rem', color: '#708090'}} onClick={handleEditIcon}/>
+     </div> :
+     <div className="bg-white text-black text-sm rounded-full border h-8 w-8 flex justify-center items-center"> 
+     <img alt={`${FilterIcon} svg`} src={FilterIcon}  style={{ fontSize: '0.6rem', color: '#708090'}} onClick={handleEditIcon}/>
+     </div>}
+</button>                
+</span>  */}
 
 
     const handleAssigneeSort=()=>{
@@ -353,7 +354,7 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
 
     return (
         <div className='border border-grey-30 text-sx'>
-            <DataTable value={customers?.workflows} dataKey="id" rows={100} selection={selectedProducts} filterDisplay={showFilters && "row"} onRowMouseEnter={onRowSelect} onRowMouseLeave={onRowUnselect} loading={!customers?.workflows.length ? true : false} header={ selectedProducts.length>1 && renderHeader} footer={pagination} onSelectionChange={onSelectionChange} emptyMessage="No customers found." onRowClick={onRowClick}>
+            <DataTable value={customers?.workflows} dataKey="id" rows={100} selection={selectedProducts} filterDisplay={showFilters && "row"} onRowMouseEnter={onRowSelect} onRowMouseLeave={onRowUnselect} header={ selectedProducts.length>1 && renderHeader} footer={pagination} onSelectionChange={onSelectionChange} emptyMessage="No customers found." onRowClick={onRowClick}>
                 {isAdmin && <Column selectionMode="multiple" style={{width: "3%"}}></Column>}
                 <Column field="styleId" header={<TableHeaders headerName={"Style"} sortIcon={ArrowSort} onClick={handleStyleSort}/>} filter showFilterMenu={false} filterElement={styleRowFilterTemplate} filterPlaceholder="Search by Style" style={{width: "5%"}}/>
                 <Column field="title" header={<TableHeaders headerName={"Title"} sortIcon={ArrowSort} onClick={handleTitleSort}/>} filter filterElement={titleRowFilterTemplate} showFilterMenu={false} filterPlaceholder="Search by Title" style={{width: "22%"}}/>
