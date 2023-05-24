@@ -1,14 +1,14 @@
-import React from "react";
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 import useSessionStorage from "../hooks/useSessionStorage";
 import NormalizationImg from "../logos/Normalization-img.svg";
 import SizingAppImg from "../logos/SizingApp-img.svg";
 import ChoosingAppArrow from "../logos/ChoosingApp-arrow.svg";
 import MenuChooserAppDetails from "./MenuChooserAppDetails";
 const {
-  VITE_SIZING_APP_GROUP_ID: SIZING_APP_GROUP_ID,
-  VITE_DATA_NORMALIZATION_GROUP_ID: DATA_NORMALIZATION_GROUP_ID
+  VITE_SIZING_APP_GROUP_ID: SIZING_APP_GROUP_NAME,
+  VITE_ADMIN_GROUP_NAME: ADMIN_GROUP_NAME,
+  VITE_WRITER_GROUP_NAME: WRITER_GROUP_NAME,
+  VITE_EDITOR_GROUP_NAME: EDITOR_GROUP_NAME
 } = process.env;
 
 function MenuChooser() {
@@ -17,17 +17,20 @@ function MenuChooser() {
   const [groups] = useSessionStorage("userGroups");
 
   useEffect(() => {
-    setAccessSizingApp(groups?.includes(SIZING_APP_GROUP_ID));
-    setAccessWorkBenchApp(groups?.includes(DATA_NORMALIZATION_GROUP_ID));
+    setAccessSizingApp(groups?.includes(SIZING_APP_GROUP_NAME));
+    setAccessWorkBenchApp(
+      groups?.includes(ADMIN_GROUP_NAME) ||
+        groups?.includes(WRITER_GROUP_NAME) ||
+        groups?.includes(EDITOR_GROUP_NAME)
+    );
   }, [groups, setAccessSizingApp, setAccessWorkBenchApp]);
-
 
   return (
     <div className="bg-grey-40 h-screen text-center">
       <h1 className="text-xs font-bold text-black pt-10">
         Choose the Application
       </h1>
-      
+
       {canAccessWorkBenchApp && canAccessSizingApp && (
         <p className="text-sm mt-4">
           You Have Permission to access Data Normalization and <br />
@@ -38,19 +41,19 @@ function MenuChooser() {
       <div className="flex flex-row justify-center items-center">
         {canAccessWorkBenchApp && (
           <MenuChooserAppDetails
-          img={NormalizationImg}
-          title={"Writer Interphase App"}
-          choosingAppArrow={ChoosingAppArrow}
-          displayContent={"Lorem ipsum dolor sit amet,consectetur adipiscing"}
+            img={NormalizationImg}
+            title={"Writer InterFace App"}
+            choosingAppArrow={ChoosingAppArrow}
+            displayContent={"Lorem ipsum dolor sit amet,consectetur adipiscing"}
           />
         )}
 
         {canAccessSizingApp && (
           <MenuChooserAppDetails
-          img={SizingAppImg}
-          title={"Sizing App"}
-          choosingAppArrow={ChoosingAppArrow}
-          displayContent={"Lorem ipsum dolor sit amet,consectetur adipiscing"}
+            img={SizingAppImg}
+            title={"Sizing App"}
+            choosingAppArrow={ChoosingAppArrow}
+            displayContent={"Lorem ipsum dolor sit amet,consectetur adipiscing"}
           />
         )}
       </div>

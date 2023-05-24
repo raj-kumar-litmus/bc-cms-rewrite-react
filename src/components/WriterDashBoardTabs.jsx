@@ -6,12 +6,12 @@ import Button from "./Button";
 function WriterDashBoardTabs() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [groups] = useSessionStorage("userGroups");
-  const { VITE_ADMIN_GROUP_ID: ADMIN_GROUP_ID } = process.env;
+  const { VITE_ADMIN_GROUP_NAME: ADMIN_GROUP_NAME } = process.env;
   const [currentTab, setCurrentTab] = useState("Unassigned");
 
   useEffect(() => {
-    setIsAdmin(groups?.includes(ADMIN_GROUP_ID));
-  }, [ADMIN_GROUP_ID, setIsAdmin]);
+    setIsAdmin(groups?.includes(ADMIN_GROUP_NAME));
+  }, [ADMIN_GROUP_NAME, setIsAdmin]);
 
   const handleTabEvents = (tab) => {
     setCurrentTab(tab.target.innerText);
