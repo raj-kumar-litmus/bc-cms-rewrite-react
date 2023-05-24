@@ -5,6 +5,7 @@ import BackcountryLogo from "../logos/backcountry-logo-with-text.svg";
 import NavBarSwitchingIcon from "../logos/NavBarSwitchingIcon.svg";
 import useSessionStorage from "../hooks/useSessionStorage";
 import Button from "./Button";
+import msalInstance from "./authInitialize";
 
 function NavBar() {
   const navigate = useNavigate();
@@ -15,14 +16,20 @@ function NavBar() {
     setShowpopup(!showPopup);
   };
 
+  const signOut = () => {
+    msalInstance
+      .logoutRedirect()
+      .then((_) => {})
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   return (
     <nav className="bg-white">
       <div className="flex flex-wrap justify-between items-center mx-[139px] h-[70px]">
         <div className="flex items-center">
-          <img
-            src={BackcountryLogo}
-            alt="Backcountry SVG"
-          />
+          <img src={BackcountryLogo} alt="Backcountry SVG" />
         </div>
         <div className="flex">
           {location.pathname !== "/menuChooser" && (
@@ -78,7 +85,14 @@ function NavBar() {
                   </div>
 
                   <div>
-                    <Button className={"bg-white text-black text-sm rounded border m-2 p-1"}>Logout </Button>
+                    <Button
+                      onClick={signOut}
+                      className={
+                        "bg-white text-black text-sm rounded border m-2 p-1"
+                      }
+                    >
+                      Logout
+                    </Button>
                   </div>
                 </div>
               </div>
