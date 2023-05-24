@@ -80,19 +80,22 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
         const newDate = date.toDateString().split(' ')
         const finalDate = `${newDate[3]}-${newDate[1]}-${newDate[2]}`
         const newSelectedBrand = selectedBrand.map(item => item.brand)
-            const status = []
+            let status = []
             switch(currentTab){
                 case "Unassigned" :
                       status.push("WAITING_FOR_WRITER")
+                      break;
                 case "Completed" :
                       status.push("WRITING_COMPLETE", "EDITING_COMPLETE")
+                      break;
                 case "Assigned" :
                     status.push("ASSIGNED_TO_WRITER", "ASSIGNED_TO_EDITOR")
+                    break;
                 case "InProgress" :
                     status.push("WRITING_IN_PROGRESS", "EDITING_IN_PROGRESS")
+                    break;
                 default: status
             }
-
             const body = {
                 "filters": {
                      ...(searchByStyle && {styleId:searchByStyle }),
