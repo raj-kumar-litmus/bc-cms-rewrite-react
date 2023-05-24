@@ -307,7 +307,7 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
                 <span>
                 {(rowData.id == showEdit && isRowSelected && isAdmin) && 
                    <span className='bg-white flex rounded-full justify-center items-center border border-grey-30  h-[30px] w-[30px]'>  
-                     <img alt={`${imgPath} svg`} src={imgPath}  style={{ fontSize: '0.6rem', color: '#708090'}} onClick={handleEditIcon}/>
+                     <img alt={`${imgPath} svg`} src={imgPath} onClick={handleEditIcon}/>
                     </span>
                 }
                 </span>
@@ -345,7 +345,7 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
 
     return (
         <div className='border border-grey-30 text-sx'>
-            <DataTable value={customers?.workflows} dataKey="id" rows={100} selection={selectedProducts} filterDisplay={showFilters && "row"} onRowMouseEnter={onRowSelect} onRowMouseLeave={onRowUnselect} header={ selectedProducts.length>1 && renderHeader} footer={pagination} onSelectionChange={onSelectionChange} emptyMessage="No customers found." onRowClick={onRowClick}>
+            <DataTable value={customers?.workflows} dataKey="id" rows={100} selection={selectedProducts} filterDisplay={showFilters && "row"} onRowMouseEnter={onRowSelect} onRowMouseLeave={onRowUnselect} header={selectedProducts.length>1 && renderHeader} footer={pagination} onSelectionChange={onSelectionChange} emptyMessage="No customers found." onRowClick={onRowClick}>
                 {isAdmin && <Column selectionMode="multiple" style={{width: "3%"}}></Column>}
                 <Column field="styleId" header={<TableHeaders headerName={"Style"} sortIcon={ArrowSort} onClick={handleStyleSort}/>} filter showFilterMenu={false} filterElement={styleRowFilterTemplate} filterPlaceholder="Search by Style" style={{width: "5%"}}/>
                 <Column field="title" header={<TableHeaders headerName={"Title"} sortIcon={ArrowSort} onClick={handleTitleSort}/>} filter filterElement={titleRowFilterTemplate} showFilterMenu={false} filterPlaceholder="Search by Title" style={{width: "22%"}}/>
