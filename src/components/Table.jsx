@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import 'primereact/resources/themes/fluent-light/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
-import debounce from 'lodash.debounce'
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { InputText } from 'primereact/inputtext';
@@ -74,7 +73,6 @@ export default function Table({currentTab, setCustomers, customers, isAdmin, pre
             .then(response => response.json())
             .then(result => setStatus(result?.data?.uniqueValues));
     }, [currentPage]);
-
 
      useEffect(() => {
         var date = new Date(searchByUpdatedAt);
