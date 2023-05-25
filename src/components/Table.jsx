@@ -676,10 +676,6 @@ export default function Table({
             body={(e) => handleRowSelectIcons(e, AssigneEdit, "assign")}
             style={{ width: "0%" }}
           />
-          {/* <Column
-            body={(e) => handleRowSelectIcons(e, MoreIcons, "more")}
-            style={{ width: "0%" }}
-          /> */}
           <Column body={handleMoreIcon} style={{ width: "0%" }} />
         </DataTable>
       )}
