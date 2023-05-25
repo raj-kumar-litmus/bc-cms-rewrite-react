@@ -228,7 +228,7 @@ export default function Table({
               }}
             >
              <span className="bg-white flex rounded-full justify-center items-center border w-[30px] h-[30px] border-grey-30 mr-1">
-             <img alt={`AssignToWriter svg`} src={AssignToWriter} />
+             <img alt={`AssignToEditor svg`} src={AssignToEditor} />
             </span>
               <span>Assign to Editor</span>
             </button>
