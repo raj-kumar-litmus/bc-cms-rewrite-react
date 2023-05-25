@@ -26,6 +26,7 @@ function NormalizationDashboard() {
   const [currentPage, setCurrentPage] = useState(1);
   const [groups] = useSessionStorage("userGroups");
   const [workflowId, setWorkflowId] = useState(null);
+  const [loader, setLoader] = useState(true);
   const { VITE_ADMIN_GROUP_NAME: ADMIN_GROUP_NAME } = process.env;
 
   useEffect(() => {
@@ -37,6 +38,7 @@ function NormalizationDashboard() {
   }, [isAdmin]);
 
   const handleTabEvents = (tab) => {
+    setCurrentPage(1);
     setCurrentTab(tab.target.innerText);
   };
 
@@ -102,6 +104,7 @@ function NormalizationDashboard() {
         </div>
         <div className="mt-[49px]">
           <WriterDashBoardTabs
+            loader={loader}
             handleTabEvents={handleTabEvents}
             currentTab={currentTab}
             isAdmin={isAdmin}
@@ -109,6 +112,8 @@ function NormalizationDashboard() {
         </div>
         <div className="mt-[49px]">
           <Table
+            loader={loader}
+            setLoader={setLoader}
             setWorkflowId={setWorkflowId}
             setAssigneeType={setAssigneeType}
             setStyleId={setStyleId}

@@ -28,6 +28,7 @@ function AssignStyle({
   const [isChecked, setIsChecked] = useState(false);
   const [assignee, SetAssignee] = useState(null);
   const [assigneeName, SetAssigneeName] = useState(null);
+  const [clearValue, setClearValue] = useState(false);
   const [accountDetails] = useSessionStorage("accountDetails");
 
   const buildStyleStrings = () => {
@@ -156,11 +157,15 @@ function AssignStyle({
             label={`Assign ${userGroup === "writers" ? "Writer" : "Editor"}`}
             isLoading={isFetching}
             onChange={(e) => {
-              SetAssignee(e.value);
-              SetAssigneeName(e.label);
+              if (e) {
+                SetAssignee(e.value);
+                SetAssigneeName(e.label);
+              }
             }}
             isDisabled={!isActiveDropdown || isFetching}
             options={options}
+            clearValue={clearValue}
+            setClearValue={setClearValue}
             hasCustomOption={true}
             isClearable={true}
             classNamePrefix="assign-writer"
@@ -176,6 +181,7 @@ function AssignStyle({
               onChange={() => {
                 setIsChecked(!isChecked);
                 setIsActiveDropdown(isChecked);
+                setClearValue(true);
                 setSelfAsAssignee();
               }}
               text={"Assign Me"}

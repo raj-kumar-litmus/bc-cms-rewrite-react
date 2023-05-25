@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import Select, { components } from "react-select";
 
 const { ValueContainer, Placeholder } = components;
@@ -42,9 +42,12 @@ const DropDown = ({
   isLoading,
   hasCustomOption,
   isClearable,
+  clearValue = false,
+  setClearValue,
   classNamePrefix = "",
   isMulti = false
 }) => {
+  const selectRef = useRef(null);
   const tempStyles = {
     container: (provided, state) => ({
       ...provided,
@@ -65,6 +68,13 @@ const DropDown = ({
     })
   };
 
+  useEffect(() => {
+    if (clearValue) {
+      selectRef.current.clearValue();
+      setClearValue(false);
+    }
+  }, [clearValue]);
+
   const props = {
     isClearable,
     id,
@@ -73,6 +83,7 @@ const DropDown = ({
     isSearchable: true,
     isDisabled,
     onChange,
+    ref: selectRef,
     isLoading,
     defaultValue,
     blurInputOnSelect: true,
