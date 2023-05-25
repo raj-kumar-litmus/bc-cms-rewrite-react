@@ -23,6 +23,8 @@ import MoreIconPopUp from "./MoreIcon";
 import Loader from "../components/loader";
 import useSessionStorage from "../hooks/useSessionStorage";
 import { status } from "../constants/index";
+import AssignToEditor from "../logos/AssignToEditor.svg";
+import AssignToWriter from "../logos/AssignToWriter.svg";
 
 export default function Table({
   loader,
