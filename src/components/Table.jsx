@@ -136,7 +136,7 @@ export default function Table({
         ...(searchByTitle && { title: searchByTitle }),
         ...(newSelectedBrand.length && { brand: newSelectedBrand }),
         ...(searchByUpdatedBy && { lastUpdatedBy: searchByUpdatedBy }),
-        ...((searchByAssignee || (!isAdmin && currentTab == "Assigned")) && { assignee: (!isAdmin && currentTab == "Assigned") ? userEmail : searchByAssignee }),
+        ...((searchByAssignee || !isAdmin) && {assignee: !isAdmin  ? userEmail : searchByAssignee }),
         ...(searchByUpdatedAt && { lastUpdateTs: finalDate }),
         status: isStatusSelected ? [searchByStatus] : status
       },
