@@ -24,6 +24,8 @@ import Loader from "../components/loader";
 import useSessionStorage from "../hooks/useSessionStorage";
 
 export default function Table({
+  loader,
+  setLoader,
   setIsModalVisible,
   setAssigneeType,
   setStyleId,
@@ -61,7 +63,6 @@ export default function Table({
   const [isRowSelected, setIsRowSelected] = useState(false);
   const [isStatusSelected, setIsStatusSelected] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
-  const [loader, setLoader] = useState(true);
   const navigate = useNavigate();
   const [userEmail] = useSessionStorage("userEmail");
 
@@ -427,6 +428,20 @@ export default function Table({
             });
           }
           if (type === "assign") {
+            if (
+              ["ASSIGNED_TO_WRITER", "WAITING_FOR_WRITER"].includes(
+                rowData.status
+              )
+            ) {
+              setAssigneeType("writers");
+            }
+            if (
+              ["ASSIGNED_TO_EDITOR", "EDITING_IN_PROGRESS"].includes(
+                rowData.status
+              )
+            ) {
+              setAssigneeType("editors");
+            }
             console.log(rowData);
             setIsModalVisible(true);
             setStyleId([rowData?.styleId]);
@@ -666,15 +681,19 @@ export default function Table({
             body={(e) => handleRowSelectIcons(e, Edit, "edit")}
             style={{ width: "0%" }}
           />
-          <Column
-            body={(e) => handleRowSelectIcons(e, AssigneEdit, "assign")}
-            style={{ width: "0%" }}
-          />
+          {currentTab !== "Completed" && (
+            <Column
+              body={(e) => handleRowSelectIcons(e, AssigneEdit, "assign")}
+              style={{ width: "0%" }}
+            />
+          )}
           {/* <Column
             body={(e) => handleRowSelectIcons(e, MoreIcons, "more")}
             style={{ width: "0%" }}
           /> */}
-          <Column body={handleMoreIcon} style={{ width: "0%" }} />
+          {currentTab === "Completed" && (
+            <Column body={handleMoreIcon} style={{ width: "0%" }} />
+          )}
         </DataTable>
       )}
     </div>

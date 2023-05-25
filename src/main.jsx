@@ -1,6 +1,11 @@
 import React, { Suspense, lazy } from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate
+} from "react-router-dom";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
 import "../public/index.css";
@@ -19,6 +24,8 @@ const StyleDetails = lazy(() => import("./pages/styleDetails"));
 const Loader = lazy(() => import("./components/loader"));
 
 const root = createRoot(document.getElementById("root"));
+const account = JSON.parse(window.sessionStorage.getItem("accountDetails"));
+const canAccess = account?.idTokenClaims?.exp;
 
 root.render(
   <Router>
@@ -27,7 +34,13 @@ root.render(
         <Route path="/" element={<SSOLogin />} />
         <Route
           path="/styleDetails"
-          element={<StyleDetails quickFix={false} styleId="CGHD23Y" />}
+          element={
+            canAccess ? (
+              <StyleDetails quickFix={false} styleId="CGHD23Y" />
+            ) : (
+              <Navigate replace to="/" />
+            )
+          }
         />
         <Route path="/redirect/web" element={<Token />} />
         <Route
@@ -42,26 +55,34 @@ root.render(
         <Route
           path="/normalizationDashBoard"
           element={
-            <>
-              <NavBar />
-              <NormalizationDashboard />
-            </>
+            canAccess ? (
+              <>
+                <NavBar />
+                <NormalizationDashboard />
+              </>
+            ) : (
+              <Navigate replace to="/" />
+            )
           }
         />
         <Route
           path="/manualWorkFlowDashboard"
           element={
-            <>
-              <NavBar />
-              <ManualWorkFlowDashboard
-                backButtonString={"<Back"}
-                searchTest={"Search"}
-                alertText={"Style DGET233 and FWPT1Y3 are doesn’t exist"}
-                displayTest={
-                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et d"
-                }
-              />
-            </>
+            canAccess ? (
+              <>
+                <NavBar />
+                <ManualWorkFlowDashboard
+                  backButtonString={"<Back"}
+                  searchTest={"Search"}
+                  alertText={"Style DGET233 and FWPT1Y3 are doesn’t exist"}
+                  displayTest={
+                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et d"
+                  }
+                />
+              </>
+            ) : (
+              <Navigate replace to="/" />
+            )
           }
         />
       </Routes>
