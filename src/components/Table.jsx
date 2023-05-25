@@ -135,7 +135,7 @@ export default function Table({
         ...(searchByTitle && { title: searchByTitle }),
         ...(newSelectedBrand.length && { brand: newSelectedBrand }),
         ...(searchByUpdatedBy && { lastUpdatedBy: searchByUpdatedBy }),
-        ...(searchByAssignee && { assignee: searchByAssignee }),
+        ...((searchByAssignee || (!isAdmin && currentTab == "Assigned")) && { assignee: (!isAdmin && currentTab == "Assigned") ? userEmail : searchByAssignee }),
         ...(searchByUpdatedAt && { lastUpdateTs: finalDate }),
         status: isStatusSelected ? [searchByStatus] : status
       },
@@ -202,31 +202,34 @@ export default function Table({
 
   const renderHeader = () => {
     return (
-      <div className="flex flex-wrap justify-content-end gap-2">
+      <div className="flex justify-content-end gap-4">
         {selectedProducts.length > 1 && (
           <>
             <button
+              className="flex"
               onClick={() => {
                 setStyleId(selectedProducts.map((e) => e?.styleId));
                 setIsModalVisible(true);
                 setAssigneeType("writers");
               }}
             >
-              <span className="bg-white text-black rounded-full border h-8 w-8 px-1 py-1">
-                <i className="pi pi-user-plus" />
-              </span>
+            <span className="bg-white flex rounded-full justify-center items-center border w-[30px] h-[30px] border-grey-30 mr-1">
+             <img alt={`AssignToWriter svg`} src={AssignToWriter} />
+            </span>
               <span>Assign to Writer</span>
             </button>
+         
             <button
+              className="flex"
               onClick={() => {
                 setStyleId(selectedProducts.map((e) => e?.styleId));
                 setIsModalVisible(true);
                 setAssigneeType("editors");
               }}
             >
-              <span className="bg-white text-black rounded-full border h-8 w-8 px-1 py-1">
-                <i className="pi pi-user-plus" />
-              </span>
+             <span className="bg-white flex rounded-full justify-center items-center border w-[30px] h-[30px] border-grey-30 mr-1">
+             <img alt={`AssignToWriter svg`} src={AssignToWriter} />
+            </span>
               <span>Assign to Editor</span>
             </button>
           </>
@@ -334,7 +337,7 @@ export default function Table({
 
   const dateFilterTemplate = () => {
     return (
-      <span className="w-[100%] min-w-[80px] relative">
+      <span className="w-[100%] relative">
         <img
           alt={`${CalendarIcon} svg`}
           src={CalendarIcon}
@@ -344,6 +347,7 @@ export default function Table({
           value={searchByUpdatedAt}
           onChange={handleCalanderChange}
           className={Boolean && "p-calendar p-component p-inputwrapper"}
+          style={{minWidth: "60px"}}
         />
       </span>
     );
