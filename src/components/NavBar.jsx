@@ -89,7 +89,7 @@ function NavBar() {
                 </div>
 
                 <div className="mb-1">
-                  <p className="text-[18px] text-[#2C2C2C] font-bold text-['Aktiv Grotesk']">{name}</p>
+                  <p className="text-[18px] text-[#2C2C2C] font-bold">{name}</p>
                 </div>
 
                 <div>
