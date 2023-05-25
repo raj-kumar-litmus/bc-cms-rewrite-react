@@ -691,10 +691,6 @@ export default function Table({
               style={{ width: "0%" }}
             />
           )}
-          {/* <Column
-            body={(e) => handleRowSelectIcons(e, MoreIcons, "more")}
-            style={{ width: "0%" }}
-          /> */}
           {currentTab === "Completed" && (
             <Column body={handleMoreIcon} style={{ width: "0%" }} />
           )}
