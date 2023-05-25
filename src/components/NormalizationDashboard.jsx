@@ -7,6 +7,8 @@ import WriterDashBoardTabs from "./WriterDashBoardTabs.jsx";
 import AssignStyle from "../pages/assignStyle.jsx";
 import GreenTick from "../logos/green-tick.svg";
 import RedCross from "../logos/red-cross-in-circle.svg";
+import Table from "./Table.jsx";
+import useSessionStorage from "../hooks/useSessionStorage";
 
 function NormalizationDashboard() {
   const toastBR = useRef(null);
@@ -17,6 +19,26 @@ function NormalizationDashboard() {
   const [assignee, setAssignee] = useState(null);
   const [userGroup, setUserGroup] = useState(null);
   const [errorToast, setErrorToast] = useState(false);
+
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [currentTab, setCurrentTab] = useState("Completed");
+  const [customers, setCustomers] = useState();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [groups] = useSessionStorage("userGroups");
+  const [workflowId, setWorkflowId] = useState(null);
+  const { VITE_ADMIN_GROUP_NAME: ADMIN_GROUP_NAME } = process.env;
+
+  useEffect(() => {
+    setIsAdmin(groups?.includes(ADMIN_GROUP_NAME));
+  }, [ADMIN_GROUP_NAME, setIsAdmin]);
+
+  useEffect(() => {
+    setCurrentTab(isAdmin ? "Unassigned" : "Completed");
+  }, [isAdmin]);
+
+  const handleTabEvents = (tab) => {
+    setCurrentTab(tab.target.innerText);
+  };
 
   const Summary = () => {
     return (
@@ -57,36 +79,6 @@ function NormalizationDashboard() {
     setErrorToast(error);
   };
 
-  const styles = [
-    "BHNJ234",
-    "CGHD23Y",
-    "WUSJ903",
-    "DFWY126",
-    "DJEKI973",
-    "JSNJF274",
-    "OGDT23Y",
-    "SUWJ948",
-    "DHFY117",
-    "BHNJ234",
-    "CGHD23Y",
-    "WUSJ903",
-    "DFWY126",
-    "DJEKI973",
-    "JSNJF274",
-    "OGDT23Y",
-    "SUWJ948",
-    "DHFY117",
-    "BHNJ234",
-    "CGHD23Y",
-    "WUSJ903",
-    "DFWY126",
-    "DJEKI973",
-    "JSNJF274",
-    "OGDT23Y",
-    "SUWJ948",
-    "DHFY117"
-  ];
-
   useEffect(() => {
     if (styleAssigned) {
       showTopCenter();
@@ -96,50 +88,46 @@ function NormalizationDashboard() {
   return (
     <div className="bg-white pb-[20px]">
       <div className="mx-[5%]">
-        <StatusBarsForNormalization isAdmin={isAdmin}/>
-      <div className="mt-[40px]">
-        <GlobalSearch searchString={"Search"} inputClasses={"bg-white w-full h-[64px] items-center pl-[24px] text-sm placeholder-gray-20 rounded border border-grey-30 shadow"}
-        buttonClasses={"text-white bg-black h-[64px] w-[131px] rounded ml-2"} />
-      </div>
-      <div className="mt-[49px]">
-        <WriterDashBoardTabs handleTabEvents={handleTabEvents} currentTab={currentTab} isAdmin={isAdmin}/>
-      </div>
-      <div className="mt-[49px]">
-        <Table currentTab={currentTab} setCustomers={setCustomers} isAdmin={isAdmin} customers={customers} preText={"< Prev"} nextText={"Next >"} currentPage={currentPage} setCurrentPage={setCurrentPage}/>
-      </div>
-      <div>
-        <button
-          aria-label="temp-assign-button-writer"
-          className="ml-[20px]"
-          onClick={() => {
-            setIsModalVisible(!isModalVisible);
-            setAssigneeType("writers");
-          }}
-        >
-          Assign to Writer
-        </button>
-        <button
-          aria-label="temp-assign-button-editor"
-          className="ml-[20px] mr-[20px]"
-          onClick={() => {
-            setIsModalVisible(!isModalVisible);
-            setAssigneeType("editors");
-          }}
-        >
-          Assign to Editor
-        </button>
-        <Link
-          to={"/styleDetails"}
-          className="mr-[20px]"
-          state={{ quickFix: true, styleId: "CGHD23YYZZ" }}
-        >
-          Quick Fix for CGHD23YYZZ
-        </Link>
-        <Link to={"/styleDetails"}>Style details for CGHD23YYZZ</Link>
+        <StatusBarsForNormalization isAdmin={isAdmin} />
+        <div className="mt-[40px]">
+          <GlobalSearch
+            searchString={"Search"}
+            inputClasses={
+              "bg-white w-full h-[64px] items-center pl-[24px] text-sm placeholder-gray-20 rounded border border-grey-30 shadow"
+            }
+            buttonClasses={
+              "text-white bg-black h-[64px] w-[131px] rounded ml-2"
+            }
+          />
+        </div>
+        <div className="mt-[49px]">
+          <WriterDashBoardTabs
+            handleTabEvents={handleTabEvents}
+            currentTab={currentTab}
+            isAdmin={isAdmin}
+          />
+        </div>
+        <div className="mt-[49px]">
+          <Table
+            setWorkflowId={setWorkflowId}
+            setAssigneeType={setAssigneeType}
+            setStyleId={setStyleId}
+            setIsModalVisible={setIsModalVisible}
+            currentTab={currentTab}
+            setCustomers={setCustomers}
+            isAdmin={isAdmin}
+            customers={customers}
+            preText={"< Prev"}
+            nextText={"Next >"}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+          />
+        </div>
+
         {isModalVisible && (
           <AssignStyle
-            styles={assigneeType === "editors" ? ["ABCDRF"] : ["ABCDRF"]}
-            workflowId={"645cd39f165d71b6a35e3f33"}
+            styles={styleId}
+            workflowId={workflowId}
             userGroup={assigneeType}
             isModalVisible={isModalVisible}
             setIsModalVisible={setIsModalVisible}
@@ -147,11 +135,11 @@ function NormalizationDashboard() {
           />
         )}
         <Toast ref={toastBR} position="top-center" />
+        <div className="m-10">
+          {/* <GlobalSearch searchString={"Search"} /> */}
+        </div>
       </div>
-      <div className="m-10">
-        <GlobalSearch searchString={"Search"} />
-      </div>
-      </div>
+    </div>
   );
 }
 export default NormalizationDashboard;

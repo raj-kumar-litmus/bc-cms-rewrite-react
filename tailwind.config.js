@@ -19,6 +19,7 @@ export default {
         "grey-40": "#F4F6F8",
         "grey-50": "#f3f3f3",
         "grey-60": "#ECEDEF",
+        "grey-70": "#3C3C3C0D",
         white: "#ffffff"
       },
       fontSize: {
