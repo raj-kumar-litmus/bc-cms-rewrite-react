@@ -11,8 +11,8 @@ function WriterDashBoardTabs({handleTabEvents, currentTab, isAdmin}) {
             currentTab={currentTab}
             className={
               currentTab == "Unassigned"
-                ? "py-2 px-8 font-bold border-b-2 text-[14px]"
-                : "py-2 px-8"
+                ? "py-2 px-8 font-bold border-b-2 text-sm"
+                : "py-2 px-8 text-sm"
             }
           >
             {" "}
@@ -25,8 +25,8 @@ function WriterDashBoardTabs({handleTabEvents, currentTab, isAdmin}) {
           currentTab={currentTab}
           className={
             currentTab == "Completed"
-              ? "py-2 px-8 font-bold border-b-2 text-[14px]"
-              : "py-2 px-8"
+              ? "py-2 px-8 font-bold border-b-2 text-sm"
+              : "py-2 px-8 text-sm"
           }
         >
           {" "}
@@ -38,8 +38,8 @@ function WriterDashBoardTabs({handleTabEvents, currentTab, isAdmin}) {
           currentTab={currentTab}
           className={
             currentTab == "Assigned"
-              ? "py-2 px-8 font-bold border-b-2 text-[14px]"
-              : "py-2 px-8"
+              ? "py-2 px-8 font-bold border-b-2 text-sm"
+              : "py-2 px-8 text-sm"
           }
         >
           {" "}
@@ -51,8 +51,8 @@ function WriterDashBoardTabs({handleTabEvents, currentTab, isAdmin}) {
           currentTab={currentTab}
           className={
             currentTab == "InProgress"
-              ? "py-2 px-8 font-bold border-b-2 text-[14px]"
-              : "py-2 px-8"
+              ? "py-2 px-8 font-bold border-b-2 text-sm"
+              : "py-2 px-8 text-sm"
           }
         >
           {" "}
