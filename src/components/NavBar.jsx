@@ -81,7 +81,6 @@ function NavBar() {
                 <div className="mb-1">
                   <Button
                     dataTestId={"show-popup-button"}
-                    // onClick={handlPopup}
                   >
                     <div className="bg-white font-bold flex text-[18px] justify-center items-center text-[#2C2C2C] rounded-full border h-[54px] w-[54px]">
                       {name?.charAt(0)}
