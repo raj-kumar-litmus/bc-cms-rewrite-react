@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import configurations from "../config";
 
 // if the JWT token from Azure (on login) doesn't contain the group claims,
 // then we will call our back-end api which will generate a oauth token,
@@ -17,8 +16,7 @@ function Token() {
   const [memberGroups, setMemberGroups] = useState(null);
   const { search } = useLocation();
 
-  const { msGraphHostName, hostnameServer } =
-    configurations[process.env.NODE_ENV];
+  const { msGraphHostName, hostnameServer } = process.env;
 
   const fetchUserId = (token) => {
     const requestOptions = {

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28">
+  <g id="Group_302" data-name="Group 302" transform="translate(-779 -812)">
+    <g id="Ellipse_12" data-name="Ellipse 12" transform="translate(779 812)" fill="none" stroke="#fc5556" stroke-width="2">
+      <circle cx="14" cy="14" r="14" stroke="none"/>
+      <circle cx="14" cy="14" r="13" fill="none"/>
+    </g>
+    <path id="Size_32_Theme_Regular" data-name="Size=32, Theme=Regular" d="M11.431,4.1a.333.333,0,1,1,.471.471L8.472,8,11.9,11.431a.333.333,0,1,1-.471.471L8,8.472,4.569,11.9a.333.333,0,1,1-.471-.471L7.529,8,4.1,4.569A.333.333,0,0,1,4.569,4.1L8,7.529Z" transform="translate(784.998 818)" fill="#fc5556" stroke="#fc5556" stroke-width="1"/>
+  </g>
+</svg>

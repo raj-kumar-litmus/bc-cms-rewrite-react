@@ -10,17 +10,20 @@ function SSOLogin() {
   const [accountDetails, setAccountDetails] = useState(null);
   const [userGroups, setUserGroups] = useSessionStorage("userGroups");
   const [userName, setUserName] = useSessionStorage("userName");
+  const [userEmail, setUserEmail] = useSessionStorage("userEmail");
+  const [account, setAccount] = useSessionStorage("accountDetails");
 
   useEffect(() => {
     if (accountDetails) {
       setUserGroups(accountDetails?.idTokenClaims?.groups);
       setUserName(accountDetails?.idTokenClaims?.name);
+      setUserEmail(accountDetails?.idTokenClaims?.preferred_username);
+      setAccount(accountDetails);
       navigate("/menuChooser");
     }
   }, [accountDetails]);
 
   useEffect(() => {
-    // Account selection logic is app dependent. Adjust as needed for different use cases.
     // Set active acccount on page load
     const accounts = msalInstance.getAllAccounts();
     if (accounts.length > 0) {

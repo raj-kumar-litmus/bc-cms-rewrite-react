@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import useSessionStorage from "../hooks/useSessionStorage";
-import NormalizationImg from "../logos/Normalization-img.svg";
-import SizingAppImg from "../logos/SizingApp-img.svg";
+import NormalizationImg from "../logos/writer-interface-menu-chooser.svg";
+import SizingAppImg from "../logos/sizing-app-chooser.svg";
 import ChoosingAppArrow from "../logos/ChoosingApp-arrow.svg";
 import MenuChooserAppDetails from "./MenuChooserAppDetails";
 const {

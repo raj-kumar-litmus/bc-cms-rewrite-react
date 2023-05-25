@@ -1,19 +1,22 @@
 import React from "react";
 
-const Loader = () => {
+const Loader = ({ className }) => {
   return (
-    <div className="flex flex-col h-screen justify-center items-center">
+    <div
+      aria-label="Loader"
+      className={`${className} flex flex-col h-screen justify-center items-center`}
+    >
       <svg
         version="1.1"
         id="loader-1"
         xmlns="http://www.w3.org/2000/svg"
-        xmlns:xlink="http://www.w3.org/1999/xlink"
+        xmlnsXlink="http://www.w3.org/1999/xlink"
         x="0px"
         y="0px"
         width="80px"
         height="80px"
         viewBox="0 0 50 50"
-        xml:space="preserve"
+        xmlSpace="preserve"
       >
         <path
           fill="#000"

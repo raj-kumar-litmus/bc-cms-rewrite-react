@@ -1,15 +1,15 @@
+import React from "react";
 
-import React from 'react';
-
-function Button({onClick, className, dataTestId, children}) {
+function Button({ onClick, ariaLabel, className, dataTestId, children }) {
   return (
-             <button
-               onClick={onClick}
-               className={className}
-               data-testid={dataTestId}
-             >
-              {children}
-             </button>
+    <button
+      aria-label={ariaLabel}
+      onClick={onClick}
+      className={className}
+      data-testid={dataTestId}
+    >
+      {children}
+    </button>
   );
 }
 export default Button;
