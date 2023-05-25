@@ -1,16 +1,19 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { DashBoardContext } from "../context/normalizationDashboard";
 import Edit from "../logos/Edit.svg";
 import AssignToEditor from "../logos/AssignToEditor.svg";
 import AssignToWriter from "../logos/AssignToWriter.svg";
 
 function MoreIcon({
   rowData,
-  setIsModalVisible,
-  setAssigneeType,
-  setStyleId,
-  setWorkflowId
+  // setIsModalVisible,
+  setAssigneeType
+  // setStyleId,
+  // setWorkflowId
 }) {
+  const { setWorkflowId, setStyleId, setIsModalVisible } =
+    useContext(DashBoardContext);
   const navigate = useNavigate();
   const handleQuickFix = () => {
     navigate("/styleDetails", {

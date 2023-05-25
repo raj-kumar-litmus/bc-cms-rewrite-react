@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
+import { DashBoardContext } from "../context/normalizationDashboard.jsx";
 import { Toast } from "primereact/toast";
 import { useNavigate } from "react-router-dom";
 import StatusBarsForNormalization from "./StatusBarsForNormalization.jsx";
@@ -13,23 +14,27 @@ import useSessionStorage from "../hooks/useSessionStorage";
 function NormalizationDashboard() {
   const toastBR = useRef(null);
   const navigate = useNavigate();
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  // const [isModalVisible, setIsModalVisible] = useState(false);
   const [styleAssigned, setStyleAssigned] = useState(false);
   const [assigneeType, setAssigneeType] = useState("writers");
-  const [styleId, setStyleId] = useState(null);
+  // const [styleId, setStyleId] = useState(null);
   const [assignee, setAssignee] = useState(null);
   const [userGroup, setUserGroup] = useState(null);
   const [errorToast, setErrorToast] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [currentTab, setCurrentTab] = useState("Completed");
   const [customers, setCustomers] = useState();
-  const [currentPage, setCurrentPage] = useState(1);
+  // const [currentPage, setCurrentPage] = useState(1);
   const [groups] = useSessionStorage("userGroups");
   const [accountDetails] = useSessionStorage("accountDetails");
   const [workflowId, setWorkflowId] = useState(null);
   const [loader, setLoader] = useState(true);
   const [selectedProducts, setSelectedProducts] = useState([]);
+  // const [workflowId, setWorkflowId] = useState(null);
   const { VITE_ADMIN_GROUP_NAME: ADMIN_GROUP_NAME } = process.env;
+
+  const { styleId, setStyleId, isModalVisible, setIsModalVisible } =
+    useContext(DashBoardContext);
 
   useEffect(() => {
     setIsAdmin(groups?.includes(ADMIN_GROUP_NAME));
@@ -48,7 +53,7 @@ function NormalizationDashboard() {
   const handleTabEvents = (tab) => {
     setCurrentPage(1);
     setCurrentTab(tab.target.innerText);
-    setSelectedProducts([])
+    setSelectedProducts([]);
   };
 
   const Summary = () => {
@@ -124,29 +129,30 @@ function NormalizationDashboard() {
             loader={loader}
             setLoader={setLoader}
             setWorkflowId={setWorkflowId}
+            // setWorkflowId={setWorkflowId}
             setAssigneeType={setAssigneeType}
-            setStyleId={setStyleId}
-            setIsModalVisible={setIsModalVisible}
+            // setStyleId={setStyleId}
+            // setIsModalVisible={setIsModalVisible}
             currentTab={currentTab}
             setCustomers={setCustomers}
             isAdmin={isAdmin}
             customers={customers}
-            preText={"< Prev"}
-            nextText={"Next >"}
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
             selectedProducts={selectedProducts}
             setSelectedProducts={setSelectedProducts}
+            // preText={"< Prev"}
+            // nextText={"Next >"}
+            // currentPage={currentPage}
+            // setCurrentPage={setCurrentPage}
           />
         </div>
 
         {isModalVisible && (
           <AssignStyle
-            styles={styleId}
-            workflowId={workflowId}
+            // styles={styleId}
+            // workflowId={workflowId}
             userGroup={assigneeType}
-            isModalVisible={isModalVisible}
-            setIsModalVisible={setIsModalVisible}
+            // isModalVisible={isModalVisible}
+            // setIsModalVisible={setIsModalVisible}
             setStyleAssigned={styleAssignedHandler}
           />
         )}

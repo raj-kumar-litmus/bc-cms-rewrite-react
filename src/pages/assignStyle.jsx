@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
+import { DashBoardContext } from "../context/normalizationDashboard";
 import Modal from "../components/Modal";
 import DropDown from "../components/BasicDropdown";
 import WordBetweenHorizontalLine from "../components/WordBetweenHorizontalLine";
@@ -8,10 +9,10 @@ import useSessionStorage from "../hooks/useSessionStorage";
 import Loader from "../components/loader";
 
 function AssignStyle({
-  styles,
-  workflowId,
-  isModalVisible,
-  setIsModalVisible,
+  // styles,
+  // workflowId,
+  // isModalVisible,
+  // setIsModalVisible,
   setStyleAssigned,
   userGroup = "writers"
 }) {
@@ -30,6 +31,12 @@ function AssignStyle({
   const [assigneeName, SetAssigneeName] = useState(null);
   const [clearValue, setClearValue] = useState(false);
   const [accountDetails] = useSessionStorage("accountDetails");
+  const {
+    workflowId,
+    styleId: styles,
+    isModalVisible,
+    setIsModalVisible
+  } = useContext(DashBoardContext) || {};
 
   const buildStyleStrings = () => {
     if (styles.length < 10) {
@@ -131,6 +138,11 @@ function AssignStyle({
     setIsActiveDropdown(false);
     buildStyleStrings();
   }, []);
+
+  useEffect(() => {
+    console.log("styles has changed");
+    console.log(styles);
+  }, [styles]);
 
   const onSubmitHandler = async () => {
     setShowLoader(true);
