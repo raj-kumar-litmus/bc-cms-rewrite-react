@@ -3,10 +3,10 @@ import Button from './Button';
 
 function GlobalSearch({searchString, inputClasses, buttonClasses}) {
     return (
-          <form className="flex">  
-            <input type="search" className={inputClasses} placeholder="Search by Style or Title or Brand"/>
+          <div className="flex">  
+            <input className={inputClasses} placeholder="Search by Style or Title or Brand"/>
             <Button className={buttonClasses}> {searchString} </Button>
-         </form>
+         </div>
     );
   }
   export default GlobalSearch;

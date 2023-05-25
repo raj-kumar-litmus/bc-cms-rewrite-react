@@ -20,10 +20,10 @@ export default {
         "grey-50": "#f3f3f3",
         "grey-60": "#ECEDEF",
         "grey-70": "#3C3C3C0D",
-        white: "#ffffff"
+        white: "#FFFFFF"
       },
       fontSize: {
-        sm: "0.8rem",
+        sm: "14px",
         xs: "1rem",
         xl: "1.25rem",
         "2xl": "1.563rem",
