@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Toast } from "primereact/toast";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import StatusBarsForNormalization from "./StatusBarsForNormalization.jsx";
 import GlobalSearch from "./GlobalSearch.jsx";
 import WriterDashBoardTabs from "./WriterDashBoardTabs.jsx";
@@ -12,6 +12,7 @@ import useSessionStorage from "../hooks/useSessionStorage";
 
 function NormalizationDashboard() {
   const toastBR = useRef(null);
+  const navigate = useNavigate();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [styleAssigned, setStyleAssigned] = useState(false);
   const [assigneeType, setAssigneeType] = useState("writers");
@@ -25,6 +26,7 @@ function NormalizationDashboard() {
   const [customers, setCustomers] = useState();
   const [currentPage, setCurrentPage] = useState(1);
   const [groups] = useSessionStorage("userGroups");
+  const [accountDetails] = useSessionStorage("accountDetails");
   const [workflowId, setWorkflowId] = useState(null);
   const [loader, setLoader] = useState(true);
   const { VITE_ADMIN_GROUP_NAME: ADMIN_GROUP_NAME } = process.env;
@@ -36,6 +38,12 @@ function NormalizationDashboard() {
   useEffect(() => {
     setCurrentTab(isAdmin ? "Unassigned" : "Completed");
   }, [isAdmin]);
+
+  useEffect(() => {
+    if (!accountDetails?.idTokenClaims?.exp) {
+      navigate("/");
+    }
+  }, [accountDetails]);
 
   const handleTabEvents = (tab) => {
     setCurrentPage(1);
