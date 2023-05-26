@@ -303,8 +303,15 @@ export default function Table({
     );
   };
 
+  const SelectAllLable=()=>{
+    return(
+      <div className="ml-[5px]">Select All</div>
+    )
+  }
+
   const brandRowFilterTemplate = () => {
     return (
+      <div>
       <MultiSelect
         value={selectedBrand}
         options={brands}
@@ -313,8 +320,11 @@ export default function Table({
         optionLabel="brand"
         placeholder="Brand"
         maxSelectedLabels={1}
+        filter
+        filterTemplate={SelectAllLable}
         style={{ width: "100px" }}
       />
+      </div>
     );
   };
 
