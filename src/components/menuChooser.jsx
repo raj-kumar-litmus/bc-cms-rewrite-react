@@ -59,14 +59,14 @@ function MenuChooser() {
           />
         )}
 
-        {/* {canAccessSizingApp && ( */}
+        {canAccessSizingApp && (
           <MenuChooserAppDetails
             img={SizingAppImg}
             title={"Sizing App"}
             choosingAppArrow={ChoosingAppArrow}
             displayContent={"Lorem ipsum dolor sit amet,consectetur adipiscing"}
           />
-        {/* )} */}
+        )}
       </div>
     </div>
   );
