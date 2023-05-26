@@ -217,10 +217,10 @@ export default function Table({
                 setAssigneeType("writers");
               }}
             >
-            <span className="bg-white flex rounded-full justify-center items-center border w-[30px] h-[30px] border-grey-30 mr-1">
-             <img alt={`AssignToWriter svg`} src={AssignToWriter} />
+            <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
+             <img alt={`AssignToWriter svg`} src={AssignToWriter} className="w-[15px] h-[15px]" />
             </span>
-              <span>Assign to Writer</span>
+              <span className="text-sm font-['Aktiv Grotesk'] text-[#2C2C2C] font-semibold text-opacity-1">Assign To Writer</span>
             </button>}
          
             {currentTab == "Completed" && <button
@@ -232,9 +232,9 @@ export default function Table({
               }}
             >
              <span className="bg-white flex rounded-full justify-center items-center border w-[30px] h-[30px] border-grey-30 mr-1">
-             <img alt={`AssignToEditor svg`} src={AssignToEditor} />
+             <img alt={`AssignToEditor svg`} src={AssignToEditor} className="w-[15px] h-[15px]"/>
             </span>
-              <span>Assign to Editor</span>
+              <span className="text-sm font-['Aktiv Grotesk'] text-[#2C2C2C] font-semibold text-opacity-1">Assign To Editor</span>
             </button>}
 
             {currentTab == "Unassigned" &&<button
@@ -245,10 +245,10 @@ export default function Table({
                 setAssigneeType("editors");
               }}
             >
-             <span className="bg-white flex rounded-full justify-center items-center border w-[30px] h-[30px] border-grey-30 mr-1">
-             <img alt={`AssigneEdit svg`} src={AssigneEdit} />
+             <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
+             <img alt={`AssigneEdit svg`} src={AssigneEdit} className="w-[15px] h-[15px]" />
             </span>
-              <span>Assign</span>
+              <span className="text-sm font-['Aktiv Grotesk'] text-[#2C2C2C] font-semibold text-opacity-1">Assign</span>
             </button>}
 
             {(currentTab == "Assigned" || currentTab == "InProgress") && <button
@@ -259,10 +259,10 @@ export default function Table({
                 setAssigneeType("editors");
               }}
             >
-             <span className="bg-white flex rounded-full justify-center items-center border w-[30px] h-[30px] border-grey-30 mr-1">
-             <img alt={`ReAssign svg`} src={ReAssign} />
+             <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
+             <img alt={`ReAssign svg`} src={ReAssign} className="w-[15px] h-[15px]" />
             </span>
-              <span>Reassign</span>
+              <span className="text-sm font-['Aktiv Grotesk'] text-[#2C2C2C] font-semibold text-opacity-1">Reassign</span>
             </button>}
           </>
         )}
@@ -414,7 +414,7 @@ export default function Table({
     return (
       <span>
         <button onClick={() => setShowFilters(!showFilters)}>
-          {!showFilters ? (
+          {showFilters ? (
             <div className="bg-black text-white text-sm rounded-full border h-8 w-8 flex justify-center items-center">
               <img alt={`${FilterIcon} svg`} src={FilterIcon} />
             </div>
@@ -594,6 +594,8 @@ export default function Table({
   };
 
   return (
+    <>
+    <div className="mb-[4px]">{renderHeader()}</div>
     <div className="border border-grey-30 text-sx">
       {loader && <Loader />}
       {!loader && (
@@ -605,7 +607,7 @@ export default function Table({
           filterDisplay={showFilters && "row"}
           onRowMouseEnter={onRowSelect}
           onRowMouseLeave={onRowUnselect}
-          header={selectedProducts.length > 1 && renderHeader}
+          // header={selectedProducts.length > 1 && renderHeader}
           footer={pagination}
           onSelectionChange={onSelectionChange}
           emptyMessage="No Workflows found."
@@ -739,5 +741,6 @@ export default function Table({
         </DataTable>
       )}
     </div>
+    </>
   );
 }
