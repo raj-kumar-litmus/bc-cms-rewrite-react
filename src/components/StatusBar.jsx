@@ -7,9 +7,9 @@ function StatusBarTail({ img, title, count, className }) {
         <img className={"w-[18px] h-[18px]"} src={img} alt="Assigned SVG" />
     </div>
     <div className="mx-4">
-        <p className="text-sm text-[#4D4D4D] font-['Aktiv Grotesk']">{title}</p>
+        <p className="text-sm text-[#4D4D4D]">{title}</p>
         {count >= 0 ?
-        <h2 className="font-['Aktiv Grotesk'] font-bold text-[#2C2C2C] text-[34px] w-[83px]">{count > 1000 ? `${(count)/1000}K` : count}</h2>
+        <h2 className="font-bold text-[#2C2C2C] text-[34px] w-[83px]">{count > 1000 ? `${(count)/1000}K` : count}</h2>
         : <Loader/>}
     </div>
 </div>
