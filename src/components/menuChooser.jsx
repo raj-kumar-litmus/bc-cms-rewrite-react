@@ -59,7 +59,7 @@ function MenuChooser() {
           />
         )}
 
-        {/* {canAccessSizingApp && ( */}
+        {canAccessSizingApp && (
           <MenuChooserAppDetails
             disableButton={true}
             img={SizingAppImg}
@@ -67,7 +67,7 @@ function MenuChooser() {
             choosingAppArrow={ChoosingAppArrow}
             displayContent={"Lorem ipsum dolor sit amet,consectetur adipiscing"}
           />
-        {/* )} */}
+        )}
       </div>
     </div>
   );
