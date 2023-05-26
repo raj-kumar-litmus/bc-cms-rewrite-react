@@ -12,8 +12,6 @@ import { Calendar } from "primereact/calendar";
 import { workFlowsUrl } from "../constants/index";
 import Pagination from "./Pagination";
 import AssigneEdit from "../logos/AssigneEdit.svg";
-import AssignToWriter from "../logos/AssignToWriter.svg";
-import AssignToEditor from "../logos/AssignToEditor.svg";
 import ReAssign from "../logos/ReAssign.svg";
 import Edit from "../logos/Edit.svg";
 import ArrowSort from "../logos/ArrowSort.svg";
@@ -28,7 +26,6 @@ import useSessionStorage from "../hooks/useSessionStorage";
 import { status } from "../constants/index";
 import AssignToEditor from "../logos/AssignToEditor.svg";
 import AssignToWriter from "../logos/AssignToWriter.svg";
-import ReAssign from "../logos/ReAssign.svg";
 
 
 export default function Table({

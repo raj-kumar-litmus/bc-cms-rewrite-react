@@ -11,7 +11,7 @@ function MenuChooserAppDetails({
 
   return (
     <div className="bg-white rounded-lg shadow m-10">
-      <button disabled={disableButton} onClick={() => navigate("/normalizationDashBoard")} className="w-[260px] px-[17px]">
+      <button disabled={disableButton} onClick={onClick} className="w-[260px] px-[17px]">
         <div className="pt-[16px]">
           <img src={img} alt="SizingAppImg SVG"/>
         </div>
