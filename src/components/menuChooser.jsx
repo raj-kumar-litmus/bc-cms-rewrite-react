@@ -35,14 +35,14 @@ function MenuChooser() {
   }, [accountDetails]);
 
   return (
-    <div className="bg-grey-40 h-screen text-center">
-      <h1 className="text-xs font-bold text-black pt-10">
+    <div className="bg-grey-40 h-screen">
+      <h1 className="text-xs text-center font-bold text-black pt-10">
         Choose the Application
       </h1>
 
       {canAccessWorkBenchApp && canAccessSizingApp && (
         <p className="text-sm mt-4">
-          You Have Permission to access Data Normalization and <br />
+          You Have Permission to access Data Normalization and
           Sizing app. You can select one from below
         </p>
       )}
