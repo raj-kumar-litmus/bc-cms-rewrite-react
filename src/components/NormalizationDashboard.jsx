@@ -20,7 +20,6 @@ function NormalizationDashboard() {
   const [assignee, setAssignee] = useState(null);
   const [userGroup, setUserGroup] = useState(null);
   const [errorToast, setErrorToast] = useState(false);
-
   const [isAdmin, setIsAdmin] = useState(false);
   const [currentTab, setCurrentTab] = useState("Completed");
   const [customers, setCustomers] = useState();
@@ -29,6 +28,7 @@ function NormalizationDashboard() {
   const [accountDetails] = useSessionStorage("accountDetails");
   const [workflowId, setWorkflowId] = useState(null);
   const [loader, setLoader] = useState(true);
+  const [selectedProducts, setSelectedProducts] = useState([]);
   const { VITE_ADMIN_GROUP_NAME: ADMIN_GROUP_NAME } = process.env;
 
   useEffect(() => {
@@ -48,6 +48,7 @@ function NormalizationDashboard() {
   const handleTabEvents = (tab) => {
     setCurrentPage(1);
     setCurrentTab(tab.target.innerText);
+    setSelectedProducts([])
   };
 
   const Summary = () => {
@@ -134,6 +135,8 @@ function NormalizationDashboard() {
             nextText={"Next >"}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
+            selectedProducts={selectedProducts}
+            setSelectedProducts={setSelectedProducts}
           />
         </div>
 

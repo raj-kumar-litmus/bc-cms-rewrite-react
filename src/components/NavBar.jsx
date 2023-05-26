@@ -69,9 +69,9 @@ function NavBar() {
 
         <div className="mr-2">
           <Button onClick={handlPopup}>
-            <div className="bg-white text-black text-sm rounded-full border border-[#2C2C2C] h-8 w-8 px-1 py-1 font-bold">
+          <div className="bg-white font-bold flex text-[18px] justify-center items-center text-[#2C2C2C] rounded-full border h-[50px] w-[50px]">
               {name?.charAt(0)}
-            </div>
+          </div>
           </Button>
         </div>
         {showPopup && (
@@ -81,7 +81,6 @@ function NavBar() {
                 <div className="mb-1">
                   <Button
                     dataTestId={"show-popup-button"}
-                    // onClick={handlPopup}
                   >
                     <div className="bg-white font-bold flex text-[18px] justify-center items-center text-[#2C2C2C] rounded-full border h-[54px] w-[54px]">
                       {name?.charAt(0)}
