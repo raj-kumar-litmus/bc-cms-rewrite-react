@@ -25,6 +25,8 @@ import useSessionStorage from "../hooks/useSessionStorage";
 import { status } from "../constants/index";
 import AssignToEditor from "../logos/AssignToEditor.svg";
 import AssignToWriter from "../logos/AssignToWriter.svg";
+import ReAssign from "../logos/ReAssign.svg";
+
 
 export default function Table({
   loader,
