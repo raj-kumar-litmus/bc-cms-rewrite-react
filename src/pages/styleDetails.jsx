@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import useSessionStorage from "../hooks/useSessionStorage";
 import DropDown from "../components/BasicDropdown";
 import MultiSelectDropDown from "../components/DropDown";
 import Button from "../components/Button";
@@ -12,9 +13,15 @@ import BackLogo from "../logos/chevron-down.svg";
 export default function StyleDetails({ quickFix = false, styleId }) {
   const location = useLocation();
   const navigate = useNavigate();
+  const [accountDetails] = useSessionStorage("accountDetails");
   const { quickFix: quickFixFromLink, styleId: styleIdFromQuickFix } =
     location.state || {};
   const quick = quickFixFromLink || quickFix;
+  useEffect(() => {
+    if (!accountDetails?.idTokenClaims?.exp) {
+      navigate("/");
+    }
+  }, [accountDetails]);
   return (
     <>
       <NavBar />

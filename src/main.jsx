@@ -24,8 +24,6 @@ const StyleDetails = lazy(() => import("./pages/styleDetails"));
 const Loader = lazy(() => import("./components/loader"));
 
 const root = createRoot(document.getElementById("root"));
-const account = JSON.parse(window.sessionStorage.getItem("accountDetails"));
-const canAccess = account?.idTokenClaims?.exp;
 
 root.render(
   <Router>
@@ -34,13 +32,7 @@ root.render(
         <Route path="/" element={<SSOLogin />} />
         <Route
           path="/styleDetails"
-          element={
-            canAccess ? (
-              <StyleDetails quickFix={false} styleId="CGHD23Y" />
-            ) : (
-              <Navigate replace to="/" />
-            )
-          }
+          element={<StyleDetails quickFix={false} styleId="CGHD23Y" />}
         />
         <Route path="/redirect/web" element={<Token />} />
         <Route
@@ -55,34 +47,26 @@ root.render(
         <Route
           path="/normalizationDashBoard"
           element={
-            canAccess ? (
-              <>
-                <NavBar />
-                <NormalizationDashboard />
-              </>
-            ) : (
-              <Navigate replace to="/" />
-            )
+            <>
+              <NavBar />
+              <NormalizationDashboard />
+            </>
           }
         />
         <Route
           path="/manualWorkFlowDashboard"
           element={
-            canAccess ? (
-              <>
-                <NavBar />
-                <ManualWorkFlowDashboard
-                  backButtonString={"<Back"}
-                  searchTest={"Search"}
-                  alertText={"Style DGET233 and FWPT1Y3 are doesn’t exist"}
-                  displayTest={
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et d"
-                  }
-                />
-              </>
-            ) : (
-              <Navigate replace to="/" />
-            )
+            <>
+              <NavBar />
+              <ManualWorkFlowDashboard
+                backButtonString={"<Back"}
+                searchTest={"Search"}
+                alertText={"Style DGET233 and FWPT1Y3 are doesn’t exist"}
+                displayTest={
+                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et d"
+                }
+              />
+            </>
           }
         />
       </Routes>

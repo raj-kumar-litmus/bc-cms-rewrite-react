@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import useSessionStorage from "../hooks/useSessionStorage";
 import NormalizationImg from "../logos/writer-interface-menu-chooser.svg";
 import SizingAppImg from "../logos/sizing-app-chooser.svg";
@@ -12,9 +13,11 @@ const {
 } = process.env;
 
 function MenuChooser() {
+  const navigate = useNavigate();
   const [canAccessSizingApp, setAccessSizingApp] = useState(false);
   const [canAccessWorkBenchApp, setAccessWorkBenchApp] = useState(false);
   const [groups] = useSessionStorage("userGroups");
+  const [accountDetails] = useSessionStorage("accountDetails");
 
   useEffect(() => {
     setAccessSizingApp(groups?.includes(SIZING_APP_GROUP_NAME));
@@ -24,6 +27,12 @@ function MenuChooser() {
         groups?.includes(EDITOR_GROUP_NAME)
     );
   }, [groups, setAccessSizingApp, setAccessWorkBenchApp]);
+
+  useEffect(() => {
+    if (!accountDetails?.idTokenClaims?.exp) {
+      navigate("/");
+    }
+  }, [accountDetails]);
 
   return (
     <div className="bg-grey-40 h-screen text-center">
