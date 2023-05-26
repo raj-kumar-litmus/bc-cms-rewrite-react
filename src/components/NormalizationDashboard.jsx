@@ -104,7 +104,7 @@ function NormalizationDashboard() {
           <GlobalSearch
             searchString={"Search"}
             inputClasses={
-              "bg-white w-full h-[64px] items-center pl-[24px] text-sm placeholder-gray-20-900 placeholder-opacity-1 rounded border border-grey-30 shadow"
+              "bg-white w-full h-[64px] items-center pl-[24px] text-sm placeholder-gray-20 placeholder-opacity-1 rounded border border-grey-30 shadow"
             }
             buttonClasses={
               "text-white bg-black h-[64px] text-sm w-[131px] rounded ml-2"

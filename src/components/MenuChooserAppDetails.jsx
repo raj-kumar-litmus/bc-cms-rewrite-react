@@ -15,10 +15,10 @@ function MenuChooserAppDetails({
           <img src={img} alt="SizingAppImg SVG"/>
         </div>
         <div className="text-left">
-          <h1 className="text-[16px] font-bold text-[#2C2C2C] text-['Aktiv Grotesk'] w-[180px] mt-[20px]">
+          <h1 className="text-[16px] font-bold text-[#2C2C2C] w-[180px] mt-[20px]">
             {title}
           </h1>
-          <p className="text-sm  text-left font-['Aktiv Grotesk'] text-[#4D4D4D] w-[193px] mt-[7px]">{displayContent}</p>
+          <p className="text-sm  text-left text-[#4D4D4D] w-[193px] mt-[7px]">{displayContent}</p>
         </div>
 
         <div>
