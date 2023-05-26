@@ -38,7 +38,9 @@ export default function Table({
   preText,
   nextText,
   currentPage,
-  setCurrentPage
+  setCurrentPage,
+  selectedProducts,
+  setSelectedProducts
 }) {
   const [searchByStyle, setSearchByStyle] = useState("");
   const [searchByTitle, setSearchByTitle] = useState("");
@@ -48,7 +50,6 @@ export default function Table({
   const [searchByUpdatedAt, setsearchByUpdatedAt] = useState(null);
   const [selectedBrand, setSelectedBrand] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
-  const [selectedProducts, setSelectedProducts] = useState([]);
   const [brands, setBrands] = useState([]);
   const [assigneeList, setAssignee] = useState([]);
   const [statuses, setStatus] = useState([]);
@@ -205,7 +206,7 @@ export default function Table({
       <div className="flex justify-content-end gap-4">
         {selectedProducts.length > 1 && (
           <>
-            <button
+            {currentTab == "Completed" && <button
               className="flex"
               onClick={() => {
                 setStyleId(selectedProducts.map((e) => e?.styleId));
@@ -217,9 +218,9 @@ export default function Table({
              <img alt={`AssignToWriter svg`} src={AssignToWriter} />
             </span>
               <span>Assign to Writer</span>
-            </button>
+            </button>}
          
-            <button
+            {currentTab == "Completed" && <button
               className="flex"
               onClick={() => {
                 setStyleId(selectedProducts.map((e) => e?.styleId));
@@ -231,7 +232,35 @@ export default function Table({
              <img alt={`AssignToEditor svg`} src={AssignToEditor} />
             </span>
               <span>Assign to Editor</span>
-            </button>
+            </button>}
+
+            {currentTab == "Unassigned" &&<button
+              className="flex"
+              onClick={() => {
+                setStyleId(selectedProducts.map((e) => e?.styleId));
+                setIsModalVisible(true);
+                setAssigneeType("editors");
+              }}
+            >
+             <span className="bg-white flex rounded-full justify-center items-center border w-[30px] h-[30px] border-grey-30 mr-1">
+             <img alt={`AssigneEdit svg`} src={AssigneEdit} />
+            </span>
+              <span>Assign</span>
+            </button>}
+
+            {(currentTab == "Assigned" || currentTab == "InProgress") && <button
+              className="flex"
+              onClick={() => {
+                setStyleId(selectedProducts.map((e) => e?.styleId));
+                setIsModalVisible(true);
+                setAssigneeType("editors");
+              }}
+            >
+             <span className="bg-white flex rounded-full justify-center items-center border w-[30px] h-[30px] border-grey-30 mr-1">
+             <img alt={`ReAssign svg`} src={ReAssign} />
+            </span>
+              <span>ReAssign</span>
+            </button>}
           </>
         )}
       </div>
@@ -266,7 +295,7 @@ export default function Table({
         options={statuses}
         onChange={handleStatus}
         itemTemplate={statusItemTemplate}
-        placeholder="Status"
+        placeholder="Select"
       />
     );
   };
@@ -279,7 +308,7 @@ export default function Table({
         options={assigneeList}
         onChange={handleAssign}
         itemTemplate={statusItemTemplate}
-        placeholder="Assignee"
+        placeholder="Select"
       />
     );
   };
@@ -317,7 +346,7 @@ export default function Table({
         itemTemplate={representativesItemTemplate}
         onChange={(e) => handleBrands(e.value)}
         optionLabel="brand"
-        placeholder="Brand"
+        placeholder="Select"
         maxSelectedLabels={1}
         filter
         filterTemplate={SelectAllLable}
@@ -697,7 +726,7 @@ export default function Table({
           />
           {currentTab !== "Completed" && (
             <Column
-              body={(e) => handleRowSelectIcons(e, AssigneEdit, "assign")}
+              body={(e) => handleRowSelectIcons(e, (currentTab == "Assigned" ||currentTab=="InProgress") ? ReAssign  : AssigneEdit, "assign")}
               style={{ width: "0%" }}
             />
           )}
