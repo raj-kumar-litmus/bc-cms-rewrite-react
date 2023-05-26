@@ -29,7 +29,7 @@ function ManualWorkFlowDashboard({
           {backButtonString}{" "}
         </Button>
         <div className="mt-4 text-center">
-          <h1 className="text-xs font-bold leading-tight tracking-tight text-gray-900">
+          <h1 className="text-sm font-bold leading-tight tracking-tight text-gray-900">
             Create Workflows
           </h1>
           <p className="text-sm m-6">{displayTest}</p>

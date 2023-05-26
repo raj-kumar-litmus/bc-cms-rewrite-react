@@ -20,7 +20,6 @@ function NormalizationDashboard() {
   const [assignee, setAssignee] = useState(null);
   const [userGroup, setUserGroup] = useState(null);
   const [errorToast, setErrorToast] = useState(false);
-
   const [isAdmin, setIsAdmin] = useState(false);
   const [currentTab, setCurrentTab] = useState("Completed");
   const [customers, setCustomers] = useState();
@@ -29,6 +28,7 @@ function NormalizationDashboard() {
   const [accountDetails] = useSessionStorage("accountDetails");
   const [workflowId, setWorkflowId] = useState(null);
   const [loader, setLoader] = useState(true);
+  const [selectedProducts, setSelectedProducts] = useState([]);
   const { VITE_ADMIN_GROUP_NAME: ADMIN_GROUP_NAME } = process.env;
 
   useEffect(() => {
@@ -48,6 +48,7 @@ function NormalizationDashboard() {
   const handleTabEvents = (tab) => {
     setCurrentPage(1);
     setCurrentTab(tab.target.innerText);
+    setSelectedProducts([])
   };
 
   const Summary = () => {
@@ -103,10 +104,10 @@ function NormalizationDashboard() {
           <GlobalSearch
             searchString={"Search"}
             inputClasses={
-              "bg-white w-full h-[64px] items-center pl-[24px] text-sm placeholder-gray-20 rounded border border-grey-30 shadow"
+              "bg-white w-full h-[64px] items-center pl-[24px] text-sm placeholder-gray-20 placeholder-opacity-1 rounded border border-grey-30 shadow"
             }
             buttonClasses={
-              "text-white bg-black h-[64px] w-[131px] rounded ml-2"
+              "text-white bg-black h-[64px] text-sm w-[131px] rounded ml-2"
             }
           />
         </div>
@@ -134,6 +135,8 @@ function NormalizationDashboard() {
             nextText={"Next >"}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
+            selectedProducts={selectedProducts}
+            setSelectedProducts={setSelectedProducts}
           />
         </div>
 

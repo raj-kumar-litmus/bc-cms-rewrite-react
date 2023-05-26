@@ -12,6 +12,9 @@ import { Calendar } from "primereact/calendar";
 import { workFlowsUrl } from "../constants/index";
 import Pagination from "./Pagination";
 import AssigneEdit from "../logos/AssigneEdit.svg";
+import AssignToWriter from "../logos/AssignToWriter.svg";
+import AssignToEditor from "../logos/AssignToEditor.svg";
+import ReAssign from "../logos/ReAssign.svg";
 import Edit from "../logos/Edit.svg";
 import ArrowSort from "../logos/ArrowSort.svg";
 import MoreIcons from "../logos/MoreIcons.svg";
@@ -23,6 +26,10 @@ import MoreIconPopUp from "./MoreIcon";
 import Loader from "../components/loader";
 import useSessionStorage from "../hooks/useSessionStorage";
 import { status } from "../constants/index";
+import AssignToEditor from "../logos/AssignToEditor.svg";
+import AssignToWriter from "../logos/AssignToWriter.svg";
+import ReAssign from "../logos/ReAssign.svg";
+
 
 export default function Table({
   loader,
@@ -38,7 +45,9 @@ export default function Table({
   preText,
   nextText,
   currentPage,
-  setCurrentPage
+  setCurrentPage,
+  selectedProducts,
+  setSelectedProducts
 }) {
   const [searchByStyle, setSearchByStyle] = useState("");
   const [searchByTitle, setSearchByTitle] = useState("");
@@ -48,7 +57,6 @@ export default function Table({
   const [searchByUpdatedAt, setsearchByUpdatedAt] = useState(null);
   const [selectedBrand, setSelectedBrand] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
-  const [selectedProducts, setSelectedProducts] = useState([]);
   const [brands, setBrands] = useState([]);
   const [assigneeList, setAssignee] = useState([]);
   const [statuses, setStatus] = useState([]);
@@ -64,8 +72,8 @@ export default function Table({
   const [isRowSelected, setIsRowSelected] = useState(false);
   const [isStatusSelected, setIsStatusSelected] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
-  const navigate = useNavigate();
   const [userEmail] = useSessionStorage("userEmail");
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage}&unique=brand`, {
@@ -135,7 +143,7 @@ export default function Table({
         ...(searchByTitle && { title: searchByTitle }),
         ...(newSelectedBrand.length && { brand: newSelectedBrand }),
         ...(searchByUpdatedBy && { lastUpdatedBy: searchByUpdatedBy }),
-        ...(searchByAssignee && { assignee: searchByAssignee }),
+        ...((searchByAssignee || !isAdmin) && {assignee: !isAdmin  ? userEmail : searchByAssignee }),
         ...(searchByUpdatedAt && { lastUpdateTs: finalDate }),
         status: isStatusSelected ? [searchByStatus] : status
       },
@@ -202,33 +210,64 @@ export default function Table({
 
   const renderHeader = () => {
     return (
-      <div className="flex flex-wrap justify-content-end gap-2">
+      <div className="flex justify-content-end gap-4">
         {selectedProducts.length > 1 && (
           <>
-            <button
+            {currentTab == "Completed" && <button
+              className="flex"
               onClick={() => {
                 setStyleId(selectedProducts.map((e) => e?.styleId));
                 setIsModalVisible(true);
                 setAssigneeType("writers");
               }}
             >
-              <span className="bg-white text-black rounded-full border h-8 w-8 px-1 py-1">
-                <i className="pi pi-user-plus" />
-              </span>
-              <span>Assign to Writer</span>
-            </button>
-            <button
+            <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
+             <img alt={`AssignToWriter svg`} src={AssignToWriter} className="w-[15px] h-[15px]" />
+            </span>
+              <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">Assign To Writer</span>
+            </button>}
+         
+            {currentTab == "Completed" && <button
+              className="flex"
               onClick={() => {
                 setStyleId(selectedProducts.map((e) => e?.styleId));
                 setIsModalVisible(true);
                 setAssigneeType("editors");
               }}
             >
-              <span className="bg-white text-black rounded-full border h-8 w-8 px-1 py-1">
-                <i className="pi pi-user-plus" />
-              </span>
-              <span>Assign to Editor</span>
-            </button>
+             <span className="bg-white flex rounded-full justify-center items-center border w-[30px] h-[30px] border-grey-30 mr-1">
+             <img alt={`AssignToEditor svg`} src={AssignToEditor} className="w-[15px] h-[15px]"/>
+            </span>
+              <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">Assign To Editor</span>
+            </button>}
+
+            {currentTab == "Unassigned" &&<button
+              className="flex"
+              onClick={() => {
+                setStyleId(selectedProducts.map((e) => e?.styleId));
+                setIsModalVisible(true);
+                setAssigneeType("editors");
+              }}
+            >
+             <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
+             <img alt={`AssigneEdit svg`} src={AssigneEdit} className="w-[15px] h-[15px]" />
+            </span>
+              <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">Assign</span>
+            </button>}
+
+            {(currentTab == "Assigned" || currentTab == "InProgress") && <button
+              className="flex"
+              onClick={() => {
+                setStyleId(selectedProducts.map((e) => e?.styleId));
+                setIsModalVisible(true);
+                setAssigneeType("editors");
+              }}
+            >
+             <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
+             <img alt={`ReAssign svg`} src={ReAssign} className="w-[15px] h-[15px]" />
+            </span>
+              <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">Reassign</span>
+            </button>}
           </>
         )}
       </div>
@@ -258,12 +297,12 @@ export default function Table({
   const statusRowFilterTemplate = () => {
     return (
       <Dropdown
-        style={{ width: "100px" }}
+        style={{ width: "185px" }}
         value={searchByStatus}
         options={statuses}
         onChange={handleStatus}
         itemTemplate={statusItemTemplate}
-        placeholder="Status"
+        placeholder="Select"
       />
     );
   };
@@ -276,7 +315,7 @@ export default function Table({
         options={assigneeList}
         onChange={handleAssign}
         itemTemplate={statusItemTemplate}
-        placeholder="Assignee"
+        placeholder="Select"
       />
     );
   };
@@ -301,16 +340,18 @@ export default function Table({
 
   const brandRowFilterTemplate = () => {
     return (
+      <div>
       <MultiSelect
         value={selectedBrand}
         options={brands}
         itemTemplate={representativesItemTemplate}
         onChange={(e) => handleBrands(e.value)}
         optionLabel="brand"
-        placeholder="Brand"
+        placeholder="Select"
         maxSelectedLabels={1}
         style={{ width: "100px" }}
       />
+      </div>
     );
   };
 
@@ -334,16 +375,17 @@ export default function Table({
 
   const dateFilterTemplate = () => {
     return (
-      <span className="w-[100%] min-w-[80px] relative">
-        <img
+      <span className="w-[100%] relative">
+        {!searchByUpdatedAt &&<img
           alt={`${CalendarIcon} svg`}
           src={CalendarIcon}
           className="absolute right-2 top-4 z-10"
-        />
+        />}
         <Calendar
           value={searchByUpdatedAt}
           onChange={handleCalanderChange}
           className={Boolean && "p-calendar p-component p-inputwrapper"}
+          style={{minWidth: "60px"}}
         />
       </span>
     );
@@ -368,7 +410,7 @@ export default function Table({
     return (
       <span>
         <button onClick={() => setShowFilters(!showFilters)}>
-          {!showFilters ? (
+          {showFilters ? (
             <div className="bg-black text-white text-sm rounded-full border h-8 w-8 flex justify-center items-center">
               <img alt={`${FilterIcon} svg`} src={FilterIcon} />
             </div>
@@ -548,6 +590,8 @@ export default function Table({
   };
 
   return (
+    <>
+    <div className="mb-[4px]">{renderHeader()}</div>
     <div className="border border-grey-30 text-sx">
       {loader && <Loader />}
       {!loader && (
@@ -559,7 +603,6 @@ export default function Table({
           filterDisplay={showFilters && "row"}
           onRowMouseEnter={onRowSelect}
           onRowMouseLeave={onRowUnselect}
-          header={selectedProducts.length > 1 && renderHeader}
           footer={pagination}
           onSelectionChange={onSelectionChange}
           emptyMessage="No Workflows found."
@@ -683,19 +726,16 @@ export default function Table({
           />
           {currentTab !== "Completed" && (
             <Column
-              body={(e) => handleRowSelectIcons(e, AssigneEdit, "assign")}
+              body={(e) => handleRowSelectIcons(e, (currentTab == "Assigned" ||currentTab=="InProgress") ? ReAssign  : AssigneEdit, "assign")}
               style={{ width: "0%" }}
             />
           )}
-          {/* <Column
-            body={(e) => handleRowSelectIcons(e, MoreIcons, "more")}
-            style={{ width: "0%" }}
-          /> */}
           {currentTab === "Completed" && (
             <Column body={handleMoreIcon} style={{ width: "0%" }} />
           )}
         </DataTable>
       )}
     </div>
+    </>
   );
 }

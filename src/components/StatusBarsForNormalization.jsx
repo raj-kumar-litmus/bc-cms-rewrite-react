@@ -19,7 +19,7 @@ function StatusBarsForNormalization({isAdmin}) {
     }, []);
 
   return (
-    <div className={isAdmin? "grid grid-cols-4 gap-2" : "grid grid-cols-3 gap-2"}>
+    <div className={isAdmin? "grid grid-cols-4 gap-4" : "grid grid-cols-3 gap-4"}>
    {isAdmin && (
     <StatusBar
        title={"Unassigned"}
