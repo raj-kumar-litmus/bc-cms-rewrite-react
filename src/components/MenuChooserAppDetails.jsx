@@ -1,17 +1,16 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 
 function MenuChooserAppDetails({
   title,
   img,
   choosingAppArrow,
-  displayContent
+  displayContent,
+  onClick
 }) {
-  const navigate = useNavigate();
 
   return (
     <div className="bg-white rounded-lg shadow m-10">
-      <button onClick={() => navigate("/normalizationDashBoard")} className="w-[260px] px-[17px]">
+      <button onClick={onClick} className="w-[260px] px-[17px]">
         <div className="pt-[16px]">
           <img src={img} alt="SizingAppImg SVG"/>
         </div>
