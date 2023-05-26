@@ -69,7 +69,7 @@ function NavBar() {
 
         <div className="mr-2">
           <Button onClick={handlPopup}>
-          <div className="bg-white font-bold flex text-[14px] justify-center items-center text-[#2C2C2C] rounded-full border h-[40px] w-[40px]">
+          <div className="bg-white font-bold flex text-[14px] justify-center items-center text-[#2C2C2C] rounded-full border border-[#2C2C2C] h-[40px] w-[40px]">
               {name?.charAt(0)}
           </div>
           </Button>
@@ -82,7 +82,7 @@ function NavBar() {
                   <Button
                     dataTestId={"show-popup-button"}
                   >
-                    <div className="bg-white font-bold flex text-[18px] justify-center items-center text-[#2C2C2C] rounded-full border h-[54px] w-[54px]">
+                    <div className="bg-white font-bold flex text-[18px] justify-center items-center text-[#2C2C2C] rounded-full border border-[#2C2C2C] h-[54px] w-[54px]">
                       {name?.charAt(0)}
                     </div>
                   </Button>
