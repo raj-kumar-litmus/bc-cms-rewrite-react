@@ -69,7 +69,7 @@ function NavBar() {
 
         <div className="mr-2">
           <Button onClick={handlPopup}>
-          <div className="bg-white font-bold flex text-[18px] justify-center items-center text-[#2C2C2C] rounded-full border h-[50px] w-[50px]">
+          <div className="bg-white font-bold flex text-[14px] justify-center items-center text-[#2C2C2C] rounded-full border h-[42px] w-[42px]">
               {name?.charAt(0)}
           </div>
           </Button>
@@ -89,7 +89,7 @@ function NavBar() {
                 </div>
 
                 <div className="mb-1">
-                  <p className="text-[18px] text-[#2C2C2C] font-bold">{name}</p>
+                  <p className="text-[18px] text-[#2C2C2C] font-bold text-['Aktiv Grotesk']">{name}</p>
                 </div>
 
                 <div>
