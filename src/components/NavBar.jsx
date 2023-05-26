@@ -48,7 +48,7 @@ function NavBar() {
                 dataTestId="manualflow-button"
                 onClick={() => navigate("/manualWorkFlowDashboard")}
               >
-                <div className="bg-black text-white text-sm rounded-full border h-8 w-8 px-1 py-1">
+                <div className="bg-black text-white font-bold rounded-full border flex justify-center items-center text-[14px]  h-[40px] w-[40px]">
                   {" "}
                   +{" "}
                 </div>
@@ -69,7 +69,7 @@ function NavBar() {
 
         <div className="mr-2">
           <Button onClick={handlPopup}>
-          <div className="bg-white font-bold flex text-[14px] justify-center items-center text-[#2C2C2C] rounded-full border h-[42px] w-[42px]">
+          <div className="bg-white font-bold flex text-[14px] justify-center items-center text-[#2C2C2C] rounded-full border h-[40px] w-[40px]">
               {name?.charAt(0)}
           </div>
           </Button>

@@ -12,6 +12,9 @@ import { Calendar } from "primereact/calendar";
 import { workFlowsUrl } from "../constants/index";
 import Pagination from "./Pagination";
 import AssigneEdit from "../logos/AssigneEdit.svg";
+import AssignToWriter from "../logos/AssignToWriter.svg";
+import AssignToEditor from "../logos/AssignToEditor.svg";
+import ReAssign from "../logos/ReAssign.svg";
 import Edit from "../logos/Edit.svg";
 import ArrowSort from "../logos/ArrowSort.svg";
 import MoreIcons from "../logos/MoreIcons.svg";
@@ -65,8 +68,8 @@ export default function Table({
   const [isRowSelected, setIsRowSelected] = useState(false);
   const [isStatusSelected, setIsStatusSelected] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
-  const navigate = useNavigate();
   const [userEmail] = useSessionStorage("userEmail");
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage}&unique=brand`, {
