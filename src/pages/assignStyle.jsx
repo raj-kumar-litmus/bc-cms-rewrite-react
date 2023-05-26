@@ -47,7 +47,7 @@ function AssignStyle({
     };
     try {
       const response = await fetch(uri, requestOptions);
-      const data = await response.json();
+      const { data } = await response.json();
       const { members } = data || {};
       setOptions(
         members?.map(({ displayName, mail }) => ({

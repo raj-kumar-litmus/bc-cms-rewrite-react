@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 
 function MenuChooserAppDetails({
+  disableButton = false,
   title,
   img,
   choosingAppArrow,
@@ -11,7 +12,10 @@ function MenuChooserAppDetails({
 
   return (
     <div className="bg-white rounded-lg shadow m-10 w-64">
-      <button onClick={() => navigate("/normalizationDashBoard")}>
+      <button
+        disabled={disableButton}
+        onClick={() => navigate("/normalizationDashBoard")}
+      >
         <div className="p-6 space-y-4">
           <img src={img} alt="SizingAppImg SVG" />
         </div>
