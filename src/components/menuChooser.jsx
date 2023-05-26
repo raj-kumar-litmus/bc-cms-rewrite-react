@@ -6,7 +6,7 @@ import SizingAppImg from "../logos/sizing-app-chooser.svg";
 import ChoosingAppArrow from "../logos/ChoosingApp-arrow.svg";
 import MenuChooserAppDetails from "./MenuChooserAppDetails";
 const {
-  VITE_SIZING_APP_GROUP_ID: SIZING_APP_GROUP_NAME,
+  VITE_SIZING_GROUP_NAME: SIZING_APP_GROUP_NAME,
   VITE_ADMIN_GROUP_NAME: ADMIN_GROUP_NAME,
   VITE_WRITER_GROUP_NAME: WRITER_GROUP_NAME,
   VITE_EDITOR_GROUP_NAME: EDITOR_GROUP_NAME
@@ -59,6 +59,7 @@ function MenuChooser() {
 
         {canAccessSizingApp && (
           <MenuChooserAppDetails
+            disableButton={true}
             img={SizingAppImg}
             title={"Sizing App"}
             choosingAppArrow={ChoosingAppArrow}
