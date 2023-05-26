@@ -1,7 +1,7 @@
 import React from "react";
 import Button from "./Button";
 
-function WriterDashBoardTabs({ loader, handleTabEvents, currentTab, isAdmin }) {
+function WriterDashBoardTabs({ loader, handleTabEvents, currentTab, isAdmin}) {
   return (
     <div className="text-sm border-b border-grey-30">
       <div className="flex">
