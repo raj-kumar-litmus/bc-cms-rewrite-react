@@ -338,12 +338,6 @@ export default function Table({
     );
   };
 
-  const SelectAllLable=()=>{
-    return(
-      <div className="ml-[5px]">Select All</div>
-    )
-  }
-
   const brandRowFilterTemplate = () => {
     return (
       <div>
@@ -355,8 +349,6 @@ export default function Table({
         optionLabel="brand"
         placeholder="Select"
         maxSelectedLabels={1}
-        filter
-        filterTemplate={SelectAllLable}
         style={{ width: "100px" }}
       />
       </div>
