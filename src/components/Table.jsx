@@ -297,7 +297,7 @@ export default function Table({
   const statusRowFilterTemplate = () => {
     return (
       <Dropdown
-        style={{ width: "100px" }}
+        style={{ width: "185px" }}
         value={searchByStatus}
         options={statuses}
         onChange={handleStatus}
