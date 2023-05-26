@@ -262,7 +262,7 @@ export default function Table({
              <span className="bg-white flex rounded-full justify-center items-center border w-[30px] h-[30px] border-grey-30 mr-1">
              <img alt={`ReAssign svg`} src={ReAssign} />
             </span>
-              <span>ReAssign</span>
+              <span>Reassign</span>
             </button>}
           </>
         )}
@@ -380,11 +380,11 @@ export default function Table({
   const dateFilterTemplate = () => {
     return (
       <span className="w-[100%] relative">
-        <img
+        {!searchByUpdatedAt &&<img
           alt={`${CalendarIcon} svg`}
           src={CalendarIcon}
           className="absolute right-2 top-4 z-10"
-        />
+        />}
         <Calendar
           value={searchByUpdatedAt}
           onChange={handleCalanderChange}
