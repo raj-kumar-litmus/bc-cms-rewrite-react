@@ -108,12 +108,12 @@ function AssignStyle({
   useEffect(() => {
     if (userGroup === "writers") {
       setHeader("Assign Writer for");
-      setUri(`${VITE_SERVER_HOST_NAME}/api/v1/groupMembers/all/writers`);
+      setUri(`${VITE_SERVER_HOST_NAME}/api/v1/groups/all/writers/members`);
       setPlaceHolder("Writer");
     }
     if (userGroup === "editors") {
       setHeader("Assign Editor for");
-      setUri(`${VITE_SERVER_HOST_NAME}/api/v1/groupMembers/all/editors`);
+      setUri(`${VITE_SERVER_HOST_NAME}/api/v1/groups/all/editors/members`);
       setPlaceHolder("Editor");
     }
   }, [userGroup]);

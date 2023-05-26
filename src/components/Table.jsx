@@ -22,6 +22,7 @@ import TableHeaders from "./TableHeaders";
 import MoreIconPopUp from "./MoreIcon";
 import Loader from "../components/loader";
 import useSessionStorage from "../hooks/useSessionStorage";
+import { status } from "../constants/index";
 
 export default function Table({
   loader,
@@ -415,43 +416,44 @@ export default function Table({
     setStyleSort(styleSort == "desc" ? "asc" : "desc");
   };
 
+  const iconClickHandler = (e, type, rowData) => {
+    if (type === "edit") {
+      navigate("/styleDetails", {
+        state: {
+          quickFix: true,
+          styleId: rowData?.styleId
+        }
+      });
+    }
+    if (type === "assign") {
+      if (
+        [
+          status.assignedToWriter,
+          status.waitingForWriter,
+          status.writingInProgress
+        ].includes(rowData.status)
+      ) {
+        setAssigneeType("writers");
+      }
+      if (
+        [status.assignedToEditor, status.editingInProgress].includes(
+          rowData.status
+        )
+      ) {
+        setAssigneeType("editors");
+      }
+      console.log(rowData);
+      setIsModalVisible(true);
+      setStyleId([rowData?.styleId]);
+      setWorkflowId([rowData?.id]);
+    }
+    e.stopPropagation();
+  };
+
   const handleRowSelectIcons = (rowData, imgPath, type) => {
     return (
       <div
-        onClick={(e) => {
-          if (type === "edit") {
-            navigate("/styleDetails", {
-              state: {
-                quickFix: true,
-                styleId: rowData?.styleId
-              }
-            });
-          }
-          if (type === "assign") {
-            if (
-              ["ASSIGNED_TO_WRITER", "WAITING_FOR_WRITER"].includes(
-                rowData.status
-              )
-            ) {
-              setAssigneeType("writers");
-            }
-            if (
-              ["ASSIGNED_TO_EDITOR", "EDITING_IN_PROGRESS"].includes(
-                rowData.status
-              )
-            ) {
-              setAssigneeType("editors");
-            }
-            console.log(rowData);
-            setIsModalVisible(true);
-            setStyleId([rowData?.styleId]);
-            setWorkflowId([rowData?.id]);
-          }
-          if (type === "more") {
-            //todo
-          }
-          e.stopPropagation();
-        }}
+        onClick={(e) => iconClickHandler(e, type, rowData)}
         className="flex justify-content-end"
       >
         <span>
@@ -524,8 +526,6 @@ export default function Table({
   };
 
   const onRowClick = ({ data }) => {
-    console.log(userEmail);
-    console.log(data);
     // On admin dashboard, if click on the row is not on the checkbox then navigate to styleDetails.
     if (userEmail === data.assignee) {
       navigate("/styleDetails", {
