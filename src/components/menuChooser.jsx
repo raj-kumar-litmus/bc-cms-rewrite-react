@@ -37,9 +37,11 @@ function MenuChooser() {
 
   return (
     <div className="bg-grey-40 h-screen">
+      {canAccessWorkBenchApp && canAccessSizingApp && (
       <h1 className="text-[20px] text-center font-bold text-black pt-10">
         Choose the Application
       </h1>
+      )}
 
       {canAccessWorkBenchApp && canAccessSizingApp && (
         <p className="text-sm mt-4 text-center w-[416px] mx-[476px]">
