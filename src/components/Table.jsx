@@ -172,7 +172,7 @@ export default function Table() {
           assignee: !isAdmin ? userEmail : searchByAssignee
         }),
         ...(searchByUpdatedAt && { lastUpdateTs: finalDate }),
-        status: isStatusSelected || clearAllFilters ? [searchByStatus] : status
+        status: isStatusSelected && !clearAllFilters ? [searchByStatus] : status
       },
       orderBy: {
         ...(currentSort == "Style" && { styleId: styleSort }),
