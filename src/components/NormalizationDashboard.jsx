@@ -40,21 +40,9 @@ function NormalizationDashboard() {
     setSelectedProducts([]);
     clearFilters()
   };
+
   const handleSearchChange=(e)=>{
     setSearch(e.target.value)
-    console.log("e>>",e.target.value)
-  }
-
-  const handleSearchClick=()=>{
-    console.log("Search",search)
-    fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage}&global`, {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json; charset=UTF-8"
-      }
-    })
-      .then((response) => response.json())
-      .then((result) => setStatus(result?.data?.uniqueValues));
   }
 
   const fetchBulkStyleSearch = async () => {
@@ -122,10 +110,6 @@ function NormalizationDashboard() {
     }
   };
  
-  const handleSearchChange=(e)=>{
-    setSearch(e.target.value)
-  }
-
   return (
     <>
       <div className="bg-white pb-[20px]">
