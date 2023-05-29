@@ -1,6 +1,6 @@
 import React from 'react';
 
-function TableHeaders({headerName, sortIcon, onClick}){
+function TableHeaders({headerName, sortIcon, onClick, ArrowSort, currentSort}){
     return (
         <>
             <span className="mr-2">
@@ -8,7 +8,7 @@ function TableHeaders({headerName, sortIcon, onClick}){
             </span>
             <span>
                <button onClick={onClick}>
-                <img alt={`${sortIcon} svg`}  src={sortIcon}  />
+                <img alt={`${sortIcon} svg`}  src={currentSort == headerName ?  sortIcon : ArrowSort}  />
                 </button>
             </span>
         </>
