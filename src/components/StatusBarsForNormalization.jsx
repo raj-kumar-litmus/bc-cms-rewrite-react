@@ -10,7 +10,7 @@ import { workFlowsUrl } from "../constants/index";
 function StatusBarsForNormalization() {
   const [statusBarData, setStatusBarData] = useState([]);
 
-  const { isAdmin } = useContext(DashBoardContext);
+  const { isAdmin, currentTab } = useContext(DashBoardContext);
 
   useEffect(() => {
     fetch(`${workFlowsUrl}/counts`, {
@@ -19,7 +19,7 @@ function StatusBarsForNormalization() {
       .then((response) => response.json())
       .then((result) => setStatusBarData(result.data))
       .catch((error) => error);
-  }, []);
+  }, [currentTab]);
 
   return (
     <div

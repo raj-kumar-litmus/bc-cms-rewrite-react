@@ -138,7 +138,7 @@ export default function Table() {
     })
       .then((response) => response.json())
       .then((result) => setStatus(result?.data?.uniqueValues));
-  }, [currentPage, currentTab]);
+  }, [currentPage]);
 
   useEffect(() => {
     var date = new Date(searchByUpdatedAt);
@@ -178,10 +178,10 @@ export default function Table() {
         ...(currentSort == "Style" && { styleId: styleSort }),
         ...(currentSort == "Title" && { title: titleSort }),
         ...(currentSort == "Brand" && { brand: brandSort }),
-        ...(currentSort == "UpdatedBy" && { lastUpdatedBy: updatedBySort }),
-        ...(currentSort == "Assignee" && { lastUpdatedBy: assigneeSort }),
+        ...(currentSort == "Updated By" && {lastUpdatedBy : updatedBySort }),
+        ...(currentSort == "Assignee" && { assignee : assigneeSort }),
         ...(currentSort == "Status" && { status: statusSort }),
-        ...({ lastUpdateTs: updatedAtSort })
+        ...((currentSort == "Updated At" || (currentSort != "Style" && currentSort != "Title" && currentSort != "Brand" && currentSort != "Updated By" && currentSort != "Assignee" && currentSort != "Status" )) && {lastUpdateTs :  updatedAtSort })
       }
     };
     setLoader(true);
@@ -724,7 +724,6 @@ export default function Table() {
               showFilterMenu={false}
               filterElement={styleRowFilterTemplate}
               filterPlaceholder="Search by Style"
-              style={{ width: "5%" }}
             />
             <Column
               field="title"
@@ -741,7 +740,6 @@ export default function Table() {
               filterElement={titleRowFilterTemplate}
               showFilterMenu={false}
               filterPlaceholder="Search by Title"
-              style={{ width: "22%" }}
             />
             <Column
               header={
@@ -757,7 +755,6 @@ export default function Table() {
               showFilterMenu={false}
               filter
               filterElement={brandRowFilterTemplate}
-              style={{ width: "10%" }}
             />
             {currentTab !== "Unassigned" && (
               <Column
@@ -774,7 +771,6 @@ export default function Table() {
                 showFilterMenu={false}
                 filter
                 filterElement={statusRowFilterTemplate}
-                style={{ width: "18%" }}
               />
             )}
             {currentTab !== "Completed" &&
@@ -794,7 +790,6 @@ export default function Table() {
                   showFilterMenu={false}
                   filter
                   filterElement={assigneeRowFilterTemplate}
-                  style={{ width: "13%" }}
                 />
               )}
             <Column
@@ -811,7 +806,6 @@ export default function Table() {
               filter
               showFilterMenu={false}
               filterElement={updatedByFilterTemplate}
-              style={{ width: "15%" }}
             />
             <Column
               field="lastUpdateTs"
@@ -829,7 +823,6 @@ export default function Table() {
               showFilterMenu={false}
               body={dateBodyTemplate}
               filterElement={dateFilterTemplate}
-              style={{ width: "14%" }}
             />
             <Column header={handleFilterIcon} style={{ width: "0%" }} />
             <Column
