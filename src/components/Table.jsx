@@ -29,6 +29,7 @@ import AssignToEditor from "../logos/AssignToEditor.svg";
 import AssignToWriter from "../logos/AssignToWriter.svg";
 import ArrowSortDownLine from "../logos/ArrowSortDownLine.svg";
 import ArrowSortUpLine from "../logos/ArrowSortUpLine.svg";
+import { Tooltip } from 'primereact/tooltip';
 
 export default function Table() {
   const [searchByStyle, setSearchByStyle] = useState("");
@@ -53,6 +54,7 @@ export default function Table() {
   const [currentSort, setCurrentSort] = useState("");
   const [isRowSelected, setIsRowSelected] = useState(false);
   const [isStatusSelected, setIsStatusSelected] = useState(false);
+  const [clearAllFilters, setClearAllFilters] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [pageCount, setPageCount] = useState(1);
   const [defaultSort, setDefaultSort] = useState(ArrowSort);
@@ -170,7 +172,7 @@ export default function Table() {
           assignee: !isAdmin ? userEmail : searchByAssignee
         }),
         ...(searchByUpdatedAt && { lastUpdateTs: finalDate }),
-        status: isStatusSelected ? [searchByStatus] : status
+        status: isStatusSelected || clearAllFilters ? [searchByStatus] : status
       },
       orderBy: {
         ...(currentSort == "Style" && { styleId: styleSort }),
@@ -212,7 +214,8 @@ export default function Table() {
     assigneeSort,
     currentTab,
     currentPage,
-    isStatusSelected
+    isStatusSelected,
+    clearAllFilters
   ]);
 
   useEffect(() => {
@@ -238,6 +241,14 @@ export default function Table() {
       setsearchByUpdatedBy(e.target.value);
     }, 1000);
   };
+
+  const clearFilters =()=>{
+    setClearAllFilters(true)
+    setSelectedBrand([])
+    setSearchByStatus([])
+    setSearchByAssignee("")
+    setsearchByUpdatedAt(null)
+  }
 
   const renderHeader = () => {
     return (
@@ -333,6 +344,7 @@ export default function Table() {
             )}
           </>
         )}
+        <button className="bg-white text-black text-sm rounded border border-black m-2 p-1 w-[94px] h-[39px]" onClick={clearFilters}>Clear Filters</button>
       </div>
     );
   };
@@ -565,7 +577,7 @@ export default function Table() {
     e.stopPropagation();
   };
 
-  const handleRowSelectIcons = (rowData, imgPath, type) => {
+  const handleRowSelectIcons = (rowData, type) => {
     return (
       <div
         onClick={(e) => iconClickHandler(e, type, rowData)}
@@ -573,12 +585,31 @@ export default function Table() {
       >
         <span>
           {rowData.id == showEdit && isRowSelected && isAdmin && (
-            <button
+            <>
+             {type == "edit" ? 
+             <button
               className="bg-white flex rounded-full justify-center items-center border border-grey-30  h-[30px] w-[30px]"
               onClick={handleEditIcon}
             >
-              <img alt={`${imgPath} svg`} src={imgPath} />
+            <Tooltip target=".quick-fix"/>
+            <img alt={`${Edit} svg`} src={Edit} data-pr-tooltip="Quick Fix" data-pr-position="top" className="quick-fix"  style={{ fontSize: '200px', cursor: 'pointer' }}></img>
+            </button> 
+            :
+            <button
+            className="bg-white flex rounded-full justify-center items-center border border-grey-30  h-[30px] w-[30px]"
+            onClick={handleEditIcon}
+          >
+            <Tooltip target=".assign"/>
+            <img alt={`${ currentTab == "Assigned" || currentTab == "InProgress"
+                      ? ReAssign
+                      : AssigneEdit} svg`} src={ currentTab == "Assigned" || currentTab == "InProgress"
+                      ? ReAssign
+                      : AssigneEdit} 
+                      data-pr-tooltip="Assign" data-pr-position="top"  className="assign"  style={{ fontSize: '200px', cursor: 'pointer' }}
+                      />
             </button>
+            }
+            </>
           )}
         </span>
       </div>
@@ -802,19 +833,13 @@ export default function Table() {
             />
             <Column header={handleFilterIcon} style={{ width: "0%" }} />
             <Column
-              body={(e) => handleRowSelectIcons(e, Edit, "edit")}
+              body={(e) => handleRowSelectIcons(e, "edit")}
               style={{ width: "0%" }}
             />
             {currentTab !== "Completed" && (
               <Column
                 body={(e) =>
-                  handleRowSelectIcons(
-                    e,
-                    currentTab == "Assigned" || currentTab == "InProgress"
-                      ? ReAssign
-                      : AssigneEdit,
-                    "assign"
-                  )
+                  handleRowSelectIcons(e,"assign")
                 }
                 style={{ width: "0%" }}
               />
