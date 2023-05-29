@@ -141,6 +141,9 @@ export default function Table() {
     setCustomers(data?.data);
     setLoader(false)
   }
+  if (!data?.success){
+    console.log("data>>",data?.error)
+	}
 }
 
 async function getBrands(){
@@ -160,6 +163,9 @@ const response = await fetch(`${workFlowsUrl}/search?limit=${limit}&page=${curre
         .map((item) => ({ brand: item }))
     )
   }
+  if (!data?.success){
+    console.log("data>>",data?.error)
+	}
 }
 
 async function getStatus(){
@@ -196,6 +202,9 @@ const response = await fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage
   if(data?.success){
     setStatus(data?.data?.uniqueValues)
   }
+  if (!data?.success){
+    console.log("data>>",data?.error)
+	}
 }
 
 async function getAssignee(){
@@ -211,6 +220,9 @@ const response = await fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage
   if(data?.success){
     setAssignee(data?.data?.uniqueValues.filter(Boolean))
   }
+  if (!data?.success){
+    console.log("data>>",data?.error)
+	}
 }
 
   useEffect(() => {
