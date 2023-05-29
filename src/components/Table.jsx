@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { Tooltip } from 'primereact/tooltip';
 import { DashBoardContext } from "../context/normalizationDashboard";
 import "primereact/resources/themes/fluent-light/theme.css";
 import "primereact/resources/primereact.min.css";
@@ -24,12 +25,11 @@ import TableHeaders from "./TableHeaders";
 import MoreIconPopUp from "./MoreIcon";
 import Loader from "../components/loader";
 import useSessionStorage from "../hooks/useSessionStorage";
-import { status } from "../constants/index";
+import { status, limit } from "../constants/index";
 import AssignToEditor from "../logos/AssignToEditor.svg";
 import AssignToWriter from "../logos/AssignToWriter.svg";
 import ArrowSortDownLine from "../logos/ArrowSortDownLine.svg";
 import ArrowSortUpLine from "../logos/ArrowSortUpLine.svg";
-import { Tooltip } from 'primereact/tooltip';
 
 export default function Table() {
   const [searchByStyle, setSearchByStyle] = useState("");
@@ -95,12 +95,10 @@ export default function Table() {
         status;
     }
     const body = {
-      filters: {
-        status:status
-      }
-    }
+      filters: { status }
+  }
 
-    fetch(`${workFlowsUrl}/search?limit=999&page=${currentPage}&unique=brand`, {
+    fetch(`${workFlowsUrl}/search?limit=${limit}&page=${currentPage}&unique=brand`, {
       method: "POST",
       headers: {
         "Content-type": "application/json; charset=UTF-8"
@@ -592,7 +590,7 @@ export default function Table() {
               onClick={handleEditIcon}
             >
             <Tooltip target=".quick-fix"/>
-            <img alt={`${Edit} svg`} src={Edit} data-pr-tooltip="Quick Fix" data-pr-position="top" className="quick-fix"  style={{ fontSize: '200px', cursor: 'pointer' }}></img>
+            <img alt={`${Edit} svg`} src={Edit} data-pr-tooltip="Quick Fix" data-pr-position="top" className="quick-fix"></img>
             </button> 
             :
             <button
@@ -600,13 +598,7 @@ export default function Table() {
             onClick={handleEditIcon}
           >
             <Tooltip target=".assign"/>
-            <img alt={`${ currentTab == "Assigned" || currentTab == "InProgress"
-                      ? ReAssign
-                      : AssigneEdit} svg`} src={ currentTab == "Assigned" || currentTab == "InProgress"
-                      ? ReAssign
-                      : AssigneEdit} 
-                      data-pr-tooltip="Assign" data-pr-position="top"  className="assign"  style={{ fontSize: '200px', cursor: 'pointer' }}
-                      />
+            <img alt={`${ currentTab == "Assigned" || currentTab == "InProgress" ? ReAssign : AssigneEdit} svg`} src={ currentTab == "Assigned" || currentTab == "InProgress" ? ReAssign : AssigneEdit} data-pr-tooltip="Assign" data-pr-position="top"  className="assign"/>
             </button>
             }
             </>
