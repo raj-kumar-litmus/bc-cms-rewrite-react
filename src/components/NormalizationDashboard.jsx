@@ -41,10 +41,6 @@ function NormalizationDashboard() {
     clearFilters()
   };
 
-  const handleSearchChange=(e)=>{
-    setSearch(e.target.value)
-  }
-
   const fetchBulkStyleSearch = async () => {
     try {
       const requestOptions = {
@@ -109,6 +105,10 @@ function NormalizationDashboard() {
       getGlobalSearch();
     }
   };
+  const handleSearchChange=(e)=>{
+    setSearch(e.target.value)
+    console.log("e>>",e.target.value)
+  }
 
   return (
     <>
