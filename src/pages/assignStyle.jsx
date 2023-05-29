@@ -93,9 +93,9 @@ function AssignStyle() {
     try {
       setIsFetching(true);
       const uri = `${VITE_SERVER_HOST_NAME}/api/v1/workflows/${workflowId}`;
-      await fetch(uri, requestOptions);
+      const { status } = (await fetch(uri, requestOptions)) || {};
       styleAssignedHandler({
-        error: false,
+        error: status != 200,
         styleId: styles,
         assignee: assigneeName
       });
@@ -149,13 +149,6 @@ function AssignStyle() {
     setIsActiveDropdown(false);
     if (Array.isArray(styles) && styles.length > 0) buildStyleStrings();
   }, []);
-
-  useEffect(() => {
-    if (clearValue) {
-      SetAssigneeName(null);
-      SetAssignee(null);
-    }
-  }, [clearValue]);
 
   useEffect(() => {
     if (!isChecked && !assignee && !assigneeName) {
