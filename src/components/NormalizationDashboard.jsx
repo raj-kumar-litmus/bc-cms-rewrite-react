@@ -105,9 +105,9 @@ function NormalizationDashboard() {
       getGlobalSearch();
     }
   };
+
   const handleSearchChange=(e)=>{
     setSearch(e.target.value)
-    console.log("e>>",e.target.value)
   }
 
   return (
