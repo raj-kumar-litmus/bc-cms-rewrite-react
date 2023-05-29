@@ -39,6 +39,7 @@ function NormalizationDashboard() {
     setCurrentTab(tab.target.innerText);
     setSelectedProducts([]);
   };
+
   const handleSearchChange=(e)=>{
     setSearch(e.target.value)
   }
