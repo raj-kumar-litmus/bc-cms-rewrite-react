@@ -717,43 +717,29 @@ export default function Table() {
         <span>
           {rowData.id == showEdit && isRowSelected && isAdmin && (
             <>
-              {type == "edit" ? (
-                <button
-                  className="bg-white flex rounded-full justify-center items-center border border-grey-30  h-[30px] w-[30px]"
-                  onClick={handleEditIcon}
-                >
-                  <Tooltip target=".quick-fix" />
-                  <img
-                    alt={`${Edit} svg`}
-                    src={Edit}
-                    data-pr-tooltip="Quick Fix"
-                    data-pr-position="top"
-                    className="quick-fix"
-                  ></img>
-                </button>
-              ) : (
-                <button
-                  className="bg-white flex rounded-full justify-center items-center border border-grey-30  h-[30px] w-[30px]"
-                  onClick={handleEditIcon}
-                >
-                  <Tooltip target=".assign" />
-                  <img
-                    alt={`${
-                      currentTab == "Assigned" || currentTab == "InProgress"
-                        ? ReAssign
-                        : AssigneEdit
-                    } svg`}
-                    src={
-                      currentTab == "Assigned" || currentTab == "InProgress"
-                        ? ReAssign
-                        : AssigneEdit
-                    }
-                    data-pr-tooltip="Assign"
-                    data-pr-position="top"
-                    className="assign"
-                  />
-                </button>
-              )}
+             {type == "edit" ? 
+             <button
+              className="bg-white flex rounded-full justify-center items-center border border-grey-30  h-[30px] w-[30px]"
+              onClick={handleEditIcon}
+            >
+            <Tooltip target=".quick-fix"/>
+            <img alt={`${Edit} svg`} src={Edit} data-pr-tooltip="Quick Fix" data-pr-position="top" className="quick-fix"  style={{ fontSize: '200px', cursor: 'pointer' }}></img>
+            </button> 
+            :
+            <button
+            className="bg-white flex rounded-full justify-center items-center border border-grey-30  h-[30px] w-[30px]"
+            onClick={handleEditIcon}
+          >
+            <Tooltip target=".assign"/>
+            <img alt={`${ currentTab == "Assigned" || currentTab == "InProgress"
+                      ? ReAssign
+                      : AssigneEdit} svg`} src={ currentTab == "Assigned" || currentTab == "InProgress"
+                      ? ReAssign
+                      : AssigneEdit} 
+                      data-pr-tooltip="Assign" data-pr-position="top"  className="assign"  style={{ fontSize: '200px', cursor: 'pointer' }}
+                      />
+            </button>
+            }
             </>
           )}
         </span>
