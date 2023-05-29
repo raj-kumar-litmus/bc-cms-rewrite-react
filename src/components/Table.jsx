@@ -718,7 +718,7 @@ export default function Table() {
               onClick={handleEditIcon}
             >
             <Tooltip target=".quick-fix"/>
-            <img alt={`${Edit} svg`} src={Edit} data-pr-tooltip="Quick Fix" data-pr-position="top" className="quick-fix"  style={{ fontSize: '200px', cursor: 'pointer' }}></img>
+            <img alt={`${Edit} svg`} src={Edit} data-pr-tooltip="Quick Fix" data-pr-position="top" className="quick-fix"></img>
             </button> 
             :
             <button
@@ -726,13 +726,7 @@ export default function Table() {
             onClick={handleEditIcon}
           >
             <Tooltip target=".assign"/>
-            <img alt={`${ currentTab == "Assigned" || currentTab == "InProgress"
-                      ? ReAssign
-                      : AssigneEdit} svg`} src={ currentTab == "Assigned" || currentTab == "InProgress"
-                      ? ReAssign
-                      : AssigneEdit} 
-                      data-pr-tooltip="Assign" data-pr-position="top"  className="assign"  style={{ fontSize: '200px', cursor: 'pointer' }}
-                      />
+            <img alt={`${ currentTab == "Assigned" || currentTab == "InProgress" ? ReAssign : AssigneEdit} svg`} src={ currentTab == "Assigned" || currentTab == "InProgress" ? ReAssign : AssigneEdit} data-pr-tooltip="Assign" data-pr-position="top"  className="assign"/>
             </button>
             }
             </>
