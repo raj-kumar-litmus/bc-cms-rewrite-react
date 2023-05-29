@@ -39,6 +39,9 @@ function NormalizationDashboard() {
     setCurrentTab(tab.target.innerText);
     setSelectedProducts([]);
   };
+  const handleSearchChange=(e)=>{
+    setSearch(e.target.value)
+  }
 
   const fetchBulkStyleSearch = async () => {
     try {
@@ -73,10 +76,6 @@ function NormalizationDashboard() {
       setLoader(false);
       setShowToast(true);
     }
-  };
-
-  const handleSearchChange = (e) => {
-    setSearch(e.target.value);
   };
 
   async function getGlobalSearch() {
