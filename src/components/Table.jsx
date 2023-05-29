@@ -155,7 +155,7 @@ export default function Table() {
         ...(currentSort == "UpdatedBy" && { lastUpdatedBy: updatedBySort }),
         ...(currentSort == "Assignee" && { lastUpdatedBy: assigneeSort }),
         ...(currentSort == "Status" && { status: statusSort }),
-        ...(currentSort == "UpdatedAt" && { lastUpdateTs: updatedAtSort })
+        ...({ lastUpdateTs: updatedAtSort })
       }
     };
     setLoader(true);
