@@ -105,7 +105,7 @@ function NormalizationDashboard() {
       getGlobalSearch();
     }
   };
-
+ 
   const handleSearchChange=(e)=>{
     setSearch(e.target.value)
   }
