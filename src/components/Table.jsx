@@ -75,7 +75,30 @@ export default function Table() {
   } = useContext(DashBoardContext);
 
   useEffect(() => {
-    fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage}&unique=brand`, {
+    const status = [];
+    switch (currentTab) {
+      case "Unassigned":
+        status.push("WAITING_FOR_WRITER");
+        break;
+      case "Completed":
+        status.push("WRITING_COMPLETE", "EDITING_COMPLETE");
+        break;
+      case "Assigned":
+        status.push("ASSIGNED_TO_WRITER", "ASSIGNED_TO_EDITOR");
+        break;
+      case "InProgress":
+        status.push("WRITING_IN_PROGRESS", "EDITING_IN_PROGRESS");
+        break;
+      default:
+        status;
+    }
+    const body = {
+      filters: {
+        status:status
+      }
+    }
+
+    fetch(`${workFlowsUrl}/search?limit=999&page=${currentPage}&unique=brand`, {
       method: "POST",
       headers: {
         "Content-type": "application/json; charset=UTF-8"
@@ -106,13 +129,14 @@ export default function Table() {
 
     fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage}&unique=status`, {
       method: "POST",
+      body: JSON.stringify(body),
       headers: {
         "Content-type": "application/json; charset=UTF-8"
       }
     })
       .then((response) => response.json())
       .then((result) => setStatus(result?.data?.uniqueValues));
-  }, [currentPage]);
+  }, [currentPage, currentTab]);
 
   useEffect(() => {
     var date = new Date(searchByUpdatedAt);
@@ -387,6 +411,7 @@ export default function Table() {
           onChange={(e) => handleBrands(e.value)}
           optionLabel="brand"
           placeholder="Select"
+          filter
           maxSelectedLabels={1}
           style={{ width: "100px" }}
         />
@@ -466,7 +491,6 @@ export default function Table() {
   };
 
   const handleAssigneeSort = () => {
-    
     setCurrentSort("Assignee");
     setAssigneeSort(assigneeSort == "desc" ? "asc" : "desc");
     setDefaultSort(assigneeSort == "desc" ? ArrowSortDownLine : ArrowSortUpLine)

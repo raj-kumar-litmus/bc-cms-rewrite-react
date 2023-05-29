@@ -1,6 +1,7 @@
-import React, { useEffect, useContext } from "react";
+import React, {useState, useEffect, useContext } from "react";
 import { DashBoardContext } from "../context/normalizationDashboard.jsx";
 import { useNavigate } from "react-router-dom";
+import { workFlowsUrl } from "../constants/index";
 import StatusBarsForNormalization from "./StatusBarsForNormalization.jsx";
 import GlobalSearch from "./GlobalSearch.jsx";
 import WriterDashBoardTabs from "./WriterDashBoardTabs.jsx";
@@ -11,8 +12,8 @@ import useSessionStorage from "../hooks/useSessionStorage";
 function NormalizationDashboard() {
   const navigate = useNavigate();
   const [accountDetails] = useSessionStorage("accountDetails");
-
-  const { setSelectedProducts, setCurrentTab, setCurrentPage, isAdmin } =
+  const [search, setSearch] = useState('')
+  const { setSelectedProducts, setCurrentTab, setCurrentPage, isAdmin, setCustomers, currentPage, setLoader } =
     useContext(DashBoardContext);
 
   useEffect(() => {
@@ -30,21 +31,24 @@ function NormalizationDashboard() {
     setCurrentTab(tab.target.innerText);
     setSelectedProducts([]);
   };
+
   const handleSearchChange=(e)=>{
     setSearch(e.target.value)
-    console.log("e>>",e.target.value)
   }
 
   const handleSearchClick=()=>{
-    console.log("Search",search)
-    fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage}&global`, {
+    setLoader(true)
+    fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage}&globalSearch=${search}`, {
       method: "POST",
       headers: {
         "Content-type": "application/json; charset=UTF-8"
       }
     })
       .then((response) => response.json())
-      .then((result) => setStatus(result?.data?.uniqueValues));
+      .then((result) => {
+        setCustomers(result?.data);
+        setLoader(false);
+      });
   }
 
   return (
@@ -53,6 +57,9 @@ function NormalizationDashboard() {
         <StatusBarsForNormalization />
         <div className="mt-[40px]">
           <GlobalSearch
+            onChange={handleSearchChange}
+            onClick={handleSearchClick}
+            value={search}
             searchString={"Search"}
             inputClasses={
               "bg-white w-full h-[64px] items-center pl-[24px] text-sm placeholder-gray-20 placeholder-opacity-1 rounded border border-grey-30 shadow"
