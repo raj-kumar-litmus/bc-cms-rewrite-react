@@ -536,12 +536,6 @@ export default function Table() {
     }
   }
 
-  const handleStyleSort = () => {
-    setCurrentSort("Style");
-    setStyleSort(styleSort == "desc" ? "asc" : "desc");
-    setDefaultSort(styleSort == "desc" ? ArrowSortDownLine : ArrowSortUpLine)
-  };
-
   const iconClickHandler = (e, type, rowData) => {
     if (type === "edit") {
       navigate("/styleDetails", {
