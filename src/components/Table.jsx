@@ -30,6 +30,7 @@ import AssignToEditor from "../logos/AssignToEditor.svg";
 import AssignToWriter from "../logos/AssignToWriter.svg";
 import ArrowSortDownLine from "../logos/ArrowSortDownLine.svg";
 import ArrowSortUpLine from "../logos/ArrowSortUpLine.svg";
+import { async } from "regenerator-runtime";
 
 export default function Table() {
   const [searchByStyle, setSearchByStyle] = useState("");
@@ -77,68 +78,12 @@ export default function Table() {
   } = useContext(DashBoardContext);
 
   useEffect(() => {
-    const status = [];
-    switch (currentTab) {
-      case "Unassigned":
-        status.push("WAITING_FOR_WRITER");
-        break;
-      case "Completed":
-        status.push("WRITING_COMPLETE", "EDITING_COMPLETE");
-        break;
-      case "Assigned":
-        status.push("ASSIGNED_TO_WRITER", "ASSIGNED_TO_EDITOR");
-        break;
-      case "InProgress":
-        status.push("WRITING_IN_PROGRESS", "EDITING_IN_PROGRESS");
-        break;
-      default:
-        status;
-    }
-    const body = {
-      filters: { status }
-  }
+      getBrands()
+      getAssignee()
+      getStatus()
+  }, [currentPage, currentTab]);
 
-    fetch(`${workFlowsUrl}/search?limit=${limit}&page=${currentPage}&unique=brand`, {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json; charset=UTF-8"
-      }
-    })
-      .then((response) => response.json())
-      .then((result) =>
-        setBrands(
-          result?.data?.uniqueValues
-            .filter(Boolean)
-            .map((item) => ({ brand: item }))
-        )
-      );
-
-    fetch(
-      `${workFlowsUrl}/search?limit=10&page=${currentPage}&unique=assignee`,
-      {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json; charset=UTF-8"
-        }
-      }
-    )
-      .then((response) => response.json())
-      .then((result) =>
-        setAssignee(result?.data?.uniqueValues.filter(Boolean))
-      );
-
-    fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage}&unique=status`, {
-      method: "POST",
-      body: JSON.stringify(body),
-      headers: {
-        "Content-type": "application/json; charset=UTF-8"
-      }
-    })
-      .then((response) => response.json())
-      .then((result) => setStatus(result?.data?.uniqueValues));
-  }, [currentPage]);
-
-  useEffect(() => {
+  async function getCustomers(){
     var date = new Date(searchByUpdatedAt);
     const newDate = date.toDateString().split(" ");
     const finalDate = `${newDate[3]}-${newDate[1]}-${newDate[2]}`;
@@ -182,19 +127,95 @@ export default function Table() {
         ...((currentSort == "Updated At" || (currentSort != "Style" && currentSort != "Title" && currentSort != "Brand" && currentSort != "Updated By" && currentSort != "Assignee" && currentSort != "Status" )) && {lastUpdateTs :  updatedAtSort })
       }
     };
-    setLoader(true);
-    fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage}`, {
-      method: "POST",
-      body: JSON.stringify(body),
-      headers: {
-        "Content-type": "application/json; charset=UTF-8"
+      const response = await fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage}`,
+       {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8"
+        }
       }
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        setCustomers(result?.data);
-        setLoader(false);
-      });
+  );
+  const data = await response.json();
+  if(data?.success){
+    setCustomers(data?.data);
+    setLoader(false)
+  }
+}
+
+async function getBrands(){
+const response = await fetch(`${workFlowsUrl}/search?limit=${limit}&page=${currentPage}&unique=brand`,
+       {
+        method: 'POST',
+        headers: {
+          "Content-type": "application/json; charset=UTF-8"
+        }
+      }
+  );
+  const data = await response.json();
+  if(data?.success){
+    setBrands(
+      data?.data?.uniqueValues
+        .filter(Boolean)
+        .map((item) => ({ brand: item }))
+    )
+  }
+}
+
+async function getStatus(){
+  const status = [];
+  switch (currentTab) {
+    case "Unassigned":
+      status.push("WAITING_FOR_WRITER");
+      break;
+    case "Completed":
+      status.push("WRITING_COMPLETE", "EDITING_COMPLETE");
+      break;
+    case "Assigned":
+      status.push("ASSIGNED_TO_WRITER", "ASSIGNED_TO_EDITOR");
+      break;
+    case "InProgress":
+      status.push("WRITING_IN_PROGRESS", "EDITING_IN_PROGRESS");
+      break;
+    default:
+      status;
+  }
+  const body = {
+    filters: { status }
+}
+const response = await fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage}&unique=status`,
+       {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8"
+        }
+      }
+  );
+  const data = await response.json();
+  if(data?.success){
+    setStatus(data?.data?.uniqueValues)
+  }
+}
+
+async function getAssignee(){
+const response = await fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage}&unique=assignee`,
+       {
+        method: 'POST',
+        headers: {
+          "Content-type": "application/json; charset=UTF-8"
+        }
+      }
+  );
+  const data = await response.json();
+  if(data?.success){
+    setAssignee(data?.data?.uniqueValues.filter(Boolean))
+  }
+}
+
+  useEffect(() => {
+    setLoader(true);
+    getCustomers()
   }, [
     searchByStyle,
     searchByTitle,
