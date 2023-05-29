@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
+import { DashBoardContext } from "../context/normalizationDashboard";
 import Button from "./Button";
 
-function WriterDashBoardTabs({ loader, handleTabEvents, currentTab, isAdmin}) {
+function WriterDashBoardTabs({ handleTabEvents }) {
+  const { loader, currentTab, isAdmin } = useContext(DashBoardContext);
   return (
     <div className="text-sm border-b border-grey-30">
       <div className="flex">

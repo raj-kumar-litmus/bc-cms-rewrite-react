@@ -1,18 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
+import { DashBoardContext } from "../context/normalizationDashboard";
 import Button from "./Button";
 
-function Pagination({
-  customers,
-  preText,
-  nextText,
-  currentPage,
-  setCurrentPage,
-  className
-}) {
-  const pages = [];
-  for (let i = 1; i <= customers?.pagination?.pageCount; i++) {
-    pages.push(i);
-  }
+function Pagination({ count, preText, nextText, className }) {
+  const { currentPage, setCurrentPage } = useContext(DashBoardContext);
+  const pages = Array.from(Array(count).keys(), (item) => item + 1);
+
   const onPageChange = (pageNumber) => {
     setCurrentPage(pageNumber.target.innerText);
   };
@@ -20,7 +13,7 @@ function Pagination({
     if (currentPage > 1) setCurrentPage(parseInt(currentPage) - 1);
   };
   const onNextClick = () => {
-    if (customers?.pagination?.pageCount > currentPage) {
+    if (count > currentPage) {
       setCurrentPage(parseInt(currentPage) + 1);
     }
   };

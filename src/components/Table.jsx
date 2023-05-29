@@ -28,25 +28,7 @@ import { status } from "../constants/index";
 import AssignToEditor from "../logos/AssignToEditor.svg";
 import AssignToWriter from "../logos/AssignToWriter.svg";
 
-export default function Table({
-  loader,
-  setLoader,
-  setIsModalVisible,
-  // setIsModalVisible,
-  setAssigneeType,
-  // setStyleId,
-  // setWorkflowId,
-  currentTab,
-  setCustomers,
-  customers,
-  selectedProducts,
-  setSelectedProducts,
-  isAdmin
-  // preText,
-  // nextText,
-  // currentPage,
-  // setCurrentPage
-}) {
+export default function Table() {
   const [searchByStyle, setSearchByStyle] = useState("");
   const [searchByTitle, setSearchByTitle] = useState("");
   const [searchByStatus, setSearchByStatus] = useState([]);
@@ -70,12 +52,24 @@ export default function Table({
   const [isRowSelected, setIsRowSelected] = useState(false);
   const [isStatusSelected, setIsStatusSelected] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
+  const [pageCount, setPageCount] = useState(1);
   const [userEmail] = useSessionStorage("userEmail");
   const navigate = useNavigate();
-  const [loader, setLoader] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const { setWorkflowId, setStyleId, setIsModalVisible } =
-    useContext(DashBoardContext);
+  const {
+    setWorkflowId,
+    setStyleId,
+    setIsModalVisible,
+    currentPage,
+    setAssigneeType,
+    customers,
+    setCustomers,
+    selectedProducts,
+    setSelectedProducts,
+    currentTab,
+    isAdmin,
+    loader,
+    setLoader
+  } = useContext(DashBoardContext);
 
   useEffect(() => {
     fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage}&unique=brand`, {
@@ -193,6 +187,12 @@ export default function Table({
     currentPage,
     isStatusSelected
   ]);
+
+  useEffect(() => {
+    if (customers?.pagination?.pageCount) {
+      setPageCount(customers?.pagination?.pageCount);
+    }
+  }, [customers]);
 
   const handleStyleChanges = (e) => {
     setTimeout(() => {
@@ -570,13 +570,7 @@ export default function Table({
         </div>
         {rowData.id == showEdit && showPopup && (
           <div className="absolute top-0 right-0">
-            <MoreIconPopUp
-              // setStyleId={setStyleId}
-              // setWorkflowId={setWorkflowId}
-              setAssigneeType={setAssigneeType}
-              // setIsModalVisible={setIsModalVisible}
-              rowData={rowData}
-            />
+            <MoreIconPopUp rowData={rowData} />
           </div>
         )}
       </div>
@@ -590,11 +584,9 @@ export default function Table({
   const pagination = () => {
     return (
       <Pagination
-        customers={customers}
+        count={pageCount}
         preText={"< Prev"}
         nextText={"Next >"}
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
         className={"px-3 py-2 mr-2 leading-tight text-gray-500 bg-white"}
       />
     );
@@ -630,8 +622,10 @@ export default function Table({
   return (
     <>
       <div className="mb-[4px]">{renderHeader()}</div>
-      <div className="border border-grey-30 text-sx">
-        {loader && <Loader />}
+      <div
+        className={`${loader ? "border-0" : "border"} border-grey-30 text-sx`}
+      >
+        {loader && <Loader className={`h-full`} />}
         {!loader && (
           <DataTable
             value={customers?.workflows}
