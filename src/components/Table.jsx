@@ -27,6 +27,8 @@ import useSessionStorage from "../hooks/useSessionStorage";
 import { status } from "../constants/index";
 import AssignToEditor from "../logos/AssignToEditor.svg";
 import AssignToWriter from "../logos/AssignToWriter.svg";
+import ArrowSortDownLine from "../logos/ArrowSortDownLine.svg";
+import ArrowSortUpLine from "../logos/ArrowSortUpLine.svg";
 
 export default function Table() {
   const [searchByStyle, setSearchByStyle] = useState("");
@@ -53,6 +55,7 @@ export default function Table() {
   const [isStatusSelected, setIsStatusSelected] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [pageCount, setPageCount] = useState(1);
+  const [defaultSort, setDefaultSort] = useState(ArrowSort);
   const [userEmail] = useSessionStorage("userEmail");
   const navigate = useNavigate();
   const {
@@ -146,13 +149,13 @@ export default function Table() {
         status: isStatusSelected ? [searchByStatus] : status
       },
       orderBy: {
-        ...(currentSort == "styleSort" && { styleId: styleSort }),
-        ...(currentSort == "titleSort" && { title: titleSort }),
-        ...(currentSort == "brandSort" && { brand: brandSort }),
-        ...(currentSort == "updatedBySort" && { lastUpdatedBy: updatedBySort }),
-        ...(currentSort == "assigneeSort" && { lastUpdatedBy: assigneeSort }),
-        ...(currentSort == "statusSort" && { status: statusSort }),
-        ...(currentSort == "updatedAtSort" && { lastUpdateTs: updatedAtSort })
+        ...(currentSort == "Style" && { styleId: styleSort }),
+        ...(currentSort == "Title" && { title: titleSort }),
+        ...(currentSort == "Brand" && { brand: brandSort }),
+        ...(currentSort == "UpdatedBy" && { lastUpdatedBy: updatedBySort }),
+        ...(currentSort == "Assignee" && { lastUpdatedBy: assigneeSort }),
+        ...(currentSort == "Status" && { status: statusSort }),
+        ...(currentSort == "UpdatedAt" && { lastUpdateTs: updatedAtSort })
       }
     };
     setLoader(true);
@@ -461,39 +464,48 @@ export default function Table() {
       </span>
     );
   };
+
   const handleAssigneeSort = () => {
-    setCurrentSort("assigneeSort");
+    
+    setCurrentSort("Assignee");
     setAssigneeSort(assigneeSort == "desc" ? "asc" : "desc");
+    setDefaultSort(assigneeSort == "desc" ? ArrowSortDownLine : ArrowSortUpLine)
   };
 
   const handleUpdatedAtSort = () => {
-    setCurrentSort("updatedAtSort");
+    setCurrentSort("Updated At");
     setUpdatedAtSort(updatedAtSort == "desc" ? "asc" : "desc");
+    setDefaultSort(updatedAtSort == "desc" ? ArrowSortDownLine : ArrowSortUpLine)
   };
 
   const handleUpdatedBySort = () => {
-    setCurrentSort("updatedBySort");
+    setCurrentSort("Updated By");
     setUpdatedBySort(updatedBySort == "desc" ? "asc" : "desc");
+    setDefaultSort(updatedBySort == "desc" ? ArrowSortDownLine : ArrowSortUpLine)
   };
 
   const handleStatusSort = () => {
-    setCurrentSort("statusSort");
+    setCurrentSort("Status");
     setStatusSort(statusSort == "desc" ? "asc" : "desc");
+    setDefaultSort(statusSort == "desc" ? ArrowSortDownLine : ArrowSortUpLine)
   };
 
   const handleBrandSort = () => {
-    setCurrentSort("brandSort");
+    setCurrentSort("Brand");
     setBrandSort(brandSort == "desc" ? "asc" : "desc");
+    setDefaultSort(brandSort == "desc" ? ArrowSortDownLine : ArrowSortUpLine)
   };
 
   const handleTitleSort = () => {
-    setCurrentSort("titleSort");
+    setCurrentSort("Title");
     setTitleSort(titleSort == "desc" ? "asc" : "desc");
+    setDefaultSort(titleSort == "desc" ? ArrowSortDownLine : ArrowSortUpLine)
   };
 
   const handleStyleSort = () => {
-    setCurrentSort("styleSort");
+    setCurrentSort("Style");
     setStyleSort(styleSort == "desc" ? "asc" : "desc");
+    setDefaultSort(styleSort == "desc" ? ArrowSortDownLine : ArrowSortUpLine)
   };
 
   const iconClickHandler = (e, type, rowData) => {
@@ -522,7 +534,6 @@ export default function Table() {
       ) {
         setAssigneeType("editors");
       }
-      console.log(rowData);
       setIsModalVisible(true);
       setStyleId([rowData?.styleId]);
       setWorkflowId([rowData?.id]);
@@ -648,8 +659,10 @@ export default function Table() {
               header={
                 <TableHeaders
                   headerName={"Style"}
-                  sortIcon={ArrowSort}
+                  sortIcon={defaultSort}
                   onClick={handleStyleSort}
+                  currentSort={currentSort}
+                  ArrowSort={ArrowSort}
                 />
               }
               filter
@@ -663,8 +676,10 @@ export default function Table() {
               header={
                 <TableHeaders
                   headerName={"Title"}
-                  sortIcon={ArrowSort}
+                  sortIcon={defaultSort}
                   onClick={handleTitleSort}
+                  currentSort={currentSort}
+                  ArrowSort={ArrowSort}
                 />
               }
               filter
@@ -677,8 +692,10 @@ export default function Table() {
               header={
                 <TableHeaders
                   headerName={"Brand"}
-                  sortIcon={ArrowSort}
+                  sortIcon={defaultSort}
                   onClick={handleBrandSort}
+                  currentSort={currentSort}
+                  ArrowSort={ArrowSort}
                 />
               }
               field="brand"
@@ -693,8 +710,10 @@ export default function Table() {
                 header={
                   <TableHeaders
                     headerName={"Status"}
-                    sortIcon={ArrowSort}
+                    sortIcon={defaultSort}
                     onClick={handleStatusSort}
+                    currentSort={currentSort}
+                    ArrowSort={ArrowSort}
                   />
                 }
                 showFilterMenu={false}
@@ -711,8 +730,10 @@ export default function Table() {
                   header={
                     <TableHeaders
                       headerName={"Assignee"}
-                      sortIcon={ArrowSort}
+                      sortIcon={defaultSort}
                       onClick={handleAssigneeSort}
+                      currentSort={currentSort}
+                      ArrowSort={ArrowSort}
                     />
                   }
                   showFilterMenu={false}
@@ -725,9 +746,11 @@ export default function Table() {
               field="lastUpdatedBy"
               header={
                 <TableHeaders
-                  headerName={"Updated BY"}
-                  sortIcon={ArrowSort}
+                  headerName={"Updated By"}
+                  sortIcon={defaultSort}
                   onClick={handleUpdatedBySort}
+                  currentSort={currentSort}
+                  ArrowSort={ArrowSort}
                 />
               }
               filter
@@ -740,8 +763,10 @@ export default function Table() {
               header={
                 <TableHeaders
                   headerName={"Updated At"}
-                  sortIcon={ArrowSort}
+                  sortIcon={defaultSort}
                   onClick={handleUpdatedAtSort}
+                  currentSort={currentSort}
+                  ArrowSort={ArrowSort}
                 />
               }
               dataType="date"
