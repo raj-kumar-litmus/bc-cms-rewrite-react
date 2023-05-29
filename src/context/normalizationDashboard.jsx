@@ -10,7 +10,7 @@ function DashBoardProvider({ children }) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [loader, setLoader] = useState(true);
-  const [assigneeType, setAssigneeType] = useState("writers");
+  const [assigneeType, setAssigneeType] = useState(null);
   const [customers, setCustomers] = useState(null);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [currentTab, setCurrentTab] = useState("Completed");
