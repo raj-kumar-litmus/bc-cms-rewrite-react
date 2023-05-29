@@ -17,7 +17,7 @@ function NormalizationDashboard() {
     useContext(DashBoardContext);
 
   useEffect(() => {
-    setCurrentTab(isAdmin ? "Unassigned" : "Completed");
+    setCurrentTab(isAdmin ? "Unassigned" : "Assigned");
   }, [isAdmin]);
 
   useEffect(() => {
