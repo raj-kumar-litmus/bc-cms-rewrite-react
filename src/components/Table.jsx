@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { DashBoardContext } from "../context/normalizationDashboard";
 import "primereact/resources/themes/fluent-light/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
@@ -27,25 +28,7 @@ import { status } from "../constants/index";
 import AssignToEditor from "../logos/AssignToEditor.svg";
 import AssignToWriter from "../logos/AssignToWriter.svg";
 
-
-export default function Table({
-  loader,
-  setLoader,
-  setIsModalVisible,
-  setAssigneeType,
-  setStyleId,
-  setWorkflowId,
-  currentTab,
-  setCustomers,
-  customers,
-  isAdmin,
-  preText,
-  nextText,
-  currentPage,
-  setCurrentPage,
-  selectedProducts,
-  setSelectedProducts
-}) {
+export default function Table() {
   const [searchByStyle, setSearchByStyle] = useState("");
   const [searchByTitle, setSearchByTitle] = useState("");
   const [searchByStatus, setSearchByStatus] = useState([]);
@@ -69,8 +52,24 @@ export default function Table({
   const [isRowSelected, setIsRowSelected] = useState(false);
   const [isStatusSelected, setIsStatusSelected] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
+  const [pageCount, setPageCount] = useState(1);
   const [userEmail] = useSessionStorage("userEmail");
   const navigate = useNavigate();
+  const {
+    setWorkflowId,
+    setStyleId,
+    setIsModalVisible,
+    currentPage,
+    setAssigneeType,
+    customers,
+    setCustomers,
+    selectedProducts,
+    setSelectedProducts,
+    currentTab,
+    isAdmin,
+    loader,
+    setLoader
+  } = useContext(DashBoardContext);
 
   useEffect(() => {
     fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage}&unique=brand`, {
@@ -140,7 +139,9 @@ export default function Table({
         ...(searchByTitle && { title: searchByTitle }),
         ...(newSelectedBrand.length && { brand: newSelectedBrand }),
         ...(searchByUpdatedBy && { lastUpdatedBy: searchByUpdatedBy }),
-        ...((searchByAssignee || !isAdmin) && {assignee: !isAdmin  ? userEmail : searchByAssignee }),
+        ...((searchByAssignee || !isAdmin) && {
+          assignee: !isAdmin ? userEmail : searchByAssignee
+        }),
         ...(searchByUpdatedAt && { lastUpdateTs: finalDate }),
         status: isStatusSelected ? [searchByStatus] : status
       },
@@ -187,6 +188,12 @@ export default function Table({
     isStatusSelected
   ]);
 
+  useEffect(() => {
+    if (customers?.pagination?.pageCount) {
+      setPageCount(customers?.pagination?.pageCount);
+    }
+  }, [customers]);
+
   const handleStyleChanges = (e) => {
     setTimeout(() => {
       setSearchByStyle(e.target.value);
@@ -210,61 +217,93 @@ export default function Table({
       <div className="flex justify-content-end gap-4">
         {selectedProducts.length > 1 && (
           <>
-            {currentTab == "Completed" && <button
-              className="flex"
-              onClick={() => {
-                setStyleId(selectedProducts.map((e) => e?.styleId));
-                setIsModalVisible(true);
-                setAssigneeType("writers");
-              }}
-            >
-            <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
-             <img alt={`AssignToWriter svg`} src={AssignToWriter} className="w-[15px] h-[15px]" />
-            </span>
-              <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">Assign To Writer</span>
-            </button>}
-         
-            {currentTab == "Completed" && <button
-              className="flex"
-              onClick={() => {
-                setStyleId(selectedProducts.map((e) => e?.styleId));
-                setIsModalVisible(true);
-                setAssigneeType("editors");
-              }}
-            >
-             <span className="bg-white flex rounded-full justify-center items-center border w-[30px] h-[30px] border-grey-30 mr-1">
-             <img alt={`AssignToEditor svg`} src={AssignToEditor} className="w-[15px] h-[15px]"/>
-            </span>
-              <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">Assign To Editor</span>
-            </button>}
+            {currentTab == "Completed" && (
+              <button
+                className="flex"
+                onClick={() => {
+                  setStyleId(selectedProducts.map((e) => e?.styleId));
+                  setIsModalVisible(true);
+                  setAssigneeType("writers");
+                }}
+              >
+                <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
+                  <img
+                    alt={`AssignToWriter svg`}
+                    src={AssignToWriter}
+                    className="w-[15px] h-[15px]"
+                  />
+                </span>
+                <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">
+                  Assign To Writer
+                </span>
+              </button>
+            )}
 
-            {currentTab == "Unassigned" &&<button
-              className="flex"
-              onClick={() => {
-                setStyleId(selectedProducts.map((e) => e?.styleId));
-                setIsModalVisible(true);
-                setAssigneeType("editors");
-              }}
-            >
-             <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
-             <img alt={`AssigneEdit svg`} src={AssigneEdit} className="w-[15px] h-[15px]" />
-            </span>
-              <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">Assign</span>
-            </button>}
+            {currentTab == "Completed" && (
+              <button
+                className="flex"
+                onClick={() => {
+                  setStyleId(selectedProducts.map((e) => e?.styleId));
+                  setIsModalVisible(true);
+                  setAssigneeType("editors");
+                }}
+              >
+                <span className="bg-white flex rounded-full justify-center items-center border w-[30px] h-[30px] border-grey-30 mr-1">
+                  <img
+                    alt={`AssignToEditor svg`}
+                    src={AssignToEditor}
+                    className="w-[15px] h-[15px]"
+                  />
+                </span>
+                <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">
+                  Assign To Editor
+                </span>
+              </button>
+            )}
 
-            {(currentTab == "Assigned" || currentTab == "InProgress") && <button
-              className="flex"
-              onClick={() => {
-                setStyleId(selectedProducts.map((e) => e?.styleId));
-                setIsModalVisible(true);
-                setAssigneeType("editors");
-              }}
-            >
-             <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
-             <img alt={`ReAssign svg`} src={ReAssign} className="w-[15px] h-[15px]" />
-            </span>
-              <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">Reassign</span>
-            </button>}
+            {currentTab == "Unassigned" && (
+              <button
+                className="flex"
+                onClick={() => {
+                  setStyleId(selectedProducts.map((e) => e?.styleId));
+                  setIsModalVisible(true);
+                  setAssigneeType("editors");
+                }}
+              >
+                <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
+                  <img
+                    alt={`AssigneEdit svg`}
+                    src={AssigneEdit}
+                    className="w-[15px] h-[15px]"
+                  />
+                </span>
+                <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">
+                  Assign
+                </span>
+              </button>
+            )}
+
+            {(currentTab == "Assigned" || currentTab == "InProgress") && (
+              <button
+                className="flex"
+                onClick={() => {
+                  setStyleId(selectedProducts.map((e) => e?.styleId));
+                  setIsModalVisible(true);
+                  setAssigneeType("editors");
+                }}
+              >
+                <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
+                  <img
+                    alt={`ReAssign svg`}
+                    src={ReAssign}
+                    className="w-[15px] h-[15px]"
+                  />
+                </span>
+                <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">
+                  Reassign
+                </span>
+              </button>
+            )}
           </>
         )}
       </div>
@@ -338,16 +377,16 @@ export default function Table({
   const brandRowFilterTemplate = () => {
     return (
       <div>
-      <MultiSelect
-        value={selectedBrand}
-        options={brands}
-        itemTemplate={representativesItemTemplate}
-        onChange={(e) => handleBrands(e.value)}
-        optionLabel="brand"
-        placeholder="Select"
-        maxSelectedLabels={1}
-        style={{ width: "100px" }}
-      />
+        <MultiSelect
+          value={selectedBrand}
+          options={brands}
+          itemTemplate={representativesItemTemplate}
+          onChange={(e) => handleBrands(e.value)}
+          optionLabel="brand"
+          placeholder="Select"
+          maxSelectedLabels={1}
+          style={{ width: "100px" }}
+        />
       </div>
     );
   };
@@ -373,16 +412,18 @@ export default function Table({
   const dateFilterTemplate = () => {
     return (
       <span className="w-[100%] relative">
-        {!searchByUpdatedAt &&<img
-          alt={`${CalendarIcon} svg`}
-          src={CalendarIcon}
-          className="absolute right-2 top-4 z-10"
-        />}
+        {!searchByUpdatedAt && (
+          <img
+            alt={`${CalendarIcon} svg`}
+            src={CalendarIcon}
+            className="absolute right-2 top-4 z-10"
+          />
+        )}
         <Calendar
           value={searchByUpdatedAt}
           onChange={handleCalanderChange}
           className={Boolean && "p-calendar p-component p-inputwrapper"}
-          style={{minWidth: "60px"}}
+          style={{ minWidth: "60px" }}
         />
       </span>
     );
@@ -529,13 +570,7 @@ export default function Table({
         </div>
         {rowData.id == showEdit && showPopup && (
           <div className="absolute top-0 right-0">
-            <MoreIconPopUp
-              setStyleId={setStyleId}
-              setWorkflowId={setWorkflowId}
-              setAssigneeType={setAssigneeType}
-              setIsModalVisible={setIsModalVisible}
-              rowData={rowData}
-            />
+            <MoreIconPopUp rowData={rowData} />
           </div>
         )}
       </div>
@@ -549,11 +584,9 @@ export default function Table({
   const pagination = () => {
     return (
       <Pagination
-        customers={customers}
-        preText={preText}
-        nextText={nextText}
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
+        count={pageCount}
+        preText={"< Prev"}
+        nextText={"Next >"}
         className={"px-3 py-2 mr-2 leading-tight text-gray-500 bg-white"}
       />
     );
@@ -588,151 +621,161 @@ export default function Table({
 
   return (
     <>
-    <div className="mb-[4px]">{renderHeader()}</div>
-    <div className="border border-grey-30 text-sx">
-      {loader && <Loader />}
-      {!loader && (
-        <DataTable
-          value={customers?.workflows}
-          dataKey="id"
-          rows={100}
-          selection={selectedProducts}
-          filterDisplay={showFilters && "row"}
-          onRowMouseEnter={onRowSelect}
-          onRowMouseLeave={onRowUnselect}
-          footer={pagination}
-          onSelectionChange={onSelectionChange}
-          emptyMessage="No Workflows found."
-          onRowClick={onRowClick}
-        >
-          {isAdmin && (
-            <Column selectionMode="multiple" style={{ width: "3%" }}></Column>
-          )}
-          <Column
-            field="styleId"
-            header={
-              <TableHeaders
-                headerName={"Style"}
-                sortIcon={ArrowSort}
-                onClick={handleStyleSort}
-              />
-            }
-            filter
-            showFilterMenu={false}
-            filterElement={styleRowFilterTemplate}
-            filterPlaceholder="Search by Style"
-            style={{ width: "5%" }}
-          />
-          <Column
-            field="title"
-            header={
-              <TableHeaders
-                headerName={"Title"}
-                sortIcon={ArrowSort}
-                onClick={handleTitleSort}
-              />
-            }
-            filter
-            filterElement={titleRowFilterTemplate}
-            showFilterMenu={false}
-            filterPlaceholder="Search by Title"
-            style={{ width: "22%" }}
-          />
-          <Column
-            header={
-              <TableHeaders
-                headerName={"Brand"}
-                sortIcon={ArrowSort}
-                onClick={handleBrandSort}
-              />
-            }
-            field="brand"
-            showFilterMenu={false}
-            filter
-            filterElement={brandRowFilterTemplate}
-            style={{ width: "10%" }}
-          />
-          {currentTab !== "Unassigned" && (
+      <div className="mb-[4px]">{renderHeader()}</div>
+      <div
+        className={`${loader ? "border-0" : "border"} border-grey-30 text-sx`}
+      >
+        {loader && <Loader className={`h-full`} />}
+        {!loader && (
+          <DataTable
+            value={customers?.workflows}
+            dataKey="id"
+            rows={100}
+            selection={selectedProducts}
+            filterDisplay={showFilters && "row"}
+            onRowMouseEnter={onRowSelect}
+            onRowMouseLeave={onRowUnselect}
+            footer={pagination}
+            onSelectionChange={onSelectionChange}
+            emptyMessage="No Workflows found."
+            onRowClick={onRowClick}
+          >
+            {isAdmin && (
+              <Column selectionMode="multiple" style={{ width: "3%" }}></Column>
+            )}
             <Column
-              field="status"
+              field="styleId"
               header={
                 <TableHeaders
-                  headerName={"Status"}
+                  headerName={"Style"}
                   sortIcon={ArrowSort}
-                  onClick={handleStatusSort}
+                  onClick={handleStyleSort}
                 />
               }
+              filter
+              showFilterMenu={false}
+              filterElement={styleRowFilterTemplate}
+              filterPlaceholder="Search by Style"
+              style={{ width: "5%" }}
+            />
+            <Column
+              field="title"
+              header={
+                <TableHeaders
+                  headerName={"Title"}
+                  sortIcon={ArrowSort}
+                  onClick={handleTitleSort}
+                />
+              }
+              filter
+              filterElement={titleRowFilterTemplate}
+              showFilterMenu={false}
+              filterPlaceholder="Search by Title"
+              style={{ width: "22%" }}
+            />
+            <Column
+              header={
+                <TableHeaders
+                  headerName={"Brand"}
+                  sortIcon={ArrowSort}
+                  onClick={handleBrandSort}
+                />
+              }
+              field="brand"
               showFilterMenu={false}
               filter
-              filterElement={statusRowFilterTemplate}
-              style={{ width: "18%" }}
+              filterElement={brandRowFilterTemplate}
+              style={{ width: "10%" }}
             />
-          )}
-          {currentTab !== "Completed" &&
-            currentTab !== "Unassigned" &&
-            isAdmin && (
+            {currentTab !== "Unassigned" && (
               <Column
-                field="assignee"
+                field="status"
                 header={
                   <TableHeaders
-                    headerName={"Assignee"}
+                    headerName={"Status"}
                     sortIcon={ArrowSort}
-                    onClick={handleAssigneeSort}
+                    onClick={handleStatusSort}
                   />
                 }
                 showFilterMenu={false}
                 filter
-                filterElement={assigneeRowFilterTemplate}
-                style={{ width: "13%" }}
+                filterElement={statusRowFilterTemplate}
+                style={{ width: "18%" }}
               />
             )}
-          <Column
-            field="lastUpdatedBy"
-            header={
-              <TableHeaders
-                headerName={"Updated BY"}
-                sortIcon={ArrowSort}
-                onClick={handleUpdatedBySort}
-              />
-            }
-            filter
-            showFilterMenu={false}
-            filterElement={updatedByFilterTemplate}
-            style={{ width: "15%" }}
-          />
-          <Column
-            field="lastUpdateTs"
-            header={
-              <TableHeaders
-                headerName={"Updated At"}
-                sortIcon={ArrowSort}
-                onClick={handleUpdatedAtSort}
-              />
-            }
-            dataType="date"
-            filter
-            showFilterMenu={false}
-            body={dateBodyTemplate}
-            filterElement={dateFilterTemplate}
-            style={{ width: "14%" }}
-          />
-          <Column header={handleFilterIcon} style={{ width: "0%" }} />
-          <Column
-            body={(e) => handleRowSelectIcons(e, Edit, "edit")}
-            style={{ width: "0%" }}
-          />
-          {currentTab !== "Completed" && (
+            {currentTab !== "Completed" &&
+              currentTab !== "Unassigned" &&
+              isAdmin && (
+                <Column
+                  field="assignee"
+                  header={
+                    <TableHeaders
+                      headerName={"Assignee"}
+                      sortIcon={ArrowSort}
+                      onClick={handleAssigneeSort}
+                    />
+                  }
+                  showFilterMenu={false}
+                  filter
+                  filterElement={assigneeRowFilterTemplate}
+                  style={{ width: "13%" }}
+                />
+              )}
             <Column
-              body={(e) => handleRowSelectIcons(e, (currentTab == "Assigned" ||currentTab=="InProgress") ? ReAssign  : AssigneEdit, "assign")}
+              field="lastUpdatedBy"
+              header={
+                <TableHeaders
+                  headerName={"Updated BY"}
+                  sortIcon={ArrowSort}
+                  onClick={handleUpdatedBySort}
+                />
+              }
+              filter
+              showFilterMenu={false}
+              filterElement={updatedByFilterTemplate}
+              style={{ width: "15%" }}
+            />
+            <Column
+              field="lastUpdateTs"
+              header={
+                <TableHeaders
+                  headerName={"Updated At"}
+                  sortIcon={ArrowSort}
+                  onClick={handleUpdatedAtSort}
+                />
+              }
+              dataType="date"
+              filter
+              showFilterMenu={false}
+              body={dateBodyTemplate}
+              filterElement={dateFilterTemplate}
+              style={{ width: "14%" }}
+            />
+            <Column header={handleFilterIcon} style={{ width: "0%" }} />
+            <Column
+              body={(e) => handleRowSelectIcons(e, Edit, "edit")}
               style={{ width: "0%" }}
             />
-          )}
-          {currentTab === "Completed" && (
-            <Column body={handleMoreIcon} style={{ width: "0%" }} />
-          )}
-        </DataTable>
-      )}
-    </div>
+            {currentTab !== "Completed" && (
+              <Column
+                body={(e) =>
+                  handleRowSelectIcons(
+                    e,
+                    currentTab == "Assigned" || currentTab == "InProgress"
+                      ? ReAssign
+                      : AssigneEdit,
+                    "assign"
+                  )
+                }
+                style={{ width: "0%" }}
+              />
+            )}
+            {currentTab === "Completed" && (
+              <Column body={handleMoreIcon} style={{ width: "0%" }} />
+            )}
+          </DataTable>
+        )}
+      </div>
     </>
   );
 }

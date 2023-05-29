@@ -1,20 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext, useRef } from "react";
+import { Toast } from "primereact/toast";
+import { DashBoardContext } from "../context/normalizationDashboard";
 import Modal from "../components/Modal";
 import DropDown from "../components/BasicDropdown";
 import WordBetweenHorizontalLine from "../components/WordBetweenHorizontalLine";
 import Button from "../components/Button";
 import CheckBox from "../components/CheckBox";
+import GreenTick from "../logos/green-tick.svg";
+import RedCross from "../logos/red-cross-in-circle.svg";
 import useSessionStorage from "../hooks/useSessionStorage";
 import Loader from "../components/loader";
 
-function AssignStyle({
-  styles,
-  workflowId,
-  isModalVisible,
-  setIsModalVisible,
-  setStyleAssigned,
-  userGroup = "writers"
-}) {
+function AssignStyle() {
+  const toastBR = useRef(null);
   const { VITE_SERVER_HOST_NAME } = process.env;
   const [options, setOptions] = useState([]);
   const [isFetching, setIsFetching] = useState(false);
@@ -26,10 +24,23 @@ function AssignStyle({
   const [uri, setUri] = useState(null);
   const [placeHolder, setPlaceHolder] = useState(null);
   const [isChecked, setIsChecked] = useState(false);
-  const [assignee, SetAssignee] = useState(null);
+  const [toastAssignee, setToastAssignee] = useState(null);
   const [assigneeName, SetAssigneeName] = useState(null);
+  const [styleAssigned, setStyleAssigned] = useState(false);
+  const [assignee, SetAssignee] = useState(null);
+  const [errorToast, setErrorToast] = useState(false);
   const [clearValue, setClearValue] = useState(false);
+  const [disableSubmit, setDisableSubmit] = useState(true);
   const [accountDetails] = useSessionStorage("accountDetails");
+  const {
+    assigneeType: userGroup,
+    workflowId,
+    styleId: styles,
+    setStyleId,
+    currentTab,
+    isModalVisible,
+    setIsModalVisible
+  } = useContext(DashBoardContext) || {};
 
   const buildStyleStrings = () => {
     if (styles.length < 10) {
@@ -62,6 +73,13 @@ function AssignStyle({
     }
   };
 
+  const styleAssignedHandler = ({ styleId, assignee, error = false }) => {
+    setStyleId(styleId);
+    setToastAssignee(assignee);
+    setStyleAssigned(true);
+    setErrorToast(error);
+  };
+
   const assignStyleToUser = async () => {
     const requestOptions = {
       method: "PATCH",
@@ -75,24 +93,23 @@ function AssignStyle({
     try {
       setIsFetching(true);
       const uri = `${VITE_SERVER_HOST_NAME}/api/v1/workflows/${workflowId}`;
-      const response = await fetch(uri, requestOptions);
-      const { status } = response;
-      setStyleAssigned({
-        error: status !== 200,
+      await fetch(uri, requestOptions);
+      styleAssignedHandler({
+        error: false,
         styleId: styles,
-        assignee: assigneeName,
-        userGroup: placeHolder
+        assignee: assigneeName
       });
+      setIsModalVisible(false);
       setShowLoader(false);
       setIsFetching(false);
       return;
     } catch (_) {
-      setStyleAssigned({
+      styleAssignedHandler({
         styleId: styles,
         error: true,
-        assignee: assigneeName,
-        userGroup: placeHolder
+        assignee: assigneeName
       });
+      setIsModalVisible(false);
       setShowLoader(false);
       setIsFetching(false);
       return;
@@ -103,6 +120,7 @@ function AssignStyle({
     const { username, name } = accountDetails || {};
     SetAssignee(username);
     SetAssigneeName(name);
+    setToastAssignee(name);
   };
 
   useEffect(() => {
@@ -132,85 +150,144 @@ function AssignStyle({
     buildStyleStrings();
   }, []);
 
+  useEffect(() => {
+    if (clearValue) {
+      SetAssigneeName(null);
+      SetAssignee(null);
+    }
+  }, [clearValue]);
+
+  useEffect(() => {
+    if (!isChecked && !assignee && !assigneeName) {
+      setDisableSubmit(true);
+    }
+    if (isChecked || assignee || assigneeName) {
+      setDisableSubmit(false);
+    }
+  }, [isChecked, assignee, assigneeName]);
+
   const onSubmitHandler = async () => {
     setShowLoader(true);
     await assignStyleToUser();
   };
 
+  const Summary = () => {
+    return (
+      <div className="flex">
+        {!errorToast && <img src={GreenTick} alt="GreenTick" />}
+        {errorToast && <img src={RedCross} alt="RedCross" />}
+        <div className="flex flex-col ml-[20px]">
+          <p>
+            {!errorToast &&
+              `Succesfully ${
+                currentTab === "Assigned" ? "ReAssigned" : "Assigned"
+              }`}
+          </p>
+          <p>{errorToast && "Something went wrong !"}</p>
+          <p>
+            {!errorToast &&
+              `${toastAssignee} assigned as the ${userGroup} for ${styles}`}
+          </p>
+        </div>
+      </div>
+    );
+  };
+
+  const showTopCenter = () => {
+    toastBR.current.show({
+      severity: errorToast ? "error" : "success",
+      content: <Summary />,
+      sticky: true
+    });
+    setStyleAssigned(false);
+  };
+
+  const selfAssignHandler = () => {
+    setIsChecked(!isChecked);
+    setIsActiveDropdown(isChecked);
+    setClearValue(true);
+    setSelfAsAssignee();
+  };
+
+  useEffect(() => {
+    if (styleAssigned) {
+      showTopCenter();
+    }
+  }, [styleAssigned]);
+
   return (
-    <Modal
-      className={"w-[500px]"}
-      visible={isModalVisible}
-      setVisible={setIsModalVisible}
-      header={<p className="text-xl font-semibold">{header}</p>}
-    >
-      {!showLoader && (
-        <>
-          <div className="text-base mb-[5px] flex">
-            <p>
-              {styleString}
-              <span className={"font-bold text-gray-900"}> {moreText}</span>
-            </p>
-          </div>
-          <DropDown
-            id="single-option-dropdown"
-            label={`Assign ${userGroup === "writers" ? "Writer" : "Editor"}`}
-            isLoading={isFetching}
-            onChange={(e) => {
-              if (e) {
-                SetAssignee(e.value);
-                SetAssigneeName(e.label);
-              }
-            }}
-            isDisabled={!isActiveDropdown || isFetching}
-            options={options}
-            clearValue={clearValue}
-            setClearValue={setClearValue}
-            hasCustomOption={true}
-            isClearable={true}
-            classNamePrefix="assign-writer"
-            placeholder={placeHolder}
-          />
-          <div className="mt-[25px]">
-            <WordBetweenHorizontalLine lineColor="bg-gray-300" text="Or" />
-          </div>
-          <div className="mt-[10px]">
-            <CheckBox
-              value={isChecked}
-              inputClassName={"w-[18px] accent-gray-900"}
-              onChange={() => {
-                setIsChecked(!isChecked);
-                setIsActiveDropdown(isChecked);
-                setClearValue(true);
-                setSelfAsAssignee();
+    <>
+      <Modal
+        className={"w-[500px]"}
+        visible={isModalVisible}
+        setVisible={setIsModalVisible}
+        header={<p className="text-xl font-semibold">{header}</p>}
+      >
+        {!showLoader && (
+          <>
+            <div className="text-base mb-[5px] flex">
+              <p>
+                {styleString}
+                <span className={"font-bold text-gray-900"}> {moreText}</span>
+              </p>
+            </div>
+            <DropDown
+              id="single-option-dropdown"
+              label={`Assign ${userGroup === "writers" ? "Writer" : "Editor"}`}
+              isLoading={isFetching}
+              onChange={(e) => {
+                if (e) {
+                  SetAssignee(e.value);
+                  SetAssigneeName(e.label);
+                }
               }}
-              text={"Assign Me"}
+              isDisabled={!isActiveDropdown || isFetching}
+              options={options}
+              clearValue={clearValue}
+              setClearValue={setClearValue}
+              hasCustomOption={true}
+              isClearable={true}
+              classNamePrefix="assign-writer"
+              placeholder={placeHolder}
             />
-          </div>
-          <div className="flex justify-center mt-[30px]">
-            <Button
-              onClick={() => setIsModalVisible(false)}
-              ariaLabel="Hide-Assign-Modal"
-              className={
-                "border rounded border-gray-800 w-[100px] h-[50px] mr-[20px]"
-              }
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={onSubmitHandler}
-              ariaLabel="Assign-Style"
-              className={
-                "bg-gray-900 border text-white rounded border-gray-800 w-[100px] h-[50px]"
-              }
-            >
-              Save
-            </Button>
-          </div>
-        </>
-      )}
-      {showLoader && <Loader className={"!h-[330px]"} />}
-    </Modal>
+            <div className="mt-[25px]">
+              <WordBetweenHorizontalLine lineColor="bg-gray-300" text="Or" />
+            </div>
+            <div className="mt-[10px]">
+              <CheckBox
+                value={isChecked}
+                inputClassName={"w-[18px] accent-gray-900"}
+                onChange={selfAssignHandler}
+                text={"Assign Me"}
+              />
+            </div>
+            <div className="flex justify-center mt-[30px]">
+              <Button
+                onClick={() => setIsModalVisible(false)}
+                ariaLabel="Hide-Assign-Modal"
+                className={
+                  "border rounded border-gray-800 w-[100px] h-[50px] mr-[20px]"
+                }
+              >
+                Cancel
+              </Button>
+              <Button
+                disabled={disableSubmit}
+                onClick={onSubmitHandler}
+                ariaLabel="Assign-Style"
+                className={
+                  "bg-gray-900 border text-white rounded border-gray-800 w-[100px] h-[50px]"
+                }
+              >
+                Save
+              </Button>
+            </div>
+          </>
+        )}
+        {showLoader && <Loader className={"!h-[330px]"} />}
+      </Modal>
+      <Toast ref={toastBR} position="top-center" />
+    </>
   );
 }
 

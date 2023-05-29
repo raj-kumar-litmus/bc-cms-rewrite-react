@@ -1,11 +1,7 @@
 import React, { Suspense, lazy } from "react";
 import { createRoot } from "react-dom/client";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate
-} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { DashBoardProvider } from "./context/normalizationDashboard";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
 import "../public/index.css";
@@ -49,7 +45,9 @@ root.render(
           element={
             <>
               <NavBar />
-              <NormalizationDashboard />
+              <DashBoardProvider>
+                <NormalizationDashboard />
+              </DashBoardProvider>
             </>
           }
         />
