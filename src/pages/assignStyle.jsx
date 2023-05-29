@@ -147,7 +147,7 @@ function AssignStyle() {
   useEffect(() => {
     setIsFetching(true);
     setIsActiveDropdown(false);
-    buildStyleStrings();
+    if (Array.isArray(styles) && styles.length > 0) buildStyleStrings();
   }, []);
 
   useEffect(() => {
