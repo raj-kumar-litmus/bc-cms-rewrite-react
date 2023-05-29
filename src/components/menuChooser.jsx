@@ -35,20 +35,27 @@ function MenuChooser() {
     }
   }, [accountDetails]);
 
+  useEffect(() => {
+    if (canAccessSizingApp && canAccessWorkBenchApp) return;
+    if (canAccessWorkBenchApp && !canAccessSizingApp)
+      navigate("/normalizationDashBoard");
+    if (!canAccessWorkBenchApp && canAccessSizingApp) navigate("/sizingApp");
+  }, [canAccessWorkBenchApp, canAccessSizingApp]);
+
   return (
     <div className="bg-grey-40 h-screen">
       {canAccessWorkBenchApp && canAccessSizingApp && (
-      <h1 className="text-[20px] text-center font-bold text-black pt-10">
-        Choose the Application
-      </h1>
+        <h1 className="text-[20px] text-center font-bold text-black pt-10">
+          Choose the Application
+        </h1>
       )}
 
       {canAccessWorkBenchApp && canAccessSizingApp && (
         <p className="text-sm mt-4 text-center w-[416px] mx-[476px]">
-          You Have Permission to access Data Normalization and
-          Sizing app. You can select one from below
+          You Have Permission to access Data Normalization and Sizing app. You
+          can select one from below
         </p>
-       )}
+      )}
 
       <div className="flex flex-row justify-center items-center">
         {canAccessWorkBenchApp && (

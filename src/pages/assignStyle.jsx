@@ -59,9 +59,8 @@ function AssignStyle() {
     try {
       const response = await fetch(uri, requestOptions);
       const { data } = await response.json();
-      const { members } = data || {};
       setOptions(
-        members?.map(({ displayName, mail }) => ({
+        data?.map(({ displayName, mail }) => ({
           value: mail,
           label: displayName
         }))
@@ -126,12 +125,12 @@ function AssignStyle() {
   useEffect(() => {
     if (userGroup === "writers") {
       setHeader("Assign Writer for");
-      setUri(`${VITE_SERVER_HOST_NAME}/api/v1/groups/all/writers/members`);
+      setUri(`${VITE_SERVER_HOST_NAME}/api/v1/groups/writers/members`);
       setPlaceHolder("Writer");
     }
     if (userGroup === "editors") {
       setHeader("Assign Editor for");
-      setUri(`${VITE_SERVER_HOST_NAME}/api/v1/groups/all/editors/members`);
+      setUri(`${VITE_SERVER_HOST_NAME}/api/v1/groups/editors/members`);
       setPlaceHolder("Editor");
     }
   }, [userGroup]);
@@ -145,9 +144,12 @@ function AssignStyle() {
   }, [uri]);
 
   useEffect(() => {
+    if (Array.isArray(styles) && styles.length > 0) buildStyleStrings();
+  }, [styles]);
+
+  useEffect(() => {
     setIsFetching(true);
     setIsActiveDropdown(false);
-    if (Array.isArray(styles) && styles.length > 0) buildStyleStrings();
   }, []);
 
   useEffect(() => {
