@@ -445,12 +445,7 @@ export default function Table() {
             )}
           </>
         )}
-        <button
-          className="bg-white text-black text-sm rounded border border-black m-2 p-1 w-[94px] h-[39px]"
-          onClick={clearFilters}
-        >
-          Clear Filters
-        </button>
+        <button className="bg-white text-black text-sm rounded border border-black m-2 p-1 w-[94px] h-[39px]" onClick={clearFilters}>Clear Filters</button>
       </div>
     );
   };
