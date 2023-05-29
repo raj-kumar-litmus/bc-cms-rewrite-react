@@ -500,41 +500,41 @@ export default function Table() {
     );
   };
 
-  const handleAssigneeSort = () => {
-    setCurrentSort("Assignee");
-    setAssigneeSort(assigneeSort == "desc" ? "asc" : "desc");
-    setDefaultSort(assigneeSort == "desc" ? ArrowSortDownLine : ArrowSortUpLine)
-  };
-
-  const handleUpdatedAtSort = () => {
-    setCurrentSort("Updated At");
-    setUpdatedAtSort(updatedAtSort == "desc" ? "asc" : "desc");
-    setDefaultSort(updatedAtSort == "desc" ? ArrowSortDownLine : ArrowSortUpLine)
-  };
-
-  const handleUpdatedBySort = () => {
-    setCurrentSort("Updated By");
-    setUpdatedBySort(updatedBySort == "desc" ? "asc" : "desc");
-    setDefaultSort(updatedBySort == "desc" ? ArrowSortDownLine : ArrowSortUpLine)
-  };
-
-  const handleStatusSort = () => {
-    setCurrentSort("Status");
-    setStatusSort(statusSort == "desc" ? "asc" : "desc");
-    setDefaultSort(statusSort == "desc" ? ArrowSortDownLine : ArrowSortUpLine)
-  };
-
-  const handleBrandSort = () => {
-    setCurrentSort("Brand");
-    setBrandSort(brandSort == "desc" ? "asc" : "desc");
-    setDefaultSort(brandSort == "desc" ? ArrowSortDownLine : ArrowSortUpLine)
-  };
-
-  const handleTitleSort = () => {
-    setCurrentSort("Title");
-    setTitleSort(titleSort == "desc" ? "asc" : "desc");
-    setDefaultSort(titleSort == "desc" ? ArrowSortDownLine : ArrowSortUpLine)
-  };
+  const handleSort=(currentSort)=>{
+    setCurrentSort(currentSort);
+    switch (currentSort) {
+      case "Style":
+        setStyleSort(styleSort == "desc" ? "asc" : "desc");
+        setDefaultSort(styleSort == "desc" ? ArrowSortDownLine : ArrowSortUpLine)
+        break;
+      case "Title":
+        setTitleSort(titleSort == "desc" ? "asc" : "desc");
+        setDefaultSort(titleSort == "desc" ? ArrowSortDownLine : ArrowSortUpLine)
+        break;
+      case "Brand":
+        setBrandSort(brandSort == "desc" ? "asc" : "desc");
+        setDefaultSort(brandSort == "desc" ? ArrowSortDownLine : ArrowSortUpLine)        
+        break;
+      case "Status":
+        setStatusSort(statusSort == "desc" ? "asc" : "desc");
+        setDefaultSort(statusSort == "desc" ? ArrowSortDownLine : ArrowSortUpLine)        
+          break;
+      case "Assignee":
+        setAssigneeSort(assigneeSort == "desc" ? "asc" : "desc");
+        setDefaultSort(assigneeSort == "desc" ? ArrowSortDownLine : ArrowSortUpLine)
+        break;
+        case "Updated By":
+          setUpdatedBySort(updatedBySort == "desc" ? "asc" : "desc");
+          setDefaultSort(updatedBySort == "desc" ? ArrowSortDownLine : ArrowSortUpLine)
+        break;
+        case "Updated At":
+          setUpdatedAtSort(updatedAtSort == "desc" ? "asc" : "desc");
+          setDefaultSort(updatedAtSort == "desc" ? ArrowSortDownLine : ArrowSortUpLine)
+        break;
+        default:
+        break;
+    }
+  }
 
   const handleStyleSort = () => {
     setCurrentSort("Style");
@@ -707,7 +707,7 @@ export default function Table() {
                 <TableHeaders
                   headerName={"Style"}
                   sortIcon={defaultSort}
-                  onClick={handleStyleSort}
+                  onClick={()=>handleSort("Style")}
                   currentSort={currentSort}
                   ArrowSort={ArrowSort}
                 />
@@ -723,7 +723,7 @@ export default function Table() {
                 <TableHeaders
                   headerName={"Title"}
                   sortIcon={defaultSort}
-                  onClick={handleTitleSort}
+                  onClick={()=>handleSort("Title")}
                   currentSort={currentSort}
                   ArrowSort={ArrowSort}
                 />
@@ -738,7 +738,7 @@ export default function Table() {
                 <TableHeaders
                   headerName={"Brand"}
                   sortIcon={defaultSort}
-                  onClick={handleBrandSort}
+                  onClick={()=>handleSort("Brand")}
                   currentSort={currentSort}
                   ArrowSort={ArrowSort}
                 />
@@ -755,7 +755,7 @@ export default function Table() {
                   <TableHeaders
                     headerName={"Status"}
                     sortIcon={defaultSort}
-                    onClick={handleStatusSort}
+                    onClick={()=>handleSort("Status")}
                     currentSort={currentSort}
                     ArrowSort={ArrowSort}
                   />
@@ -774,7 +774,7 @@ export default function Table() {
                     <TableHeaders
                       headerName={"Assignee"}
                       sortIcon={defaultSort}
-                      onClick={handleAssigneeSort}
+                      onClick={()=>handleSort("Assignee")}
                       currentSort={currentSort}
                       ArrowSort={ArrowSort}
                     />
@@ -790,7 +790,7 @@ export default function Table() {
                 <TableHeaders
                   headerName={"Updated By"}
                   sortIcon={defaultSort}
-                  onClick={handleUpdatedBySort}
+                  onClick={()=>handleSort("Updated By")}
                   currentSort={currentSort}
                   ArrowSort={ArrowSort}
                 />
@@ -805,7 +805,7 @@ export default function Table() {
                 <TableHeaders
                   headerName={"Updated At"}
                   sortIcon={defaultSort}
-                  onClick={handleUpdatedAtSort}
+                  onClick={()=>handleSort("Updated At")}
                   currentSort={currentSort}
                   ArrowSort={ArrowSort}
                 />
