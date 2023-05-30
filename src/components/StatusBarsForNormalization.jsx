@@ -9,27 +9,33 @@ import { workFlowsUrl } from "../constants/index";
 
 function StatusBarsForNormalization() {
   const [statusBarData, setStatusBarData] = useState([]);
-  const { isAdmin, currentTab, setShowToast } = useContext(DashBoardContext);
+  const { isAdmin, currentTab, setShowToast, setLoader, loader} = useContext(DashBoardContext);
 
   async function getCount(){
-    const response = await fetch(`${workFlowsUrl}/counts`,
+    try{
+      const response = await fetch(`${workFlowsUrl}/counts`,
        {
         method: 'get',
         headers: {
           "Content-type": "application/json; charset=UTF-8"
         }
       }
-  )
-  const data = await response.json();
-   if(data?.success){
+  );
+  if(response?.ok){
+    const data = await response.json();
+    setLoader(false)
     setStatusBarData(data?.data);
-   }
-  if (!data?.success){
+   }else{
+    setLoader(false)
     setShowToast(true)
-	}
+   }
+    }catch{
+      console.error(error);
+    }
   }
 
   useEffect(() => {
+    setLoader(true)
     getCount()
   }, [currentTab]);
 
@@ -44,6 +50,7 @@ function StatusBarsForNormalization() {
           img={UnAssigned}
           count={statusBarData?.unassigned}
           className="bg-pink-100"
+          loader={loader}
         />
       )}
 
@@ -52,6 +59,7 @@ function StatusBarsForNormalization() {
         img={Assigned}
         count={statusBarData?.assigned}
         className="bg-blue-100"
+        loader={loader}
       />
 
       <StatusBar
@@ -59,6 +67,7 @@ function StatusBarsForNormalization() {
         img={InProgress}
         count={statusBarData?.inProgress}
         className="bg-yellow-100"
+        loader={loader}
       />
 
       <StatusBar
@@ -66,6 +75,7 @@ function StatusBarsForNormalization() {
         img={Completed}
         count={statusBarData?.completed}
         className="bg-green-100"
+        loader={loader}
       />
     </div>
     </>
