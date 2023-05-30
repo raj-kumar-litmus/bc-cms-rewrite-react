@@ -9,7 +9,8 @@ import { workFlowsUrl } from "../constants/index";
 
 function StatusBarsForNormalization() {
   const [statusBarData, setStatusBarData] = useState([]);
-  const { isAdmin, currentTab, setShowToast, setLoader, loader} = useContext(DashBoardContext);
+  const [loader, setLoader] = useState(true);
+  const { isAdmin, currentTab, setShowToast} = useContext(DashBoardContext);
 
   async function getCount(){
     try{
