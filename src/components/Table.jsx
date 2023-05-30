@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext, useRef} from "react";
 import { useNavigate } from "react-router-dom";
 import { Tooltip } from 'primereact/tooltip';
 import { Toast } from 'primereact/toast';
+import RedCross from "../logos/red-cross-in-circle.svg";
 import { DashBoardContext } from "../context/normalizationDashboard";
 import "primereact/resources/themes/fluent-light/theme.css";
 import "primereact/resources/primereact.min.css";
@@ -79,7 +80,7 @@ export default function Table() {
     setShowToast
   } = useContext(DashBoardContext);
 
-  const toast = useRef(null);
+  const toastBR = useRef(null);
 
   useEffect(() => {
       getBrands()
@@ -87,9 +88,28 @@ export default function Table() {
       getStatus()
   }, [currentPage]);
 
+  const showTopCenter = () => {
+    toastBR.current.show({
+      severity: showToast ? "error" : "success",
+      content: <Summary />,
+      sticky: true
+    });
+  };
+
+  const Summary = () => {
+    return (
+      <div className="flex">
+        {showToast && <img src={RedCross} alt="RedCross" />}
+        <div className="flex flex-col ml-[20px]">
+          <p>{showToast && "Something went wrong !"}</p>
+        </div>
+      </div>
+    );
+  };
+
   useEffect(()=>{
     if(showToast){
-      toast.current.show({severity:'error', summary: 'Error', detail:'Something went wrong. Please try again', life: 3000});
+      showTopCenter();
     }
   },[showToast])
 
@@ -137,6 +157,7 @@ export default function Table() {
         ...((currentSort == "Updated At" || (currentSort != "Style" && currentSort != "Title" && currentSort != "Brand" && currentSort != "Updated By" && currentSort != "Assignee" && currentSort != "Status" )) && {lastUpdateTs :  updatedAtSort })
       }
     };
+    try {
       const response = await fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage}`,
        {
         method: 'POST',
@@ -146,15 +167,17 @@ export default function Table() {
         }
       }
   );
-  const data = await response.json();
-  if(data?.success){
-    setCustomers(data?.data);
+  if(response?.ok){
+    const data = await response.json()
+    setCustomers(data?.data)
     setLoader(false)
-  }
-  if (!data?.success){
+  }else{
     setLoader(false)
     setShowToast(true)
-	}
+  }
+}catch (error) {
+  console.error(err);
+}
 }
 
 async function getBrands(){
@@ -237,7 +260,7 @@ const response = await fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage
 }
 
   useEffect(() => {
-    setLoader(true);
+    setLoader(true)
     getCustomers()
   }, [
     searchByStyle,
@@ -737,7 +760,7 @@ const response = await fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage
             onRowClick={onRowClick}
           >
             {isAdmin && (
-              <Column selectionMode="multiple" style={{ width: "3%" }}></Column>
+              <Column selectionMode="multiple"></Column>
             )}
             <Column
               field="styleId"
@@ -854,28 +877,24 @@ const response = await fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage
               body={dateBodyTemplate}
               filterElement={dateFilterTemplate}
             />
-            <Column header={handleFilterIcon} style={{ width: "0%" }} />
+            <Column header={handleFilterIcon}/>
             <Column
               body={(e) => handleRowSelectIcons(e, "edit")}
-              style={{ width: "0%" }}
             />
             {currentTab !== "Completed" && (
               <Column
                 body={(e) =>
                   handleRowSelectIcons(e,"assign")
                 }
-                style={{ width: "0%" }}
               />
             )}
             {currentTab === "Completed" && (
-              <Column body={handleMoreIcon} style={{ width: "0%" }} />
+              <Column body={handleMoreIcon}/>
             )}
           </DataTable>
         )}
       </div>
-      <div className="card flex justify-content-center">
-            <Toast ref={toast} />
-        </div>
+      <Toast ref={toastBR} position="top-center" />
     </>
   );
 }

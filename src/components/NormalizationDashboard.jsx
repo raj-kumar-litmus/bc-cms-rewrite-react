@@ -1,5 +1,4 @@
-import React, {useState, useEffect, useContext, useRef } from "react";
-import { Toast } from 'primereact/toast';
+import React, {useState, useEffect, useContext} from "react";
 import { DashBoardContext } from "../context/normalizationDashboard.jsx";
 import { useNavigate } from "react-router-dom";
 import { workFlowsUrl } from "../constants/index";
@@ -12,21 +11,14 @@ import useSessionStorage from "../hooks/useSessionStorage";
 
 function NormalizationDashboard() {
   const navigate = useNavigate();
-  const toast = useRef(null);
   const [accountDetails] = useSessionStorage("accountDetails");
   const [search, setSearch] = useState('')
-  const { setSelectedProducts, setCurrentTab, setCurrentPage, isAdmin, setCustomers, currentPage, setLoader, showToast, setShowToast } =
+  const { setSelectedProducts, setCurrentTab, setCurrentPage, isAdmin, setCustomers, currentPage, setLoader, setShowToast } =
     useContext(DashBoardContext);
 
   useEffect(() => {
     setCurrentTab(isAdmin ? "Unassigned" : "Assigned");
   }, [isAdmin]);
-
-  useEffect(()=>{
-    if(showToast){
-      toast.current.show({severity:'error', summary: 'Error', detail:'Something went wrong. Please try again', life: 3000});
-    }
-  },[showToast])
 
   useEffect(() => {
     if (!accountDetails?.idTokenClaims?.exp) {
@@ -71,9 +63,6 @@ function NormalizationDashboard() {
 
   return (
     <>
-     <div className="card flex justify-content-center">
-            <Toast ref={toast} />
-        </div>
     <div className="bg-white pb-[20px]">
       <div className="mx-[5%]">
         <StatusBarsForNormalization />
