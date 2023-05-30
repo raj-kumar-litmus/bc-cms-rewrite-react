@@ -21,7 +21,8 @@ function NormalizationDashboard() {
     setCustomers,
     currentPage,
     setLoader,
-    setShowToast
+    setShowToast,
+    clearFilters
   } = useContext(DashBoardContext);
 
   useEffect(() => {
@@ -96,7 +97,10 @@ function NormalizationDashboard() {
       setShowToast(true);
     }
   }
-
+  
+const handleSearchChange=(e)=>{
+  setSearch(e.target.value)
+}
   const handleSearchClick = () => {
     setLoader(true);
     if (search.includes(",")) {
