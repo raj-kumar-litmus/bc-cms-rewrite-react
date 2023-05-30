@@ -11,7 +11,6 @@ import useSessionStorage from "../hooks/useSessionStorage";
 
 function NormalizationDashboard() {
   const navigate = useNavigate();
-  const toast = useRef(null);
   const [accountDetails] = useSessionStorage("accountDetails");
   const [search, setSearch] = useState("");
   const {
@@ -28,12 +27,6 @@ function NormalizationDashboard() {
   useEffect(() => {
     setCurrentTab(isAdmin ? "Unassigned" : "Assigned");
   }, [isAdmin]);
-
-  useEffect(()=>{
-    if(showToast){
-      toast.current.show({severity:'error', summary: 'Error', detail:'Something went wrong. Please try again', life: 3000});
-    }
-  },[showToast])
 
   useEffect(() => {
     if (!accountDetails?.idTokenClaims?.exp) {

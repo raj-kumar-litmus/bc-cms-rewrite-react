@@ -42,12 +42,6 @@ function StatusBarsForNormalization() {
     getCount()
   }, [currentTab]);
 
-  useEffect(()=>{
-    if(showToast){
-      toast.current.show({severity:'error', summary: 'Error', detail:'Something went wrong. Please try again', life: 3000});
-    }
-  },[showToast])
-
   return (
     <>
     <div
