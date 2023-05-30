@@ -6,15 +6,17 @@ import InProgress from "../logos/InProgress.svg";
 import Completed from "../logos/Completed.svg";
 import StatusBar from "./StatusBar";
 import { workFlowsUrl } from "../constants/index";
+import useSessionStorage from "../hooks/useSessionStorage";
 
 function StatusBarsForNormalization() {
   const [statusBarData, setStatusBarData] = useState([]);
   const [loader, setLoader] = useState(true);
   const { isAdmin, currentTab, setShowToast} = useContext(DashBoardContext);
+  const [email] = useSessionStorage("userEmail");
 
   async function getCount(){
     try{
-      const response = await fetch(`${workFlowsUrl}/counts`,
+      const response = await fetch(`${workFlowsUrl}/counts?email=${email}`,
        {
         method: 'get',
         headers: {
