@@ -32,6 +32,8 @@ import AssignToEditor from "../logos/AssignToEditor.svg";
 import AssignToWriter from "../logos/AssignToWriter.svg";
 import ArrowSortDownLine from "../logos/ArrowSortDownLine.svg";
 import ArrowSortUpLine from "../logos/ArrowSortUpLine.svg";
+import Clear from "../logos/clearFilters.svg";
+
 
 export default function Table() {
   const [searchByStyle, setSearchByStyle] = useState("");
@@ -85,8 +87,11 @@ export default function Table() {
   useEffect(() => {
       getBrands()
       getAssignee()
-      getStatus()
   }, [currentPage]);
+
+  useEffect(()=>{
+    getStatus()
+  },[currentTab])
 
   const showTopCenter = () => {
     toastBR.current.show({
@@ -409,7 +414,6 @@ const response = await fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage
             )}
           </>
         )}
-        <button className="bg-white text-black text-sm rounded border border-black m-2 p-1 w-[94px] h-[39px]" onClick={clearFilters}>Clear Filters</button>
       </div>
     );
   };
@@ -566,6 +570,18 @@ const response = await fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage
       </span>
     );
   };
+  const filterHeader =()=>{
+  return(
+    <span>
+      {(selectedBrand.length || searchByStatus.length || searchByAssignee || searchByUpdatedAt != null )
+         && <button onClick={clearFilters}>
+        <div className="flex">
+          <img alt={`${Clear} svg`} src={Clear}/>
+          <span className="ml-[5px] text-sm text-[#2C2C2C] font-semibold text-opacity-1">Clear</span>
+        </div>
+      </button>}
+  </span>
+  )}
 
   const handleSort=(currentSort)=>{
     setCurrentSort(currentSort);
@@ -659,7 +675,7 @@ const response = await fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage
             onClick={handleEditIcon}
           >
             <Tooltip target=".assign"/>
-            <img alt={`${ currentTab == "Assigned" || currentTab == "InProgress" ? ReAssign : AssigneEdit} svg`} src={ currentTab == "Assigned" || currentTab == "InProgress" ? ReAssign : AssigneEdit} data-pr-tooltip="Assign" data-pr-position="top"  className="assign"/>
+            <img alt={`${ currentTab == "Assigned" || currentTab == "InProgress" ? ReAssign : AssigneEdit} svg`} src={ currentTab == "Assigned" || currentTab == "InProgress" ? ReAssign : AssigneEdit} data-pr-tooltip={ currentTab == "Assigned" || currentTab == "InProgress" ? "Reassign" : "Assign"} data-pr-position="top"  className="assign"/>
             </button>
             }
             </>
@@ -877,7 +893,8 @@ const response = await fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage
               body={dateBodyTemplate}
               filterElement={dateFilterTemplate}
             />
-            <Column header={handleFilterIcon}/>
+            <Column header={handleFilterIcon} filter
+              showFilterMenu={false} filterElement={filterHeader}/>
             <Column
               body={(e) => handleRowSelectIcons(e, "edit")}
             />
