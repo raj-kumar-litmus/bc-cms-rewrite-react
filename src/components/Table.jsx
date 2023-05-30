@@ -155,11 +155,9 @@ export default function Table() {
         ...(searchByTitle && { title: searchByTitle }),
         ...(newSelectedBrand.length && { brand: newSelectedBrand }),
         ...(searchByUpdatedBy && { lastUpdatedBy: searchByUpdatedBy }),
-        ...((searchByAssignee || !isAdmin) && {
-          assignee: !isAdmin ? userEmail : searchByAssignee
-        }),
+        ...((searchByAssignee || !isAdmin) && {assignee: !isAdmin ? userEmail : searchByAssignee}),
         ...(searchByUpdatedAt && { lastUpdateTs: finalDate }),
-        status: isStatusSelected && !clearAllFilters ? [searchByStatus] : status
+        status: searchByStatus.length ? [searchByStatus] : status
       },
       orderBy: {
         ...(currentSort == "Style" && { styleId: styleSort }),
