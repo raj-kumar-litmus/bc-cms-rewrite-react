@@ -445,7 +445,6 @@ export default function Table() {
             )}
           </>
         )}
-        <button className="bg-white text-black text-sm rounded border border-black m-2 p-1 w-[94px] h-[39px]" onClick={clearFilters}>Clear Filters</button>
       </div>
     );
   };
@@ -726,7 +725,7 @@ export default function Table() {
             onClick={handleEditIcon}
           >
             <Tooltip target=".assign"/>
-            <img alt={`${ currentTab == "Assigned" || currentTab == "InProgress" ? ReAssign : AssigneEdit} svg`} src={ currentTab == "Assigned" || currentTab == "InProgress" ? ReAssign : AssigneEdit} data-pr-tooltip="Assign" data-pr-position="top"  className="assign"/>
+            <img alt={`${ currentTab == "Assigned" || currentTab == "InProgress" ? ReAssign : AssigneEdit} svg`} src={ currentTab == "Assigned" || currentTab == "InProgress" ? ReAssign : AssigneEdit} data-pr-tooltip={ currentTab == "Assigned" || currentTab == "InProgress" ? "Reassign" : "Assign"} data-pr-position="top"  className="assign"/>
             </button>
             }
             </>
@@ -942,8 +941,11 @@ export default function Table() {
               body={dateBodyTemplate}
               filterElement={dateFilterTemplate}
             />
-            <Column header={handleFilterIcon} />
-            <Column body={(e) => handleRowSelectIcons(e, "edit")} />
+            <Column header={handleFilterIcon} filter
+              showFilterMenu={false} filterElement={filterHeader}/>
+            <Column
+              body={(e) => handleRowSelectIcons(e, "edit")}
+            />
             {currentTab !== "Completed" && (
               <Column body={(e) => handleRowSelectIcons(e, "assign")} />
             )}
