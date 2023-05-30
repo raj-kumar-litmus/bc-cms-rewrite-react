@@ -41,10 +41,6 @@ function NormalizationDashboard() {
     clearFilters()
   };
 
-  const handleSearchChange=(e)=>{
-    setSearch(e.target.value)
-  }
-
   const fetchBulkStyleSearch = async () => {
     try {
       const requestOptions = {
