@@ -37,11 +37,7 @@ import { isAllEqual } from "../utils";
 export default function Table() {
   const [searchByStyle, setSearchByStyle] = useState("");
   const [searchByTitle, setSearchByTitle] = useState("");
-  const [searchByStatus, setSearchByStatus] = useState([]);
-  const [searchByAssignee, setSearchByAssignee] = useState("");
   const [searchByUpdatedBy, setsearchByUpdatedBy] = useState("");
-  const [searchByUpdatedAt, setsearchByUpdatedAt] = useState(null);
-  const [selectedBrand, setSelectedBrand] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
   const [brands, setBrands] = useState([]);
   const [assigneeList, setAssignee] = useState([]);
@@ -57,9 +53,9 @@ export default function Table() {
   const [currentSort, setCurrentSort] = useState("");
   const [isRowSelected, setIsRowSelected] = useState(false);
   const [isStatusSelected, setIsStatusSelected] = useState(false);
-  const [clearAllFilters, setClearAllFilters] = useState(false);
   const [canAssignOrReAssign, setCanAssignOrReAssign] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
+  const [tabChanged, setTabChanged] = useState(false);
   const [pageCount, setPageCount] = useState(1);
   const [defaultSort, setDefaultSort] = useState(ArrowSort);
   const [userEmail] = useSessionStorage("userEmail");
@@ -79,7 +75,18 @@ export default function Table() {
     loader,
     setLoader,
     showToast,
-    setShowToast
+    setShowToast,
+    clearAllFilters,
+    setClearAllFilters,
+    selectedBrand,
+    setSelectedBrand,
+    searchByStatus,
+    setSearchByStatus,
+    searchByAssignee,
+    setSearchByAssignee,
+    searchByUpdatedAt,
+    setsearchByUpdatedAt,
+    clearFilters
   } = useContext(DashBoardContext);
 
   const toastBR = useRef(null);
@@ -92,6 +99,7 @@ export default function Table() {
 
   useEffect(()=>{
     getStatus()
+    setTabChanged(true)
   },[currentTab])
 
   const showTopCenter = () => {
@@ -296,7 +304,7 @@ export default function Table() {
     currentTab,
     currentPage,
     isStatusSelected,
-    clearAllFilters
+    clearAllFilters,
   ]);
 
   useEffect(() => {
@@ -322,15 +330,6 @@ export default function Table() {
       setsearchByUpdatedBy(e.target.value);
     }, 1000);
   };
-
-  const clearFilters = () => {
-    setClearAllFilters(true);
-    setSelectedBrand([]);
-    setSearchByStatus([]);
-    setSearchByAssignee("");
-    setsearchByUpdatedAt(null);
-  };
-
   useEffect(() => {
     setCanAssignOrReAssign(isAllEqual(selectedProducts.map((e) => e.status)));
   }, [selectedProducts]);
@@ -592,11 +591,16 @@ export default function Table() {
     return finalDate;
   };
 
+  const setFilters=()=>{
+    setShowFilters(true)
+    setTabChanged(!tabChanged)
+  }
+
   const handleFilterIcon = () => {
     return (
       <span>
-        <button onClick={() => setShowFilters(!showFilters)}>
-          {showFilters ? (
+        <button onClick={setFilters}>
+          {showFilters && !tabChanged? (
             <div className="bg-black text-white text-sm rounded-full border h-8 w-8 flex justify-center items-center">
               <img alt={`${FilterIcon} svg`} src={FilterIcon} />
             </div>
@@ -612,13 +616,13 @@ export default function Table() {
   const filterHeader =()=>{
   return(
     <span>
-      {(selectedBrand.length || searchByStatus.length || searchByAssignee || searchByUpdatedAt != null )
-         && <button onClick={clearFilters}>
+      {(selectedBrand.length || searchByStatus.length || searchByAssignee || searchByUpdatedAt != null) && 
+        (<button onClick={clearFilters}>
         <div className="flex">
           <img alt={`${Clear} svg`} src={Clear}/>
           <span className="ml-[5px] text-sm text-[#2C2C2C] font-semibold text-opacity-1">Clear</span>
         </div>
-      </button>}
+      </button>)}
   </span>
   )}
 
@@ -840,7 +844,7 @@ export default function Table() {
             dataKey="id"
             rows={100}
             selection={selectedProducts}
-            filterDisplay={showFilters && "row"}
+            filterDisplay={showFilters  && !tabChanged && "row" }
             onRowMouseEnter={onRowSelect}
             onRowMouseLeave={onRowUnselect}
             footer={pagination}

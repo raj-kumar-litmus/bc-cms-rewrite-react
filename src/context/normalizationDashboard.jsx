@@ -15,14 +15,25 @@ function DashBoardProvider({ children }) {
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [currentTab, setCurrentTab] = useState("Completed");
   const [showToast, setShowToast] = useState(false);
-
+  const [clearAllFilters, setClearAllFilters] = useState(false);
+  const [selectedBrand, setSelectedBrand] = useState([]);
+  const [searchByStatus, setSearchByStatus] = useState([]);
+  const [searchByAssignee, setSearchByAssignee] = useState("");
+  const [searchByUpdatedAt, setsearchByUpdatedAt] = useState(null);
   const { VITE_ADMIN_GROUP_NAME: ADMIN_GROUP_NAME } = process.env;
-
   const [groups] = useSessionStorage("userGroups");
 
   useEffect(() => {
     setIsAdmin(groups?.includes(ADMIN_GROUP_NAME));
   }, [ADMIN_GROUP_NAME, setIsAdmin]);
+
+  const clearFilters =()=>{
+    setClearAllFilters(true)
+    setSelectedBrand([])
+    setSearchByStatus([])
+    setSearchByAssignee("")
+    setsearchByUpdatedAt(null)
+  }
 
   return (
     <DashBoardContext.Provider
@@ -47,7 +58,18 @@ function DashBoardProvider({ children }) {
         styleId,
         setStyleId,
         showToast,
-        setShowToast
+        setShowToast,
+        clearAllFilters,
+        setClearAllFilters,
+        selectedBrand,
+        setSelectedBrand,
+        searchByStatus,
+        setSearchByStatus,
+        searchByAssignee,
+        setSearchByAssignee,
+        searchByUpdatedAt,
+        setsearchByUpdatedAt,
+        clearFilters
       }}
     >
       {children}

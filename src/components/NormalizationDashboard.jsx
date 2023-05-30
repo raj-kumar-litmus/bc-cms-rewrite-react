@@ -38,6 +38,7 @@ function NormalizationDashboard() {
     setCurrentPage(1);
     setCurrentTab(tab.target.innerText);
     setSelectedProducts([]);
+    clearFilters()
   };
 
   const handleSearchChange=(e)=>{
