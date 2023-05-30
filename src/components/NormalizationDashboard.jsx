@@ -21,7 +21,8 @@ function NormalizationDashboard() {
     setCustomers,
     currentPage,
     setLoader,
-    setShowToast
+    setShowToast,
+    clearFilters
   } = useContext(DashBoardContext);
 
   useEffect(() => {
@@ -38,6 +39,7 @@ function NormalizationDashboard() {
     setCurrentPage(1);
     setCurrentTab(tab.target.innerText);
     setSelectedProducts([]);
+    clearFilters()
   };
 
   const fetchBulkStyleSearch = async () => {
@@ -75,10 +77,6 @@ function NormalizationDashboard() {
     }
   };
 
-  const handleSearchChange = (e) => {
-    setSearch(e.target.value);
-  };
-
   async function getGlobalSearch() {
     const response = await fetch(
       `${workFlowsUrl}/search?limit=10&page=${currentPage}&globalSearch=${search}`,
@@ -99,7 +97,10 @@ function NormalizationDashboard() {
       setShowToast(true);
     }
   }
-
+  
+const handleSearchChange=(e)=>{
+  setSearch(e.target.value)
+}
   const handleSearchClick = () => {
     setLoader(true);
     if (search.includes(",")) {
@@ -108,7 +109,7 @@ function NormalizationDashboard() {
       getGlobalSearch();
     }
   };
-
+ 
   return (
     <>
       <div className="bg-white pb-[20px]">
