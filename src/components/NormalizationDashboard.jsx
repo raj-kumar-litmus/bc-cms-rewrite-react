@@ -37,23 +37,26 @@ function NormalizationDashboard() {
   }
 
   async function getGloblSearch(){
-    const response = await fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage}&globalSearch=${search}`,
-       {
-        method: 'POST',
-        headers: {
-          "Content-type": "application/json; charset=UTF-8"
-        }
-      }
-  )
-  const data = await response.json();
-  if(data?.success){
-    setCustomers(data?.data);
-        setLoader(false);
-  }
-  if (!data?.success){
-    setLoader(false);
+    try{
+      const response = await fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage}&globalSearch=${search && search  }`,
+      {
+       method: 'POST',
+       headers: {
+         "Content-type": "application/json; charset=UTF-8"
+       }
+     }
+ );
+ if(response?.ok){
+  const data = await response.json()
+  setCustomers(data?.data)
+  setLoader(false)
+  }else{
+    setLoader(false)
     setShowToast(true)
-	}
+  }
+    }catch (error) {
+      console.error(error);
+    }
   }
 
   const handleSearchClick=()=>{

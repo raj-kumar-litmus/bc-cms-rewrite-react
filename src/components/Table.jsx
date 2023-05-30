@@ -176,7 +176,7 @@ export default function Table() {
     setShowToast(true)
   }
 }catch (error) {
-  console.error(err);
+  console.error(error);
 }
 }
 
