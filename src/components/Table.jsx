@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useContext, useRef} from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Tooltip } from 'primereact/tooltip';
-import { Toast } from 'primereact/toast';
+import { Tooltip } from "primereact/tooltip";
+import { Toast } from "primereact/toast";
 import RedCross from "../logos/red-cross-in-circle.svg";
 import { DashBoardContext } from "../context/normalizationDashboard";
 import "primereact/resources/themes/fluent-light/theme.css";
@@ -32,6 +32,7 @@ import AssignToEditor from "../logos/AssignToEditor.svg";
 import AssignToWriter from "../logos/AssignToWriter.svg";
 import ArrowSortDownLine from "../logos/ArrowSortDownLine.svg";
 import ArrowSortUpLine from "../logos/ArrowSortUpLine.svg";
+import { isAllEqual } from "../utils";
 
 export default function Table() {
   const [searchByStyle, setSearchByStyle] = useState("");
@@ -57,6 +58,7 @@ export default function Table() {
   const [isRowSelected, setIsRowSelected] = useState(false);
   const [isStatusSelected, setIsStatusSelected] = useState(false);
   const [clearAllFilters, setClearAllFilters] = useState(false);
+  const [canAssignOrReAssign, setCanAssignOrReAssign] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [pageCount, setPageCount] = useState(1);
   const [defaultSort, setDefaultSort] = useState(ArrowSort);
@@ -83,9 +85,9 @@ export default function Table() {
   const toastBR = useRef(null);
 
   useEffect(() => {
-      getBrands()
-      getAssignee()
-      getStatus()
+    getBrands();
+    getAssignee();
+    getStatus();
   }, [currentPage]);
 
   const showTopCenter = () => {
@@ -107,13 +109,13 @@ export default function Table() {
     );
   };
 
-  useEffect(()=>{
-    if(showToast){
+  useEffect(() => {
+    if (showToast) {
       showTopCenter();
     }
-  },[showToast])
+  }, [showToast]);
 
-  async function getCustomers(){
+  async function getCustomers() {
     var date = new Date(searchByUpdatedAt);
     const newDate = date.toDateString().split(" ");
     const finalDate = `${newDate[3]}-${newDate[1]}-${newDate[2]}`;
@@ -151,117 +153,127 @@ export default function Table() {
         ...(currentSort == "Style" && { styleId: styleSort }),
         ...(currentSort == "Title" && { title: titleSort }),
         ...(currentSort == "Brand" && { brand: brandSort }),
-        ...(currentSort == "Updated By" && {lastUpdatedBy : updatedBySort }),
-        ...(currentSort == "Assignee" && { assignee : assigneeSort }),
+        ...(currentSort == "Updated By" && { lastUpdatedBy: updatedBySort }),
+        ...(currentSort == "Assignee" && { assignee: assigneeSort }),
         ...(currentSort == "Status" && { status: statusSort }),
-        ...((currentSort == "Updated At" || (currentSort != "Style" && currentSort != "Title" && currentSort != "Brand" && currentSort != "Updated By" && currentSort != "Assignee" && currentSort != "Status" )) && {lastUpdateTs :  updatedAtSort })
+        ...((currentSort == "Updated At" ||
+          (currentSort != "Style" &&
+            currentSort != "Title" &&
+            currentSort != "Brand" &&
+            currentSort != "Updated By" &&
+            currentSort != "Assignee" &&
+            currentSort != "Status")) && { lastUpdateTs: updatedAtSort })
       }
     };
     try {
-      const response = await fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage}`,
-       {
-        method: 'POST',
+      const response = await fetch(
+        `${workFlowsUrl}/search?limit=10&page=${currentPage}`,
+        {
+          method: "POST",
+          body: JSON.stringify(body),
+          headers: {
+            "Content-type": "application/json; charset=UTF-8"
+          }
+        }
+      );
+      if (response?.ok) {
+        const data = await response.json();
+        setCustomers(data?.data);
+        setLoader(false);
+      } else {
+        setLoader(false);
+        setShowToast(true);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function getBrands() {
+    const response = await fetch(
+      `${workFlowsUrl}/search?limit=${limit}&page=${currentPage}&unique=brand`,
+      {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json; charset=UTF-8"
+        }
+      }
+    );
+    const data = await response.json();
+    if (data?.success) {
+      setBrands(
+        data?.data?.uniqueValues
+          .filter(Boolean)
+          .map((item) => ({ brand: item }))
+      );
+    }
+    if (!data?.success) {
+      setShowToast(true);
+    }
+  }
+
+  async function getStatus() {
+    const status = [];
+    switch (currentTab) {
+      case "Unassigned":
+        status.push("WAITING_FOR_WRITER");
+        break;
+      case "Completed":
+        status.push("WRITING_COMPLETE", "EDITING_COMPLETE");
+        break;
+      case "Assigned":
+        status.push("ASSIGNED_TO_WRITER", "ASSIGNED_TO_EDITOR");
+        break;
+      case "InProgress":
+        status.push("WRITING_IN_PROGRESS", "EDITING_IN_PROGRESS");
+        break;
+      default:
+        status;
+    }
+    const body = {
+      filters: { status }
+    };
+    const response = await fetch(
+      `${workFlowsUrl}/search?limit=10&page=${currentPage}&unique=status`,
+      {
+        method: "POST",
         body: JSON.stringify(body),
         headers: {
           "Content-type": "application/json; charset=UTF-8"
         }
       }
-  );
-  if(response?.ok){
-    const data = await response.json()
-    setCustomers(data?.data)
-    setLoader(false)
-  }else{
-    setLoader(false)
-    setShowToast(true)
+    );
+    const data = await response.json();
+    if (data?.success) {
+      setStatus(data?.data?.uniqueValues);
+    }
+    if (!data?.success) {
+      setShowToast(true);
+    }
   }
-}catch (error) {
-  console.error(err);
-}
-}
 
-async function getBrands(){
-const response = await fetch(`${workFlowsUrl}/search?limit=${limit}&page=${currentPage}&unique=brand`,
-       {
-        method: 'POST',
+  async function getAssignee() {
+    const response = await fetch(
+      `${workFlowsUrl}/search?limit=10&page=${currentPage}&unique=assignee`,
+      {
+        method: "POST",
         headers: {
           "Content-type": "application/json; charset=UTF-8"
         }
       }
-  );
-  const data = await response.json();
-  if(data?.success){
-    setBrands(
-      data?.data?.uniqueValues
-        .filter(Boolean)
-        .map((item) => ({ brand: item }))
-    )
+    );
+    const data = await response.json();
+    if (data?.success) {
+      setAssignee(data?.data?.uniqueValues.filter(Boolean));
+    }
+    if (!data?.success) {
+      setShowToast(true);
+    }
   }
-  if (!data?.success){
-    setShowToast(true)
-	}
-}
-
-async function getStatus(){
-  const status = [];
-  switch (currentTab) {
-    case "Unassigned":
-      status.push("WAITING_FOR_WRITER");
-      break;
-    case "Completed":
-      status.push("WRITING_COMPLETE", "EDITING_COMPLETE");
-      break;
-    case "Assigned":
-      status.push("ASSIGNED_TO_WRITER", "ASSIGNED_TO_EDITOR");
-      break;
-    case "InProgress":
-      status.push("WRITING_IN_PROGRESS", "EDITING_IN_PROGRESS");
-      break;
-    default:
-      status;
-  }
-  const body = {
-    filters: { status }
-}
-const response = await fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage}&unique=status`,
-       {
-        method: 'POST',
-        body: JSON.stringify(body),
-        headers: {
-          "Content-type": "application/json; charset=UTF-8"
-        }
-      }
-  );
-  const data = await response.json();
-  if(data?.success){
-    setStatus(data?.data?.uniqueValues)
-  }
-  if (!data?.success){
-    setShowToast(true)
-	}
-}
-
-async function getAssignee(){
-const response = await fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage}&unique=assignee`,
-       {
-        method: 'POST',
-        headers: {
-          "Content-type": "application/json; charset=UTF-8"
-        }
-      }
-  );
-  const data = await response.json();
-  if(data?.success){
-    setAssignee(data?.data?.uniqueValues.filter(Boolean))
-  }
-  if (!data?.success){
-    setShowToast(true)
-	}
-}
 
   useEffect(() => {
-    setLoader(true)
-    getCustomers()
+    setLoader(true);
+    getCustomers();
   }, [
     searchByStyle,
     searchByTitle,
@@ -307,18 +319,44 @@ const response = await fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage
     }, 1000);
   };
 
-  const clearFilters =()=>{
-    setClearAllFilters(true)
-    setSelectedBrand([])
-    setSearchByStatus([])
-    setSearchByAssignee("")
-    setsearchByUpdatedAt(null)
-  }
+  const clearFilters = () => {
+    setClearAllFilters(true);
+    setSelectedBrand([]);
+    setSearchByStatus([]);
+    setSearchByAssignee("");
+    setsearchByUpdatedAt(null);
+  };
+
+  useEffect(() => {
+    setCanAssignOrReAssign(isAllEqual(selectedProducts.map((e) => e.status)));
+  }, [selectedProducts]);
+
+  useEffect(() => {
+    if (canAssignOrReAssign && selectedProducts.length > 1) {
+      if (
+        [
+          status.assignedToWriter,
+          status.waitingForWriter,
+          status.writingInProgress
+        ].includes(selectedProducts?.[0]?.status)
+      ) {
+        setAssigneeType("writers");
+      }
+      if (
+        [status.assignedToEditor, status.editingInProgress].includes(
+          selectedProducts[0].status
+        )
+      ) {
+        setAssigneeType("editors");
+      }
+      setWorkflowId(selectedProducts.map((e) => e.id));
+    }
+  }, [canAssignOrReAssign, selectedProducts]);
 
   const renderHeader = () => {
     return (
       <div className="flex justify-content-end gap-4">
-        {selectedProducts.length > 1 && (
+        {selectedProducts.length > 1 && canAssignOrReAssign && (
           <>
             {currentTab == "Completed" && (
               <button
@@ -326,7 +364,6 @@ const response = await fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage
                 onClick={() => {
                   setStyleId(selectedProducts.map((e) => e?.styleId));
                   setIsModalVisible(true);
-                  setAssigneeType("writers");
                 }}
               >
                 <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
@@ -348,7 +385,6 @@ const response = await fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage
                 onClick={() => {
                   setStyleId(selectedProducts.map((e) => e?.styleId));
                   setIsModalVisible(true);
-                  setAssigneeType("editors");
                 }}
               >
                 <span className="bg-white flex rounded-full justify-center items-center border w-[30px] h-[30px] border-grey-30 mr-1">
@@ -370,7 +406,6 @@ const response = await fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage
                 onClick={() => {
                   setStyleId(selectedProducts.map((e) => e?.styleId));
                   setIsModalVisible(true);
-                  setAssigneeType("editors");
                 }}
               >
                 <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
@@ -392,7 +427,6 @@ const response = await fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage
                 onClick={() => {
                   setStyleId(selectedProducts.map((e) => e?.styleId));
                   setIsModalVisible(true);
-                  setAssigneeType("editors");
                 }}
               >
                 <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
@@ -409,7 +443,12 @@ const response = await fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage
             )}
           </>
         )}
-        <button className="bg-white text-black text-sm rounded border border-black m-2 p-1 w-[94px] h-[39px]" onClick={clearFilters}>Clear Filters</button>
+        <button
+          className="bg-white text-black text-sm rounded border border-black m-2 p-1 w-[94px] h-[39px]"
+          onClick={clearFilters}
+        >
+          Clear Filters
+        </button>
       </div>
     );
   };
@@ -567,41 +606,55 @@ const response = await fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage
     );
   };
 
-  const handleSort=(currentSort)=>{
+  const handleSort = (currentSort) => {
     setCurrentSort(currentSort);
     switch (currentSort) {
       case "Style":
         setStyleSort(styleSort == "desc" ? "asc" : "desc");
-        setDefaultSort(styleSort == "desc" ? ArrowSortDownLine : ArrowSortUpLine)
+        setDefaultSort(
+          styleSort == "desc" ? ArrowSortDownLine : ArrowSortUpLine
+        );
         break;
       case "Title":
         setTitleSort(titleSort == "desc" ? "asc" : "desc");
-        setDefaultSort(titleSort == "desc" ? ArrowSortDownLine : ArrowSortUpLine)
+        setDefaultSort(
+          titleSort == "desc" ? ArrowSortDownLine : ArrowSortUpLine
+        );
         break;
       case "Brand":
         setBrandSort(brandSort == "desc" ? "asc" : "desc");
-        setDefaultSort(brandSort == "desc" ? ArrowSortDownLine : ArrowSortUpLine)        
+        setDefaultSort(
+          brandSort == "desc" ? ArrowSortDownLine : ArrowSortUpLine
+        );
         break;
       case "Status":
         setStatusSort(statusSort == "desc" ? "asc" : "desc");
-        setDefaultSort(statusSort == "desc" ? ArrowSortDownLine : ArrowSortUpLine)        
-          break;
+        setDefaultSort(
+          statusSort == "desc" ? ArrowSortDownLine : ArrowSortUpLine
+        );
+        break;
       case "Assignee":
         setAssigneeSort(assigneeSort == "desc" ? "asc" : "desc");
-        setDefaultSort(assigneeSort == "desc" ? ArrowSortDownLine : ArrowSortUpLine)
+        setDefaultSort(
+          assigneeSort == "desc" ? ArrowSortDownLine : ArrowSortUpLine
+        );
         break;
-        case "Updated By":
-          setUpdatedBySort(updatedBySort == "desc" ? "asc" : "desc");
-          setDefaultSort(updatedBySort == "desc" ? ArrowSortDownLine : ArrowSortUpLine)
+      case "Updated By":
+        setUpdatedBySort(updatedBySort == "desc" ? "asc" : "desc");
+        setDefaultSort(
+          updatedBySort == "desc" ? ArrowSortDownLine : ArrowSortUpLine
+        );
         break;
-        case "Updated At":
-          setUpdatedAtSort(updatedAtSort == "desc" ? "asc" : "desc");
-          setDefaultSort(updatedAtSort == "desc" ? ArrowSortDownLine : ArrowSortUpLine)
+      case "Updated At":
+        setUpdatedAtSort(updatedAtSort == "desc" ? "asc" : "desc");
+        setDefaultSort(
+          updatedAtSort == "desc" ? ArrowSortDownLine : ArrowSortUpLine
+        );
         break;
-        default:
+      default:
         break;
     }
-  }
+  };
 
   const iconClickHandler = (e, type, rowData) => {
     if (type === "edit") {
@@ -645,23 +698,43 @@ const response = await fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage
         <span>
           {rowData.id == showEdit && isRowSelected && isAdmin && (
             <>
-             {type == "edit" ? 
-             <button
-              className="bg-white flex rounded-full justify-center items-center border border-grey-30  h-[30px] w-[30px]"
-              onClick={handleEditIcon}
-            >
-            <Tooltip target=".quick-fix"/>
-            <img alt={`${Edit} svg`} src={Edit} data-pr-tooltip="Quick Fix" data-pr-position="top" className="quick-fix"></img>
-            </button> 
-            :
-            <button
-            className="bg-white flex rounded-full justify-center items-center border border-grey-30  h-[30px] w-[30px]"
-            onClick={handleEditIcon}
-          >
-            <Tooltip target=".assign"/>
-            <img alt={`${ currentTab == "Assigned" || currentTab == "InProgress" ? ReAssign : AssigneEdit} svg`} src={ currentTab == "Assigned" || currentTab == "InProgress" ? ReAssign : AssigneEdit} data-pr-tooltip="Assign" data-pr-position="top"  className="assign"/>
-            </button>
-            }
+              {type == "edit" ? (
+                <button
+                  className="bg-white flex rounded-full justify-center items-center border border-grey-30  h-[30px] w-[30px]"
+                  onClick={handleEditIcon}
+                >
+                  <Tooltip target=".quick-fix" />
+                  <img
+                    alt={`${Edit} svg`}
+                    src={Edit}
+                    data-pr-tooltip="Quick Fix"
+                    data-pr-position="top"
+                    className="quick-fix"
+                  ></img>
+                </button>
+              ) : (
+                <button
+                  className="bg-white flex rounded-full justify-center items-center border border-grey-30  h-[30px] w-[30px]"
+                  onClick={handleEditIcon}
+                >
+                  <Tooltip target=".assign" />
+                  <img
+                    alt={`${
+                      currentTab == "Assigned" || currentTab == "InProgress"
+                        ? ReAssign
+                        : AssigneEdit
+                    } svg`}
+                    src={
+                      currentTab == "Assigned" || currentTab == "InProgress"
+                        ? ReAssign
+                        : AssigneEdit
+                    }
+                    data-pr-tooltip="Assign"
+                    data-pr-position="top"
+                    className="assign"
+                  />
+                </button>
+              )}
             </>
           )}
         </span>
@@ -759,16 +832,14 @@ const response = await fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage
             emptyMessage="No Workflows found."
             onRowClick={onRowClick}
           >
-            {isAdmin && (
-              <Column selectionMode="multiple"></Column>
-            )}
+            {isAdmin && <Column selectionMode="multiple"></Column>}
             <Column
               field="styleId"
               header={
                 <TableHeaders
                   headerName={"Style"}
                   sortIcon={defaultSort}
-                  onClick={()=>handleSort("Style")}
+                  onClick={() => handleSort("Style")}
                   currentSort={currentSort}
                   ArrowSort={ArrowSort}
                 />
@@ -784,7 +855,7 @@ const response = await fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage
                 <TableHeaders
                   headerName={"Title"}
                   sortIcon={defaultSort}
-                  onClick={()=>handleSort("Title")}
+                  onClick={() => handleSort("Title")}
                   currentSort={currentSort}
                   ArrowSort={ArrowSort}
                 />
@@ -799,7 +870,7 @@ const response = await fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage
                 <TableHeaders
                   headerName={"Brand"}
                   sortIcon={defaultSort}
-                  onClick={()=>handleSort("Brand")}
+                  onClick={() => handleSort("Brand")}
                   currentSort={currentSort}
                   ArrowSort={ArrowSort}
                 />
@@ -816,7 +887,7 @@ const response = await fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage
                   <TableHeaders
                     headerName={"Status"}
                     sortIcon={defaultSort}
-                    onClick={()=>handleSort("Status")}
+                    onClick={() => handleSort("Status")}
                     currentSort={currentSort}
                     ArrowSort={ArrowSort}
                   />
@@ -835,7 +906,7 @@ const response = await fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage
                     <TableHeaders
                       headerName={"Assignee"}
                       sortIcon={defaultSort}
-                      onClick={()=>handleSort("Assignee")}
+                      onClick={() => handleSort("Assignee")}
                       currentSort={currentSort}
                       ArrowSort={ArrowSort}
                     />
@@ -851,7 +922,7 @@ const response = await fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage
                 <TableHeaders
                   headerName={"Updated By"}
                   sortIcon={defaultSort}
-                  onClick={()=>handleSort("Updated By")}
+                  onClick={() => handleSort("Updated By")}
                   currentSort={currentSort}
                   ArrowSort={ArrowSort}
                 />
@@ -866,7 +937,7 @@ const response = await fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage
                 <TableHeaders
                   headerName={"Updated At"}
                   sortIcon={defaultSort}
-                  onClick={()=>handleSort("Updated At")}
+                  onClick={() => handleSort("Updated At")}
                   currentSort={currentSort}
                   ArrowSort={ArrowSort}
                 />
@@ -877,20 +948,12 @@ const response = await fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage
               body={dateBodyTemplate}
               filterElement={dateFilterTemplate}
             />
-            <Column header={handleFilterIcon}/>
-            <Column
-              body={(e) => handleRowSelectIcons(e, "edit")}
-            />
+            <Column header={handleFilterIcon} />
+            <Column body={(e) => handleRowSelectIcons(e, "edit")} />
             {currentTab !== "Completed" && (
-              <Column
-                body={(e) =>
-                  handleRowSelectIcons(e,"assign")
-                }
-              />
+              <Column body={(e) => handleRowSelectIcons(e, "assign")} />
             )}
-            {currentTab === "Completed" && (
-              <Column body={handleMoreIcon}/>
-            )}
+            {currentTab === "Completed" && <Column body={handleMoreIcon} />}
           </DataTable>
         )}
       </div>
