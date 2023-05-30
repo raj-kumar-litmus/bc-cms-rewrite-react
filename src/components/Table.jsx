@@ -76,7 +76,6 @@ export default function Table() {
     showToast,
     setShowToast,
     clearAllFilters,
-    setClearAllFilters,
     selectedBrand,
     setSelectedBrand,
     searchByStatus,
