@@ -13,7 +13,8 @@ function NormalizationDashboard() {
   const navigate = useNavigate();
   const [accountDetails] = useSessionStorage("accountDetails");
   const [search, setSearch] = useState('')
-  const { setSelectedProducts, setCurrentTab, setCurrentPage, isAdmin, setCustomers, currentPage, setLoader, setShowToast } =
+
+  const { setSelectedProducts, setCurrentTab, setCurrentPage, isAdmin, setCustomers, currentPage, setLoader, setShowToast, clearFilters } =
     useContext(DashBoardContext);
 
   useEffect(() => {
@@ -30,6 +31,7 @@ function NormalizationDashboard() {
     setCurrentPage(1);
     setCurrentTab(tab.target.innerText);
     setSelectedProducts([]);
+    clearFilters()
   };
  
   const handleSearchChange=(e)=>{
