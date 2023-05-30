@@ -1,5 +1,8 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef} from "react";
 import { useNavigate } from "react-router-dom";
+import { Tooltip } from 'primereact/tooltip';
+import { Toast } from 'primereact/toast';
+import RedCross from "../logos/red-cross-in-circle.svg";
 import { DashBoardContext } from "../context/normalizationDashboard";
 import "primereact/resources/themes/fluent-light/theme.css";
 import "primereact/resources/primereact.min.css";
@@ -24,9 +27,11 @@ import TableHeaders from "./TableHeaders";
 import MoreIconPopUp from "./MoreIcon";
 import Loader from "../components/loader";
 import useSessionStorage from "../hooks/useSessionStorage";
-import { status } from "../constants/index";
+import { status, limit } from "../constants/index";
 import AssignToEditor from "../logos/AssignToEditor.svg";
 import AssignToWriter from "../logos/AssignToWriter.svg";
+import ArrowSortDownLine from "../logos/ArrowSortDownLine.svg";
+import ArrowSortUpLine from "../logos/ArrowSortUpLine.svg";
 
 export default function Table() {
   const [searchByStyle, setSearchByStyle] = useState("");
@@ -51,8 +56,10 @@ export default function Table() {
   const [currentSort, setCurrentSort] = useState("");
   const [isRowSelected, setIsRowSelected] = useState(false);
   const [isStatusSelected, setIsStatusSelected] = useState(false);
+  const [clearAllFilters, setClearAllFilters] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [pageCount, setPageCount] = useState(1);
+  const [defaultSort, setDefaultSort] = useState(ArrowSort);
   const [userEmail] = useSessionStorage("userEmail");
   const navigate = useNavigate();
   const {
@@ -68,50 +75,45 @@ export default function Table() {
     currentTab,
     isAdmin,
     loader,
-    setLoader
+    setLoader,
+    showToast,
+    setShowToast
   } = useContext(DashBoardContext);
 
+  const toastBR = useRef(null);
+
   useEffect(() => {
-    fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage}&unique=brand`, {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json; charset=UTF-8"
-      }
-    })
-      .then((response) => response.json())
-      .then((result) =>
-        setBrands(
-          result?.data?.uniqueValues
-            .filter(Boolean)
-            .map((item) => ({ brand: item }))
-        )
-      );
-
-    fetch(
-      `${workFlowsUrl}/search?limit=10&page=${currentPage}&unique=assignee`,
-      {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json; charset=UTF-8"
-        }
-      }
-    )
-      .then((response) => response.json())
-      .then((result) =>
-        setAssignee(result?.data?.uniqueValues.filter(Boolean))
-      );
-
-    fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage}&unique=status`, {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json; charset=UTF-8"
-      }
-    })
-      .then((response) => response.json())
-      .then((result) => setStatus(result?.data?.uniqueValues));
+      getBrands()
+      getAssignee()
+      getStatus()
   }, [currentPage]);
 
-  useEffect(() => {
+  const showTopCenter = () => {
+    toastBR.current.show({
+      severity: showToast ? "error" : "success",
+      content: <Summary />,
+      sticky: true
+    });
+  };
+
+  const Summary = () => {
+    return (
+      <div className="flex">
+        {showToast && <img src={RedCross} alt="RedCross" />}
+        <div className="flex flex-col ml-[20px]">
+          <p>{showToast && "Something went wrong !"}</p>
+        </div>
+      </div>
+    );
+  };
+
+  useEffect(()=>{
+    if(showToast){
+      showTopCenter();
+    }
+  },[showToast])
+
+  async function getCustomers(){
     var date = new Date(searchByUpdatedAt);
     const newDate = date.toDateString().split(" ");
     const finalDate = `${newDate[3]}-${newDate[1]}-${newDate[2]}`;
@@ -143,31 +145,123 @@ export default function Table() {
           assignee: !isAdmin ? userEmail : searchByAssignee
         }),
         ...(searchByUpdatedAt && { lastUpdateTs: finalDate }),
-        status: isStatusSelected ? [searchByStatus] : status
+        status: isStatusSelected && !clearAllFilters ? [searchByStatus] : status
       },
       orderBy: {
-        ...(currentSort == "styleSort" && { styleId: styleSort }),
-        ...(currentSort == "titleSort" && { title: titleSort }),
-        ...(currentSort == "brandSort" && { brand: brandSort }),
-        ...(currentSort == "updatedBySort" && { lastUpdatedBy: updatedBySort }),
-        ...(currentSort == "assigneeSort" && { lastUpdatedBy: assigneeSort }),
-        ...(currentSort == "statusSort" && { status: statusSort }),
-        ...(currentSort == "updatedAtSort" && { lastUpdateTs: updatedAtSort })
+        ...(currentSort == "Style" && { styleId: styleSort }),
+        ...(currentSort == "Title" && { title: titleSort }),
+        ...(currentSort == "Brand" && { brand: brandSort }),
+        ...(currentSort == "Updated By" && {lastUpdatedBy : updatedBySort }),
+        ...(currentSort == "Assignee" && { assignee : assigneeSort }),
+        ...(currentSort == "Status" && { status: statusSort }),
+        ...((currentSort == "Updated At" || (currentSort != "Style" && currentSort != "Title" && currentSort != "Brand" && currentSort != "Updated By" && currentSort != "Assignee" && currentSort != "Status" )) && {lastUpdateTs :  updatedAtSort })
       }
     };
-    setLoader(true);
-    fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage}`, {
-      method: "POST",
-      body: JSON.stringify(body),
-      headers: {
-        "Content-type": "application/json; charset=UTF-8"
+    try {
+      const response = await fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage}`,
+       {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8"
+        }
       }
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        setCustomers(result?.data);
-        setLoader(false);
-      });
+  );
+  if(response?.ok){
+    const data = await response.json()
+    setCustomers(data?.data)
+    setLoader(false)
+  }else{
+    setLoader(false)
+    setShowToast(true)
+  }
+}catch (error) {
+  console.error(err);
+}
+}
+
+async function getBrands(){
+const response = await fetch(`${workFlowsUrl}/search?limit=${limit}&page=${currentPage}&unique=brand`,
+       {
+        method: 'POST',
+        headers: {
+          "Content-type": "application/json; charset=UTF-8"
+        }
+      }
+  );
+  const data = await response.json();
+  if(data?.success){
+    setBrands(
+      data?.data?.uniqueValues
+        .filter(Boolean)
+        .map((item) => ({ brand: item }))
+    )
+  }
+  if (!data?.success){
+    setShowToast(true)
+	}
+}
+
+async function getStatus(){
+  const status = [];
+  switch (currentTab) {
+    case "Unassigned":
+      status.push("WAITING_FOR_WRITER");
+      break;
+    case "Completed":
+      status.push("WRITING_COMPLETE", "EDITING_COMPLETE");
+      break;
+    case "Assigned":
+      status.push("ASSIGNED_TO_WRITER", "ASSIGNED_TO_EDITOR");
+      break;
+    case "InProgress":
+      status.push("WRITING_IN_PROGRESS", "EDITING_IN_PROGRESS");
+      break;
+    default:
+      status;
+  }
+  const body = {
+    filters: { status }
+}
+const response = await fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage}&unique=status`,
+       {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8"
+        }
+      }
+  );
+  const data = await response.json();
+  if(data?.success){
+    setStatus(data?.data?.uniqueValues)
+  }
+  if (!data?.success){
+    setShowToast(true)
+	}
+}
+
+async function getAssignee(){
+const response = await fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage}&unique=assignee`,
+       {
+        method: 'POST',
+        headers: {
+          "Content-type": "application/json; charset=UTF-8"
+        }
+      }
+  );
+  const data = await response.json();
+  if(data?.success){
+    setAssignee(data?.data?.uniqueValues.filter(Boolean))
+  }
+  if (!data?.success){
+    setShowToast(true)
+	}
+}
+
+  useEffect(() => {
+    setLoader(true)
+    getCustomers()
   }, [
     searchByStyle,
     searchByTitle,
@@ -185,7 +279,8 @@ export default function Table() {
     assigneeSort,
     currentTab,
     currentPage,
-    isStatusSelected
+    isStatusSelected,
+    clearAllFilters
   ]);
 
   useEffect(() => {
@@ -211,6 +306,14 @@ export default function Table() {
       setsearchByUpdatedBy(e.target.value);
     }, 1000);
   };
+
+  const clearFilters =()=>{
+    setClearAllFilters(true)
+    setSelectedBrand([])
+    setSearchByStatus([])
+    setSearchByAssignee("")
+    setsearchByUpdatedAt(null)
+  }
 
   const renderHeader = () => {
     return (
@@ -306,6 +409,7 @@ export default function Table() {
             )}
           </>
         )}
+        <button className="bg-white text-black text-sm rounded border border-black m-2 p-1 w-[94px] h-[39px]" onClick={clearFilters}>Clear Filters</button>
       </div>
     );
   };
@@ -384,6 +488,7 @@ export default function Table() {
           onChange={(e) => handleBrands(e.value)}
           optionLabel="brand"
           placeholder="Select"
+          filter
           maxSelectedLabels={1}
           style={{ width: "100px" }}
         />
@@ -461,40 +566,42 @@ export default function Table() {
       </span>
     );
   };
-  const handleAssigneeSort = () => {
-    setCurrentSort("assigneeSort");
-    setAssigneeSort(assigneeSort == "desc" ? "asc" : "desc");
-  };
 
-  const handleUpdatedAtSort = () => {
-    setCurrentSort("updatedAtSort");
-    setUpdatedAtSort(updatedAtSort == "desc" ? "asc" : "desc");
-  };
-
-  const handleUpdatedBySort = () => {
-    setCurrentSort("updatedBySort");
-    setUpdatedBySort(updatedBySort == "desc" ? "asc" : "desc");
-  };
-
-  const handleStatusSort = () => {
-    setCurrentSort("statusSort");
-    setStatusSort(statusSort == "desc" ? "asc" : "desc");
-  };
-
-  const handleBrandSort = () => {
-    setCurrentSort("brandSort");
-    setBrandSort(brandSort == "desc" ? "asc" : "desc");
-  };
-
-  const handleTitleSort = () => {
-    setCurrentSort("titleSort");
-    setTitleSort(titleSort == "desc" ? "asc" : "desc");
-  };
-
-  const handleStyleSort = () => {
-    setCurrentSort("styleSort");
-    setStyleSort(styleSort == "desc" ? "asc" : "desc");
-  };
+  const handleSort=(currentSort)=>{
+    setCurrentSort(currentSort);
+    switch (currentSort) {
+      case "Style":
+        setStyleSort(styleSort == "desc" ? "asc" : "desc");
+        setDefaultSort(styleSort == "desc" ? ArrowSortDownLine : ArrowSortUpLine)
+        break;
+      case "Title":
+        setTitleSort(titleSort == "desc" ? "asc" : "desc");
+        setDefaultSort(titleSort == "desc" ? ArrowSortDownLine : ArrowSortUpLine)
+        break;
+      case "Brand":
+        setBrandSort(brandSort == "desc" ? "asc" : "desc");
+        setDefaultSort(brandSort == "desc" ? ArrowSortDownLine : ArrowSortUpLine)        
+        break;
+      case "Status":
+        setStatusSort(statusSort == "desc" ? "asc" : "desc");
+        setDefaultSort(statusSort == "desc" ? ArrowSortDownLine : ArrowSortUpLine)        
+          break;
+      case "Assignee":
+        setAssigneeSort(assigneeSort == "desc" ? "asc" : "desc");
+        setDefaultSort(assigneeSort == "desc" ? ArrowSortDownLine : ArrowSortUpLine)
+        break;
+        case "Updated By":
+          setUpdatedBySort(updatedBySort == "desc" ? "asc" : "desc");
+          setDefaultSort(updatedBySort == "desc" ? ArrowSortDownLine : ArrowSortUpLine)
+        break;
+        case "Updated At":
+          setUpdatedAtSort(updatedAtSort == "desc" ? "asc" : "desc");
+          setDefaultSort(updatedAtSort == "desc" ? ArrowSortDownLine : ArrowSortUpLine)
+        break;
+        default:
+        break;
+    }
+  }
 
   const iconClickHandler = (e, type, rowData) => {
     if (type === "edit") {
@@ -522,7 +629,6 @@ export default function Table() {
       ) {
         setAssigneeType("editors");
       }
-      console.log(rowData);
       setIsModalVisible(true);
       setStyleId([rowData?.styleId]);
       setWorkflowId([rowData?.id]);
@@ -530,7 +636,7 @@ export default function Table() {
     e.stopPropagation();
   };
 
-  const handleRowSelectIcons = (rowData, imgPath, type) => {
+  const handleRowSelectIcons = (rowData, type) => {
     return (
       <div
         onClick={(e) => iconClickHandler(e, type, rowData)}
@@ -538,12 +644,25 @@ export default function Table() {
       >
         <span>
           {rowData.id == showEdit && isRowSelected && isAdmin && (
-            <button
+            <>
+             {type == "edit" ? 
+             <button
               className="bg-white flex rounded-full justify-center items-center border border-grey-30  h-[30px] w-[30px]"
               onClick={handleEditIcon}
             >
-              <img alt={`${imgPath} svg`} src={imgPath} />
+            <Tooltip target=".quick-fix"/>
+            <img alt={`${Edit} svg`} src={Edit} data-pr-tooltip="Quick Fix" data-pr-position="top" className="quick-fix"></img>
+            </button> 
+            :
+            <button
+            className="bg-white flex rounded-full justify-center items-center border border-grey-30  h-[30px] w-[30px]"
+            onClick={handleEditIcon}
+          >
+            <Tooltip target=".assign"/>
+            <img alt={`${ currentTab == "Assigned" || currentTab == "InProgress" ? ReAssign : AssigneEdit} svg`} src={ currentTab == "Assigned" || currentTab == "InProgress" ? ReAssign : AssigneEdit} data-pr-tooltip="Assign" data-pr-position="top"  className="assign"/>
             </button>
+            }
+            </>
           )}
         </span>
       </div>
@@ -641,51 +760,54 @@ export default function Table() {
             onRowClick={onRowClick}
           >
             {isAdmin && (
-              <Column selectionMode="multiple" style={{ width: "3%" }}></Column>
+              <Column selectionMode="multiple"></Column>
             )}
             <Column
               field="styleId"
               header={
                 <TableHeaders
                   headerName={"Style"}
-                  sortIcon={ArrowSort}
-                  onClick={handleStyleSort}
+                  sortIcon={defaultSort}
+                  onClick={()=>handleSort("Style")}
+                  currentSort={currentSort}
+                  ArrowSort={ArrowSort}
                 />
               }
               filter
               showFilterMenu={false}
               filterElement={styleRowFilterTemplate}
               filterPlaceholder="Search by Style"
-              style={{ width: "5%" }}
             />
             <Column
               field="title"
               header={
                 <TableHeaders
                   headerName={"Title"}
-                  sortIcon={ArrowSort}
-                  onClick={handleTitleSort}
+                  sortIcon={defaultSort}
+                  onClick={()=>handleSort("Title")}
+                  currentSort={currentSort}
+                  ArrowSort={ArrowSort}
                 />
               }
               filter
               filterElement={titleRowFilterTemplate}
               showFilterMenu={false}
               filterPlaceholder="Search by Title"
-              style={{ width: "22%" }}
             />
             <Column
               header={
                 <TableHeaders
                   headerName={"Brand"}
-                  sortIcon={ArrowSort}
-                  onClick={handleBrandSort}
+                  sortIcon={defaultSort}
+                  onClick={()=>handleSort("Brand")}
+                  currentSort={currentSort}
+                  ArrowSort={ArrowSort}
                 />
               }
               field="brand"
               showFilterMenu={false}
               filter
               filterElement={brandRowFilterTemplate}
-              style={{ width: "10%" }}
             />
             {currentTab !== "Unassigned" && (
               <Column
@@ -693,14 +815,15 @@ export default function Table() {
                 header={
                   <TableHeaders
                     headerName={"Status"}
-                    sortIcon={ArrowSort}
-                    onClick={handleStatusSort}
+                    sortIcon={defaultSort}
+                    onClick={()=>handleSort("Status")}
+                    currentSort={currentSort}
+                    ArrowSort={ArrowSort}
                   />
                 }
                 showFilterMenu={false}
                 filter
                 filterElement={statusRowFilterTemplate}
-                style={{ width: "18%" }}
               />
             )}
             {currentTab !== "Completed" &&
@@ -711,37 +834,41 @@ export default function Table() {
                   header={
                     <TableHeaders
                       headerName={"Assignee"}
-                      sortIcon={ArrowSort}
-                      onClick={handleAssigneeSort}
+                      sortIcon={defaultSort}
+                      onClick={()=>handleSort("Assignee")}
+                      currentSort={currentSort}
+                      ArrowSort={ArrowSort}
                     />
                   }
                   showFilterMenu={false}
                   filter
                   filterElement={assigneeRowFilterTemplate}
-                  style={{ width: "13%" }}
                 />
               )}
             <Column
               field="lastUpdatedBy"
               header={
                 <TableHeaders
-                  headerName={"Updated BY"}
-                  sortIcon={ArrowSort}
-                  onClick={handleUpdatedBySort}
+                  headerName={"Updated By"}
+                  sortIcon={defaultSort}
+                  onClick={()=>handleSort("Updated By")}
+                  currentSort={currentSort}
+                  ArrowSort={ArrowSort}
                 />
               }
               filter
               showFilterMenu={false}
               filterElement={updatedByFilterTemplate}
-              style={{ width: "15%" }}
             />
             <Column
               field="lastUpdateTs"
               header={
                 <TableHeaders
                   headerName={"Updated At"}
-                  sortIcon={ArrowSort}
-                  onClick={handleUpdatedAtSort}
+                  sortIcon={defaultSort}
+                  onClick={()=>handleSort("Updated At")}
+                  currentSort={currentSort}
+                  ArrowSort={ArrowSort}
                 />
               }
               dataType="date"
@@ -749,33 +876,25 @@ export default function Table() {
               showFilterMenu={false}
               body={dateBodyTemplate}
               filterElement={dateFilterTemplate}
-              style={{ width: "14%" }}
             />
-            <Column header={handleFilterIcon} style={{ width: "0%" }} />
+            <Column header={handleFilterIcon}/>
             <Column
-              body={(e) => handleRowSelectIcons(e, Edit, "edit")}
-              style={{ width: "0%" }}
+              body={(e) => handleRowSelectIcons(e, "edit")}
             />
             {currentTab !== "Completed" && (
               <Column
                 body={(e) =>
-                  handleRowSelectIcons(
-                    e,
-                    currentTab == "Assigned" || currentTab == "InProgress"
-                      ? ReAssign
-                      : AssigneEdit,
-                    "assign"
-                  )
+                  handleRowSelectIcons(e,"assign")
                 }
-                style={{ width: "0%" }}
               />
             )}
             {currentTab === "Completed" && (
-              <Column body={handleMoreIcon} style={{ width: "0%" }} />
+              <Column body={handleMoreIcon}/>
             )}
           </DataTable>
         )}
       </div>
+      <Toast ref={toastBR} position="top-center" />
     </>
   );
 }

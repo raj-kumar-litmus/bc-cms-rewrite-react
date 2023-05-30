@@ -11,3 +11,5 @@ export const status = {
   editingInProgress: "EDITING_IN_PROGRESS",
   editingComplete: "EDITING_COMPLETE"
 };
+
+export const limit = 999

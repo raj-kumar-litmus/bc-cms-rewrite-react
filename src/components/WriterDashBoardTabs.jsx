@@ -28,20 +28,6 @@ function WriterDashBoardTabs({ handleTabEvents }) {
           currentTab={currentTab}
           disabled={loader}
           className={
-            currentTab == "Completed"
-              ? "py-2 px-8 font-bold border-b-2 text-sm"
-              : "py-2 px-8 text-sm"
-          }
-        >
-          {" "}
-          Completed
-        </Button>
-
-        <Button
-          onClick={handleTabEvents}
-          currentTab={currentTab}
-          disabled={loader}
-          className={
             currentTab == "Assigned"
               ? "py-2 px-8 font-bold border-b-2 text-sm"
               : "py-2 px-8 text-sm"
@@ -63,6 +49,20 @@ function WriterDashBoardTabs({ handleTabEvents }) {
         >
           {" "}
           InProgress{" "}
+        </Button>
+
+        <Button
+          onClick={handleTabEvents}
+          currentTab={currentTab}
+          disabled={loader}
+          className={
+            currentTab == "Completed"
+              ? "py-2 px-8 font-bold border-b-2 text-sm"
+              : "py-2 px-8 text-sm"
+          }
+        >
+          {" "}
+          Completed
         </Button>
       </div>
     </div>

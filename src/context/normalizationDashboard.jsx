@@ -14,6 +14,7 @@ function DashBoardProvider({ children }) {
   const [customers, setCustomers] = useState(null);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [currentTab, setCurrentTab] = useState("Completed");
+  const [showToast, setShowToast] = useState(false);
 
   const { VITE_ADMIN_GROUP_NAME: ADMIN_GROUP_NAME } = process.env;
 
@@ -44,7 +45,9 @@ function DashBoardProvider({ children }) {
         currentTab,
         setCurrentTab,
         styleId,
-        setStyleId
+        setStyleId,
+        showToast,
+        setShowToast
       }}
     >
       {children}
