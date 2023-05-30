@@ -33,11 +33,21 @@ function StatusBarsForNormalization() {
     getCount()
   }, [currentTab]);
 
+  useEffect(()=>{
+    if(showToast){
+      toast.current.show({severity:'error', summary: 'Error', detail:'Something went wrong. Please try again', life: 3000});
+    }
+  },[showToast])
+
+
   return (
     <>
     <div
       className={isAdmin ? "grid grid-cols-4 gap-4" : "grid grid-cols-3 gap-4"}
     >
+      <div className="card flex justify-content-center">
+            <Toast ref={toast} />
+        </div>
       {isAdmin && (
         <StatusBar
           title={"Unassigned"}
