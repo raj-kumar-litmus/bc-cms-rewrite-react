@@ -41,10 +41,6 @@ function NormalizationDashboard() {
     clearFilters()
   };
 
-  const handleSearchChange=(e)=>{
-    setSearch(e.target.value)
-  }
-
   const fetchBulkStyleSearch = async () => {
     try {
       const requestOptions = {
@@ -109,6 +105,33 @@ function NormalizationDashboard() {
       getGlobalSearch();
     }
   };
+ 
+  const handleSearchChange=(e)=>{
+    setSearch(e.target.value)
+  }
+
+  async function getGloblSearch(){
+    try{
+      const response = await fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage}&globalSearch=${search && search  }`,
+      {
+       method: 'POST',
+       headers: {
+         "Content-type": "application/json; charset=UTF-8"
+       }
+     }
+ );
+ if(response?.ok){
+  const data = await response.json()
+  setCustomers(data?.data)
+  setLoader(false)
+  }else{
+    setLoader(false)
+    setShowToast(true)
+  }
+    }catch (error) {
+      console.error(error);
+    }
+  }
 
   return (
     <>
