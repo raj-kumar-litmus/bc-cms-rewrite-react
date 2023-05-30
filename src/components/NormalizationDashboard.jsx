@@ -70,10 +70,11 @@ function NormalizationDashboard() {
   }
 
   return (
-    <div className="bg-white pb-[20px]">
-       <div className="card flex justify-content-center">
+    <>
+     <div className="card flex justify-content-center">
             <Toast ref={toast} />
         </div>
+    <div className="bg-white pb-[20px]">
       <div className="mx-[5%]">
         <StatusBarsForNormalization />
         <div className="mt-[40px]">
@@ -102,6 +103,7 @@ function NormalizationDashboard() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 export default NormalizationDashboard;
