@@ -39,15 +39,11 @@ function StatusBarsForNormalization() {
     }
   },[showToast])
 
-
   return (
     <>
     <div
       className={isAdmin ? "grid grid-cols-4 gap-4" : "grid grid-cols-3 gap-4"}
     >
-      <div className="card flex justify-content-center">
-            <Toast ref={toast} />
-        </div>
       {isAdmin && (
         <StatusBar
           title={"Unassigned"}
