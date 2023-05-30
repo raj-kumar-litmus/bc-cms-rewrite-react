@@ -1,4 +1,5 @@
-import React from "react";
+import React, {useContext} from "react";
+import { DashBoardContext } from "../context/normalizationDashboard";
 import Loader from '../components/loader'
 function StatusBarTail({ img, title, count, className, loader}) {
   return (
