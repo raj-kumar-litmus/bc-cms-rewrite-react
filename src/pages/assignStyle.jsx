@@ -83,7 +83,12 @@ function AssignStyle() {
     const requestOptions = {
       method: "PATCH",
       body: JSON.stringify({
-        [userGroup === "writers" ? "writer" : "editor"]: assignee
+        filters: {
+          id: workflowId
+        },
+        assignments: {
+          [userGroup === "writers" ? "writer" : "editor"]: assignee
+        }
       }),
       headers: {
         "Content-type": "application/json"
@@ -91,7 +96,7 @@ function AssignStyle() {
     };
     try {
       setIsFetching(true);
-      const uri = `${VITE_SERVER_HOST_NAME}/api/v1/workflows/${workflowId}`;
+      const uri = `${VITE_SERVER_HOST_NAME}/api/v1/workflows/assign`;
       const { status } = (await fetch(uri, requestOptions)) || {};
       styleAssignedHandler({
         error: status != 200,
