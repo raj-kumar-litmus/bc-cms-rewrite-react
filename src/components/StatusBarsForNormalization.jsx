@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
+import { Toast } from 'primereact/toast';
 import { DashBoardContext } from "../context/normalizationDashboard";
 import UnAssigned from "../logos/UnAssigned.svg";
 import Assigned from "../logos/Assigned.svg";
@@ -9,22 +10,45 @@ import { workFlowsUrl } from "../constants/index";
 
 function StatusBarsForNormalization() {
   const [statusBarData, setStatusBarData] = useState([]);
+  const toast = useRef(null);
+  const { isAdmin, currentTab, showToast, setShowToast } = useContext(DashBoardContext);
 
-  const { isAdmin, currentTab } = useContext(DashBoardContext);
+  async function getCount(){
+    const response = await fetch(`${workFlowsUrl}/counts`,
+       {
+        method: 'get',
+        headers: {
+          "Content-type": "application/json; charset=UTF-8"
+        }
+      }
+  )
+  const data = await response.json();
+   if(data?.success){
+    setStatusBarData(data?.data);
+   }
+  if (!data?.success){
+    setShowToast(true)
+	}
+  }
 
   useEffect(() => {
-    fetch(`${workFlowsUrl}/counts`, {
-      method: "get"
-    })
-      .then((response) => response.json())
-      .then((result) => setStatusBarData(result.data))
-      .catch((error) => error);
+    getCount()
   }, [currentTab]);
+
+  useEffect(()=>{
+    if(showToast){
+      toast.current.show({severity:'error', summary: 'Error', detail:'Something went wrong. Please try again', life: 3000});
+    }
+  },[showToast])
+
 
   return (
     <div
       className={isAdmin ? "grid grid-cols-4 gap-4" : "grid grid-cols-3 gap-4"}
     >
+      <div className="card flex justify-content-center">
+            <Toast ref={toast} />
+        </div>
       {isAdmin && (
         <StatusBar
           title={"Unassigned"}

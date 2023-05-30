@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef} from "react";
 import { useNavigate } from "react-router-dom";
 import { Tooltip } from 'primereact/tooltip';
+import { Toast } from 'primereact/toast';
 import { DashBoardContext } from "../context/normalizationDashboard";
 import "primereact/resources/themes/fluent-light/theme.css";
 import "primereact/resources/primereact.min.css";
@@ -30,7 +31,6 @@ import AssignToEditor from "../logos/AssignToEditor.svg";
 import AssignToWriter from "../logos/AssignToWriter.svg";
 import ArrowSortDownLine from "../logos/ArrowSortDownLine.svg";
 import ArrowSortUpLine from "../logos/ArrowSortUpLine.svg";
-import { async } from "regenerator-runtime";
 
 export default function Table() {
   const [searchByStyle, setSearchByStyle] = useState("");
@@ -74,14 +74,24 @@ export default function Table() {
     currentTab,
     isAdmin,
     loader,
-    setLoader
+    setLoader,
+    showToast,
+    setShowToast
   } = useContext(DashBoardContext);
+
+  const toast = useRef(null);
 
   useEffect(() => {
       getBrands()
       getAssignee()
       getStatus()
-  }, [currentPage, currentTab]);
+  }, [currentPage]);
+
+  useEffect(()=>{
+    if(showToast){
+      toast.current.show({severity:'error', summary: 'Error', detail:'Something went wrong. Please try again', life: 3000});
+    }
+  },[showToast])
 
   async function getCustomers(){
     var date = new Date(searchByUpdatedAt);
@@ -142,7 +152,8 @@ export default function Table() {
     setLoader(false)
   }
   if (!data?.success){
-    console.log("data>>",data?.error)
+    setLoader(false)
+    setShowToast(true)
 	}
 }
 
@@ -164,7 +175,7 @@ const response = await fetch(`${workFlowsUrl}/search?limit=${limit}&page=${curre
     )
   }
   if (!data?.success){
-    console.log("data>>",data?.error)
+    setShowToast(true)
 	}
 }
 
@@ -203,7 +214,7 @@ const response = await fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage
     setStatus(data?.data?.uniqueValues)
   }
   if (!data?.success){
-    console.log("data>>",data?.error)
+    setShowToast(true)
 	}
 }
 
@@ -221,7 +232,7 @@ const response = await fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage
     setAssignee(data?.data?.uniqueValues.filter(Boolean))
   }
   if (!data?.success){
-    console.log("data>>",data?.error)
+    setShowToast(true)
 	}
 }
 
@@ -862,6 +873,9 @@ const response = await fetch(`${workFlowsUrl}/search?limit=10&page=${currentPage
           </DataTable>
         )}
       </div>
+      <div className="card flex justify-content-center">
+            <Toast ref={toast} />
+        </div>
     </>
   );
 }
