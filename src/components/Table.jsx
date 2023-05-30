@@ -34,7 +34,6 @@ import ArrowSortDownLine from "../logos/ArrowSortDownLine.svg";
 import ArrowSortUpLine from "../logos/ArrowSortUpLine.svg";
 import Clear from "../logos/clearFilters.svg";
 
-
 export default function Table() {
   const [searchByStyle, setSearchByStyle] = useState("");
   const [searchByTitle, setSearchByTitle] = useState("");
