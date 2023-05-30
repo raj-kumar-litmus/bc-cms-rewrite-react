@@ -33,7 +33,6 @@ import AssignToWriter from "../logos/AssignToWriter.svg";
 import ArrowSortDownLine from "../logos/ArrowSortDownLine.svg";
 import ArrowSortUpLine from "../logos/ArrowSortUpLine.svg";
 import Clear from "../logos/clearFilters.svg";
-
 import { isAllEqual } from "../utils";
 
 export default function Table() {
