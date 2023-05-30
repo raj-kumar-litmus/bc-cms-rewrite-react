@@ -90,6 +90,10 @@ export default function Table() {
     getStatus();
   }, [currentPage]);
 
+  useEffect(()=>{
+    getStatus()
+  },[currentTab])
+
   const showTopCenter = () => {
     toastBR.current.show({
       severity: showToast ? "error" : "success",
@@ -605,6 +609,18 @@ export default function Table() {
       </span>
     );
   };
+  const filterHeader =()=>{
+  return(
+    <span>
+      {(selectedBrand.length || searchByStatus.length || searchByAssignee || searchByUpdatedAt != null )
+         && <button onClick={clearFilters}>
+        <div className="flex">
+          <img alt={`${Clear} svg`} src={Clear}/>
+          <span className="ml-[5px] text-sm text-[#2C2C2C] font-semibold text-opacity-1">Clear</span>
+        </div>
+      </button>}
+  </span>
+  )}
 
   const handleSort = (currentSort) => {
     setCurrentSort(currentSort);
