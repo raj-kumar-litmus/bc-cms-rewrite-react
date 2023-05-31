@@ -8,6 +8,7 @@ import WriterDashBoardTabs from "./WriterDashBoardTabs.jsx";
 import AssignStyle from "../pages/assignStyle.jsx";
 import Table from "./Table.jsx";
 import useSessionStorage from "../hooks/useSessionStorage";
+import ClearSearch from '../logos/ClearSearch.svg'
 
 function NormalizationDashboard() {
   const navigate = useNavigate();
@@ -98,9 +99,10 @@ function NormalizationDashboard() {
     }
   }
   
-const handleSearchChange=(e)=>{
+ const handleSearchChange=(e)=>{
   setSearch(e.target.value)
-}
+ }
+
   const handleSearchClick = () => {
     setLoader(true);
     if (search.includes(",")) {
@@ -109,6 +111,10 @@ const handleSearchChange=(e)=>{
       getGlobalSearch();
     }
   };
+
+  const handleClear =()=>{
+    setSearch("")
+  }
  
   return (
     <>
@@ -119,10 +125,12 @@ const handleSearchChange=(e)=>{
             <GlobalSearch
               onChange={handleSearchChange}
               onClick={handleSearchClick}
+              handleClear={handleClear}
               value={search}
               searchString={"Search"}
+              img={ClearSearch}
               inputClasses={
-                "bg-white w-full h-[64px] items-center pl-[24px] text-sm placeholder-gray-20 placeholder-opacity-1 rounded border border-grey-30 shadow"
+                "bg-white w-full h-[64px] pl-[26px] pt-[18px] text-sm placeholder-gray-20 placeholder-opacity-1 rounded border border-grey-30 shadow"
               }
               buttonClasses={
                 "text-white bg-black h-[64px] text-sm w-[131px] rounded ml-2"
