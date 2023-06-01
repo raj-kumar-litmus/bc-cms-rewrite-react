@@ -565,7 +565,7 @@ export default function Table() {
     return (
       <span className="p-input-icon-left w-[100%] min-w-[80px]">
         <i className="pi pi-search" />
-        <InputText onChange={handleStyleChanges} />
+        <InputText value={searchByStyle} onChange={handleStyleChanges} />
       </span>
     );
   };
