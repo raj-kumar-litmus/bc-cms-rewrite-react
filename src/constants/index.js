@@ -18,8 +18,8 @@ export const statusForUi = {
   WRITING_IN_PROGRESS: "Writing In Progress",
   WRITING_COMPLETE: "Writing Complete",
   ASSIGNED_TO_EDITOR: "Assigned To Editor",
-  EDITING_IN_PROGRESS: "Editing in progress",
-  EDITING_COMPLETE: "Editing complete"
+  EDITING_IN_PROGRESS: "Editing in Progress",
+  EDITING_COMPLETE: "Editing Complete"
 };
 
 export const limit = 999;

@@ -5,8 +5,8 @@ const DashBoardContext = createContext(undefined);
 
 function DashBoardProvider({ children }) {
   const [workflowId, setWorkflowId] = useState(null);
-  const [searchByTitle, setSearchByTitle] = useState(null);
-  const [searchByStyle, setSearchByStyle] = useState(null);
+  const [searchByTitle, setSearchByTitle] = useState("");
+  const [searchByStyle, setSearchByStyle] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [styleId, setStyleId] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -23,6 +23,10 @@ function DashBoardProvider({ children }) {
   const [searchByStatus, setSearchByStatus] = useState([]);
   const [searchByAssignee, setSearchByAssignee] = useState("");
   const [searchByUpdatedAt, setsearchByUpdatedAt] = useState(null);
+  const [searchByUpdatedBy, setsearchByUpdatedBy] = useState("");
+  const [debouncedTitle, setDebouncedTitle] = useState("");
+  const [debouncedStyle, setDebouncedStyle] = useState("");
+  const [debouncedUpdatedBy, setDebouncedUpdatedBy] = useState("");
   const { VITE_ADMIN_GROUP_NAME: ADMIN_GROUP_NAME } = process.env;
   const [groups] = useSessionStorage("userGroups");
 
@@ -36,8 +40,12 @@ function DashBoardProvider({ children }) {
     setSearchByStatus([]);
     setSearchByAssignee("");
     setsearchByUpdatedAt(null);
-    setSearchByTitle(null);
-    setSearchByStyle(null);
+    setSearchByTitle("");
+    setSearchByStyle("");
+    setsearchByUpdatedBy("");
+    setDebouncedTitle("");
+    setDebouncedStyle("");
+    setDebouncedUpdatedBy("");
   };
 
   return (
@@ -45,6 +53,14 @@ function DashBoardProvider({ children }) {
       value={{
         workflowId,
         isAdmin,
+        debouncedTitle,
+        setDebouncedTitle,
+        debouncedStyle,
+        setDebouncedStyle,
+        debouncedUpdatedBy,
+        setDebouncedUpdatedBy,
+        searchByUpdatedBy,
+        setsearchByUpdatedBy,
         searchByTitle,
         setSearchByTitle,
         searchByStyle,
