@@ -13,7 +13,7 @@ import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
 import { MultiSelect } from "primereact/multiselect";
 import { Calendar } from "primereact/calendar";
-import { workFlowsUrl } from "../constants/index";
+import { workFlowsUrl, statusForUi } from "../constants/index";
 import Pagination from "./Pagination";
 import AssigneEdit from "../logos/AssigneEdit.svg";
 import ReAssign from "../logos/ReAssign.svg";
@@ -92,15 +92,18 @@ export default function Table() {
   const toastBR = useRef(null);
 
   useEffect(() => {
-    getBrands();
-    getAssignee();
-    getStatus();
+    setTabChanged(true);
   }, [currentPage]);
 
-  useEffect(()=>{
-    getStatus()
-    setTabChanged(true)
-  },[currentTab])
+  useEffect(() => {
+    if (showFilters) {
+      getBrands();
+      getStatus();
+    }
+    if (showFilters && isAdmin) {
+      getAssignee();
+    }
+  }, [showFilters]);
 
   const showTopCenter = () => {
     toastBR.current.show({
@@ -143,11 +146,11 @@ export default function Table() {
       case "Assigned":
         status.push("ASSIGNED_TO_WRITER", "ASSIGNED_TO_EDITOR");
         break;
-      case "InProgress":
+      case "In Progress":
         status.push("WRITING_IN_PROGRESS", "EDITING_IN_PROGRESS");
         break;
       default:
-        status;
+        return;
     }
     const body = {
       filters: {
@@ -155,7 +158,9 @@ export default function Table() {
         ...(searchByTitle && { title: searchByTitle }),
         ...(newSelectedBrand.length && { brand: newSelectedBrand }),
         ...(searchByUpdatedBy && { lastUpdatedBy: searchByUpdatedBy }),
-        ...((searchByAssignee || !isAdmin) && {assignee: !isAdmin ? userEmail : searchByAssignee}),
+        ...((searchByAssignee || !isAdmin) && {
+          assignee: !isAdmin ? userEmail : searchByAssignee
+        }),
         ...(searchByUpdatedAt && { lastUpdateTs: finalDate }),
         status: searchByStatus.length ? [searchByStatus] : status
       },
@@ -188,6 +193,13 @@ export default function Table() {
       );
       if (response?.ok) {
         const data = await response.json();
+        if (data?.data?.workflows) {
+          data.data.workflows = data?.data.workflows.map((e) => ({
+            ...e,
+            statusForUi: statusForUi[e?.status],
+            nameWithoutDomain: e?.assignee?.split("@")[0]
+          }));
+        }
         setCustomers(data?.data);
         setLoader(false);
       } else {
@@ -264,7 +276,7 @@ export default function Table() {
 
   async function getAssignee() {
     const response = await fetch(
-      `${workFlowsUrl}/search?limit=10&page=${currentPage}&unique=assignee`,
+      `${workFlowsUrl}/search?limit=${limit}&page=${currentPage}&unique=assignee`,
       {
         method: "POST",
         headers: {
@@ -302,11 +314,11 @@ export default function Table() {
     currentTab,
     currentPage,
     isStatusSelected,
-    clearAllFilters,
+    clearAllFilters
   ]);
 
   useEffect(() => {
-    if (customers?.pagination?.pageCount) {
+    if (customers?.pagination) {
       setPageCount(customers?.pagination?.pageCount);
     }
   }, [customers]);
@@ -363,6 +375,7 @@ export default function Table() {
               <button
                 className="flex"
                 onClick={() => {
+                  setAssigneeType("writers");
                   setStyleId(selectedProducts.map((e) => e?.styleId));
                   setIsModalVisible(true);
                 }}
@@ -384,6 +397,7 @@ export default function Table() {
               <button
                 className="flex"
                 onClick={() => {
+                  setAssigneeType("editors");
                   setStyleId(selectedProducts.map((e) => e?.styleId));
                   setIsModalVisible(true);
                 }}
@@ -483,13 +497,16 @@ export default function Table() {
 
   const assigneeRowFilterTemplate = () => {
     return (
-      <Dropdown
-        style={{ width: "120px" }}
+      <MultiSelect
         value={searchByAssignee}
         options={assigneeList}
-        onChange={handleAssign}
         itemTemplate={statusItemTemplate}
+        onChange={handleAssign}
+        showClear={false}
+        optionLabel="Assignee"
         placeholder="Select"
+        filter
+        maxSelectedLabels={0}
       />
     );
   };
@@ -583,16 +600,16 @@ export default function Table() {
     return finalDate;
   };
 
-  const setFilters=()=>{
-    setShowFilters(true)
-    setTabChanged(!tabChanged)
-  }
+  const setFilters = () => {
+    setShowFilters(true);
+    setTabChanged(!tabChanged);
+  };
 
   const handleFilterIcon = () => {
     return (
       <span>
         <button onClick={setFilters}>
-          {showFilters && !tabChanged? (
+          {showFilters && !tabChanged ? (
             <div className="bg-black text-white text-sm rounded-full border h-8 w-8 flex justify-center items-center">
               <img alt={`${FilterIcon} svg`} src={FilterIcon} />
             </div>
@@ -605,18 +622,25 @@ export default function Table() {
       </span>
     );
   };
-  const filterHeader =()=>{
-  return(
-    <span>
-      {(selectedBrand.length || searchByStatus.length || searchByAssignee || searchByUpdatedAt != null) && 
-        (<button onClick={clearFilters}>
-        <div className="flex">
-          <img alt={`${Clear} svg`} src={Clear}/>
-          <span className="ml-[5px] text-sm text-[#2C2C2C] font-semibold text-opacity-1">Clear</span>
-        </div>
-      </button>)}
-  </span>
-  )}
+  const filterHeader = () => {
+    return (
+      <span>
+        {(selectedBrand.length ||
+          searchByStatus.length ||
+          searchByAssignee ||
+          searchByUpdatedAt != null) && (
+          <button onClick={clearFilters}>
+            <div className="flex">
+              <img alt={`${Clear} svg`} src={Clear} />
+              <span className="ml-[5px] text-sm text-[#2C2C2C] font-semibold text-opacity-1">
+                Clear
+              </span>
+            </div>
+          </button>
+        )}
+      </span>
+    );
+  };
 
   const handleSort = (currentSort) => {
     setCurrentSort(currentSort);
@@ -705,29 +729,56 @@ export default function Table() {
     return (
       <div
         onClick={(e) => iconClickHandler(e, type, rowData)}
-        className="flex justify-content-end"
+        className={`${
+          rowData.id == showEdit &&
+          isRowSelected &&
+          isAdmin &&
+          selectedProducts.length < 2
+            ? "flex"
+            : "invisible"
+        } justify-content-end`}
       >
         <span>
-          {rowData.id == showEdit && isRowSelected && isAdmin && (
-            <>
-             {type == "edit" ? 
-             <button
+          {type == "edit" ? (
+            <button
               className="bg-white flex rounded-full justify-center items-center border border-grey-30  h-[30px] w-[30px]"
               onClick={handleEditIcon}
             >
-            <Tooltip target=".quick-fix"/>
-            <img alt={`${Edit} svg`} src={Edit} data-pr-tooltip="Quick Fix" data-pr-position="top" className="quick-fix"></img>
-            </button> 
-            :
-            <button
-            className="bg-white flex rounded-full justify-center items-center border border-grey-30  h-[30px] w-[30px]"
-            onClick={handleEditIcon}
-          >
-            <Tooltip target=".assign"/>
-            <img alt={`${ currentTab == "Assigned" || currentTab == "InProgress" ? ReAssign : AssigneEdit} svg`} src={ currentTab == "Assigned" || currentTab == "InProgress" ? ReAssign : AssigneEdit} data-pr-tooltip={ currentTab == "Assigned" || currentTab == "InProgress" ? "Reassign" : "Assign"} data-pr-position="top"  className="assign"/>
+              <Tooltip target=".quick-fix" />
+              <img
+                alt={`${Edit} svg`}
+                src={Edit}
+                data-pr-tooltip="Quick Fix"
+                data-pr-position="top"
+                className="quick-fix"
+              ></img>
             </button>
-            }
-            </>
+          ) : (
+            <button
+              className="bg-white flex rounded-full justify-center items-center border border-grey-30  h-[30px] w-[30px]"
+              onClick={handleEditIcon}
+            >
+              <Tooltip target=".assign" />
+              <img
+                alt={`${
+                  currentTab == "Assigned" || currentTab == "InProgress"
+                    ? ReAssign
+                    : AssigneEdit
+                } svg`}
+                src={
+                  currentTab == "Assigned" || currentTab == "InProgress"
+                    ? ReAssign
+                    : AssigneEdit
+                }
+                data-pr-tooltip={
+                  currentTab == "Assigned" || currentTab == "InProgress"
+                    ? "Reassign"
+                    : "Assign"
+                }
+                data-pr-position="top"
+                className="assign"
+              />
+            </button>
           )}
         </span>
       </div>
@@ -741,22 +792,30 @@ export default function Table() {
   const handleMoreIcon = (rowData) => {
     return (
       <div className="relative">
-        <div className="flex justify-content-end">
+        <div
+          className={`${
+            rowData.id == showEdit &&
+            isRowSelected &&
+            isAdmin &&
+            selectedProducts.length < 2
+              ? "flex"
+              : "invisible"
+          } justify-content-end relative`}
+        >
           <span>
-            {rowData.id == showEdit && isRowSelected && isAdmin && (
-              <button onClick={handleMoreIconClick}>
-                <span className="bg-white flex rounded-full justify-center items-center border border-grey-30  h-[30px] w-[30px]">
-                  <img alt={`${MoreIcons} svg`} src={MoreIcons} />
-                </span>
-              </button>
-            )}
+            <button onClick={handleMoreIconClick}>
+              <span className="bg-white flex rounded-full justify-center items-center border border-grey-30  h-[30px] w-[30px]">
+                <img alt={`${MoreIcons} svg`} src={MoreIcons} />
+              </span>
+            </button>
           </span>
+
+          {rowData.id == showEdit && showPopup && (
+            <div className="absolute top-0 right-0">
+              <MoreIconPopUp rowData={rowData} />
+            </div>
+          )}
         </div>
-        {rowData.id == showEdit && showPopup && (
-          <div className="absolute top-0 right-0">
-            <MoreIconPopUp rowData={rowData} />
-          </div>
-        )}
       </div>
     );
   };
@@ -766,14 +825,16 @@ export default function Table() {
   };
 
   const pagination = () => {
-    return (
+    return pageCount > 1 ? (
       <Pagination
         count={pageCount}
-        preText={"< Prev"}
-        nextText={"Next >"}
-        className={"px-3 py-2 mr-2 leading-tight text-gray-500 bg-white"}
+        preText={"Prev"}
+        nextText={"Next"}
+        className={
+          "flex items-center gap-[10%] px-3 py-2 mr-2 leading-tight text-[#2C2C2C] bg-white"
+        }
       />
-    );
+    ) : null;
   };
 
   const onSelectionChange = (event) => {
@@ -816,7 +877,7 @@ export default function Table() {
             dataKey="id"
             rows={100}
             selection={selectedProducts}
-            filterDisplay={showFilters  && !tabChanged && "row" }
+            filterDisplay={showFilters && !tabChanged && "row"}
             onRowMouseEnter={onRowSelect}
             onRowMouseLeave={onRowUnselect}
             footer={pagination}
@@ -874,7 +935,7 @@ export default function Table() {
             />
             {currentTab !== "Unassigned" && (
               <Column
-                field="status"
+                field="statusForUi"
                 header={
                   <TableHeaders
                     headerName={"Status"}
@@ -893,7 +954,7 @@ export default function Table() {
               currentTab !== "Unassigned" &&
               isAdmin && (
                 <Column
-                  field="assignee"
+                  field="nameWithoutDomain"
                   header={
                     <TableHeaders
                       headerName={"Assignee"}
@@ -940,15 +1001,17 @@ export default function Table() {
               body={dateBodyTemplate}
               filterElement={dateFilterTemplate}
             />
-            <Column header={handleFilterIcon} filter
-              showFilterMenu={false} filterElement={filterHeader}/>
-            <Column
-              body={(e) => handleRowSelectIcons(e, "edit")}
-            />
+            <Column body={(e) => handleRowSelectIcons(e, "edit")} />
             {currentTab !== "Completed" && (
               <Column body={(e) => handleRowSelectIcons(e, "assign")} />
             )}
             {currentTab === "Completed" && <Column body={handleMoreIcon} />}
+            <Column
+              header={handleFilterIcon}
+              filter
+              showFilterMenu={false}
+              filterElement={filterHeader}
+            />
           </DataTable>
         )}
       </div>

@@ -5,7 +5,7 @@ import Button from "./Button";
 function WriterDashBoardTabs({ handleTabEvents }) {
   const { loader, currentTab, isAdmin } = useContext(DashBoardContext);
   return (
-    <div className="text-sm border-b border-grey-30">
+    <div className="text-sm border-b">
       <div className="flex">
         {isAdmin && (
           <Button
@@ -14,7 +14,7 @@ function WriterDashBoardTabs({ handleTabEvents }) {
             disabled={loader}
             className={
               currentTab == "Unassigned"
-                ? "py-2 px-8 font-bold border-b-2 text-sm"
+                ? "py-2 px-8 font-bold border-b-4 text-sm border-[#1C1C1C]"
                 : "py-2 px-8 text-sm"
             }
           >
@@ -29,7 +29,7 @@ function WriterDashBoardTabs({ handleTabEvents }) {
           disabled={loader}
           className={
             currentTab == "Assigned"
-              ? "py-2 px-8 font-bold border-b-2 text-sm"
+              ? "py-2 px-8 font-bold border-b-4 text-sm border-[#1C1C1C]"
               : "py-2 px-8 text-sm"
           }
         >
@@ -42,13 +42,13 @@ function WriterDashBoardTabs({ handleTabEvents }) {
           currentTab={currentTab}
           disabled={loader}
           className={
-            currentTab == "InProgress"
-              ? "py-2 px-8 font-bold border-b-2 text-sm"
+            currentTab == "In Progress"
+              ? "py-2 px-8 font-bold border-b-4 text-sm border-[#1C1C1C]"
               : "py-2 px-8 text-sm"
           }
         >
           {" "}
-          InProgress{" "}
+          In Progress{" "}
         </Button>
 
         <Button
@@ -57,7 +57,7 @@ function WriterDashBoardTabs({ handleTabEvents }) {
           disabled={loader}
           className={
             currentTab == "Completed"
-              ? "py-2 px-8 font-bold border-b-2 text-sm"
+              ? "py-2 px-8 font-bold border-b-4 text-sm border-[#1C1C1C]"
               : "py-2 px-8 text-sm"
           }
         >

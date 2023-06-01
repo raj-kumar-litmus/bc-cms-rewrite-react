@@ -7,13 +7,13 @@ function DashBoardProvider({ children }) {
   const [workflowId, setWorkflowId] = useState(null);
   const [styleId, setStyleId] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState("default");
   const [currentPage, setCurrentPage] = useState(1);
   const [loader, setLoader] = useState(true);
   const [assigneeType, setAssigneeType] = useState(null);
   const [customers, setCustomers] = useState(null);
   const [selectedProducts, setSelectedProducts] = useState([]);
-  const [currentTab, setCurrentTab] = useState("Completed");
+  const [currentTab, setCurrentTab] = useState("default");
   const [showToast, setShowToast] = useState(false);
   const [clearAllFilters, setClearAllFilters] = useState(false);
   const [selectedBrand, setSelectedBrand] = useState([]);
@@ -27,13 +27,13 @@ function DashBoardProvider({ children }) {
     setIsAdmin(groups?.includes(ADMIN_GROUP_NAME));
   }, [ADMIN_GROUP_NAME, setIsAdmin]);
 
-  const clearFilters =()=>{
-    setClearAllFilters(true)
-    setSelectedBrand([])
-    setSearchByStatus([])
-    setSearchByAssignee("")
-    setsearchByUpdatedAt(null)
-  }
+  const clearFilters = () => {
+    setClearAllFilters(true);
+    setSelectedBrand([]);
+    setSearchByStatus([]);
+    setSearchByAssignee("");
+    setsearchByUpdatedAt(null);
+  };
 
   return (
     <DashBoardContext.Provider
