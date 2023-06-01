@@ -1065,14 +1065,15 @@ export default function Table() {
             />
             <Column body={(e) => handleRowSelectIcons(e, "edit")} />
             {currentTab !== "Completed" && (
-              <Column
-                header={handleFilterIcon}
-                body={(e) => handleRowSelectIcons(e, "assign")}
-              />
+              <Column body={(e) => handleRowSelectIcons(e, "assign")} />
             )}
-            {currentTab === "Completed" && (
-              <Column header={handleFilterIcon} body={handleMoreIcon} />
-            )}
+            {currentTab === "Completed" && <Column body={handleMoreIcon} />}
+            <Column
+              header={handleFilterIcon}
+              filter
+              showFilterMenu={false}
+              filterElement={filterHeader}
+            />
           </DataTable>
         )}
       </div>
