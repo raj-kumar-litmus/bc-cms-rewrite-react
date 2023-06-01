@@ -5,6 +5,9 @@ const DashBoardContext = createContext(undefined);
 
 function DashBoardProvider({ children }) {
   const [workflowId, setWorkflowId] = useState(null);
+  const [searchByTitle, setSearchByTitle] = useState(null);
+  const [searchByStyle, setSearchByStyle] = useState(null);
+  const [showFilters, setShowFilters] = useState(false);
   const [styleId, setStyleId] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isAdmin, setIsAdmin] = useState("default");
@@ -33,6 +36,8 @@ function DashBoardProvider({ children }) {
     setSearchByStatus([]);
     setSearchByAssignee("");
     setsearchByUpdatedAt(null);
+    setSearchByTitle(null);
+    setSearchByStyle(null);
   };
 
   return (
@@ -40,6 +45,12 @@ function DashBoardProvider({ children }) {
       value={{
         workflowId,
         isAdmin,
+        searchByTitle,
+        setSearchByTitle,
+        searchByStyle,
+        setSearchByStyle,
+        showFilters,
+        setShowFilters,
         setWorkflowId,
         isModalVisible,
         setIsModalVisible,

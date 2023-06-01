@@ -15,6 +15,7 @@ function NormalizationDashboard() {
   const [search, setSearch] = useState("");
   const {
     setSelectedProducts,
+    setShowFilters,
     setCurrentTab,
     setCurrentPage,
     isAdmin,
@@ -42,6 +43,7 @@ function NormalizationDashboard() {
     setCurrentTab(tab.target.innerText);
     setSelectedProducts([]);
     clearFilters();
+    setShowFilters(false);
   };
 
   const fetchBulkStyleSearch = async () => {

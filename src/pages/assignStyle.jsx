@@ -38,6 +38,7 @@ function AssignStyle() {
     workflowId,
     styleId: styles,
     setStyleId,
+    currentTab,
     setCurrentTab,
     setCurrentPage,
     isModalVisible,
@@ -108,8 +109,15 @@ function AssignStyle() {
       setIsModalVisible(false);
       setShowLoader(false);
       setIsFetching(false);
-      setCurrentTab("Assigned");
       setCurrentPage(1);
+      if (currentTab === "Assigned") {
+        setCurrentTab("default");
+        setTimeout(() => {
+          setCurrentTab("Assigned");
+        }, 100);
+      } else {
+        setCurrentTab("Assigned");
+      }
       return;
     } catch (_) {
       styleAssignedHandler({

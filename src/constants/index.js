@@ -17,7 +17,7 @@ export const statusForUi = {
   ASSIGNED_TO_WRITER: "Assigned To Writer",
   WRITING_IN_PROGRESS: "Writing In Progress",
   WRITING_COMPLETE: "Writing Complete",
-  ASSIGNED_TO_EDITOR: "Assigned to Editor",
+  ASSIGNED_TO_EDITOR: "Assigned To Editor",
   EDITING_IN_PROGRESS: "Editing in progress",
   EDITING_COMPLETE: "Editing complete"
 };
