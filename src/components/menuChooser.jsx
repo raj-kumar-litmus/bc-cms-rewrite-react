@@ -51,9 +51,9 @@ function MenuChooser() {
       )}
 
       {canAccessWorkBenchApp && canAccessSizingApp && (
-        <p className="text-sm mt-4 text-center w-[416px] mx-[476px]">
-          You Have Permission to access Data Normalization and Sizing app. You
-          can select one from below
+        <p className="text-sm mt-4 text-center w-[416px] m-auto">
+          You can access both Writer Interface and Sizing app. Please select one
+          from below.
         </p>
       )}
 
@@ -61,10 +61,9 @@ function MenuChooser() {
         {canAccessWorkBenchApp && (
           <MenuChooserAppDetails
             img={WriterInterfaceImg}
-            title={"Writer InterFace App"}
+            title={"Writer Interface App"}
             choosingAppArrow={ChoosingAppArrow}
             onClick={() => navigate("/normalizationDashBoard")}
-            displayContent={"Lorem ipsum dolor sit amet,consectetur adipiscing"}
           />
         )}
 
@@ -74,7 +73,6 @@ function MenuChooser() {
             img={SizingAppImg}
             title={"Sizing App"}
             choosingAppArrow={ChoosingAppArrow}
-            displayContent={"Lorem ipsum dolor sit amet,consectetur adipiscing"}
           />
         )}
       </div>

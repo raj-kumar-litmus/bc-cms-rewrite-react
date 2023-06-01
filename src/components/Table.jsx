@@ -209,6 +209,7 @@ export default function Table() {
           data.data.workflows = data?.data.workflows.map((e) => ({
             ...e,
             statusForUi: statusForUi[e?.status],
+            lastUpdatedByWithoutDomain: e?.lastUpdatedBy?.split("@")[0],
             nameWithoutDomain: e?.assignee?.split("@")[0]
           }));
         }
@@ -1031,7 +1032,7 @@ export default function Table() {
                 />
               )}
             <Column
-              field="lastUpdatedBy"
+              field="lastUpdatedByWithoutDomain"
               header={
                 <TableHeaders
                   headerName={"Updated By"}
@@ -1064,15 +1065,14 @@ export default function Table() {
             />
             <Column body={(e) => handleRowSelectIcons(e, "edit")} />
             {currentTab !== "Completed" && (
-              <Column body={(e) => handleRowSelectIcons(e, "assign")} />
+              <Column
+                header={handleFilterIcon}
+                body={(e) => handleRowSelectIcons(e, "assign")}
+              />
             )}
-            {currentTab === "Completed" && <Column body={handleMoreIcon} />}
-            <Column
-              header={handleFilterIcon}
-              filter
-              showFilterMenu={false}
-              filterElement={filterHeader}
-            />
+            {currentTab === "Completed" && (
+              <Column header={handleFilterIcon} body={handleMoreIcon} />
+            )}
           </DataTable>
         )}
       </div>
