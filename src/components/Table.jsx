@@ -36,7 +36,6 @@ import Clear from "../logos/ClearFilters.svg";
 import { isAllEqual } from "../utils";
 
 export default function Table() {
-  const [searchByUpdatedBy, setsearchByUpdatedBy] = useState("");
   const [brands, setBrands] = useState([]);
   const [assigneeList, setAssignee] = useState([]);
   const [statuses, setStatus] = useState([]);
@@ -89,6 +88,14 @@ export default function Table() {
     setSearchByAssignee,
     searchByUpdatedAt,
     setsearchByUpdatedAt,
+    debouncedTitle,
+    setDebouncedTitle,
+    debouncedStyle,
+    setDebouncedStyle,
+    debouncedUpdatedBy,
+    setDebouncedUpdatedBy,
+    searchByUpdatedBy,
+    setsearchByUpdatedBy,
     clearFilters
   } = useContext(DashBoardContext);
 
@@ -327,18 +334,21 @@ export default function Table() {
   }, [customers]);
 
   const handleStyleChanges = (e) => {
+    setDebouncedStyle(e.target.value);
     setTimeout(() => {
       setSearchByStyle(e.target.value);
     }, 1000);
   };
 
   const handleTitleChange = (e) => {
+    setDebouncedTitle(e.target.value);
     setTimeout(() => {
       setSearchByTitle(e.target.value);
     }, 2000);
   };
 
   const handleUpdatedByChange = (e) => {
+    setDebouncedUpdatedBy(e.target.value);
     setTimeout(() => {
       setsearchByUpdatedBy(e.target.value);
     }, 1000);
@@ -528,7 +538,7 @@ export default function Table() {
     return (
       <span className="p-input-icon-left w-[100%] min-w-[80px]">
         <i className="pi pi-search" />
-        <InputText value={searchByTitle} onChange={handleTitleChange} />
+        <InputText value={debouncedTitle} onChange={handleTitleChange} />
       </span>
     );
   };
@@ -556,7 +566,10 @@ export default function Table() {
     return (
       <span className="p-input-icon-left w-[100%] min-w-[80px]">
         <i className="pi pi-search" />
-        <InputText onChange={handleUpdatedByChange} />
+        <InputText
+          value={debouncedUpdatedBy}
+          onChange={handleUpdatedByChange}
+        />
       </span>
     );
   };
@@ -565,7 +578,7 @@ export default function Table() {
     return (
       <span className="p-input-icon-left w-[100%] min-w-[80px]">
         <i className="pi pi-search" />
-        <InputText value={searchByStyle} onChange={handleStyleChanges} />
+        <InputText value={debouncedStyle} onChange={handleStyleChanges} />
       </span>
     );
   };
@@ -635,6 +648,7 @@ export default function Table() {
           searchByAssignee ||
           searchByTitle ||
           searchByStyle ||
+          searchByUpdatedBy ||
           searchByUpdatedAt != null) && (
           <button onClick={clearFilters}>
             <div className="flex">
@@ -889,7 +903,11 @@ export default function Table() {
             onRowMouseLeave={onRowUnselect}
             footer={pagination}
             onSelectionChange={onSelectionChange}
-            emptyMessage="No Workflows found."
+            emptyMessage={
+              <p className="m-auto w-[200px] font-bold text-lg">
+                No Workflows found
+              </p>
+            }
             onRowClick={onRowClick}
           >
             {isAdmin && <Column selectionMode="multiple"></Column>}
@@ -940,7 +958,7 @@ export default function Table() {
               filter
               filterElement={brandRowFilterTemplate}
             />
-            {currentTab !== "Unassigned" && (
+            {currentTab !== "Unassigned" && isAdmin && (
               <Column
                 field="statusForUi"
                 header={
