@@ -18,13 +18,38 @@ function Pagination({ count, preText, nextText, className }) {
     }
   };
 
+  const ChevronLeft = ({ fill, className }) => (
+    <svg
+      className={className}
+      xmlns="http://www.w3.org/2000/svg"
+      width="10px"
+      height="11.309"
+      viewBox="0 0 6.404 11.309"
+    >
+      <path
+        id="chevron-down"
+        d="M0,0,4.594,4.594,9.188,0"
+        transform="translate(5.344 1.061) rotate(90)"
+        fill={"none"}
+        stroke={fill}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.5"
+      />
+    </svg>
+  );
+
   return (
     <div className="mt-3 mb-3">
       {pages.length > 0 && (
         <nav className="flex justify-center items-center">
-          <Button className={className} onClick={onPrevClick}>
-            {" "}
-            {preText}{" "}
+          <Button
+            disabled={currentPage == 1}
+            className={`${className} ${currentPage == 1 && "text-gray-500"}`}
+            onClick={onPrevClick}
+          >
+            <ChevronLeft fill={currentPage == 1 ? "#6E6E6E" : "#1c1c1c"} />
+            {preText}
           </Button>
           {pages?.map((item) => (
             <Button
@@ -39,9 +64,18 @@ function Pagination({ count, preText, nextText, className }) {
               {item}
             </Button>
           ))}
-          <Button className={className} onClick={onNextClick}>
-            {" "}
-            {nextText}{" "}
+          <Button
+            className={`${className} ${
+              currentPage > pages.length - 1 && "text-gray-500"
+            }`}
+            disabled={currentPage > pages.length - 1}
+            onClick={onNextClick}
+          >
+            {nextText}
+            <ChevronLeft
+              className="rotate-180"
+              fill={currentPage > pages.length - 1 ? "#6E6E6E" : "#1c1c1c"}
+            />
           </Button>
         </nav>
       )}

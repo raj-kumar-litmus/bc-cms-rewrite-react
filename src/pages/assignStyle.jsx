@@ -32,12 +32,14 @@ function AssignStyle() {
   const [clearValue, setClearValue] = useState(false);
   const [disableSubmit, setDisableSubmit] = useState(true);
   const [accountDetails] = useSessionStorage("accountDetails");
+  const [userEmail] = useSessionStorage("userEmail");
   const {
     assigneeType: userGroup,
     workflowId,
     styleId: styles,
     setStyleId,
-    currentTab,
+    setCurrentTab,
+    setCurrentPage,
     isModalVisible,
     setIsModalVisible
   } = useContext(DashBoardContext) || {};
@@ -96,7 +98,7 @@ function AssignStyle() {
     };
     try {
       setIsFetching(true);
-      const uri = `${VITE_SERVER_HOST_NAME}/api/v1/workflows/assign`;
+      const uri = `${VITE_SERVER_HOST_NAME}/api/v1/workflows/assign?email=${userEmail}`;
       const { status } = (await fetch(uri, requestOptions)) || {};
       styleAssignedHandler({
         error: status != 200,
@@ -106,6 +108,8 @@ function AssignStyle() {
       setIsModalVisible(false);
       setShowLoader(false);
       setIsFetching(false);
+      setCurrentTab("Assigned");
+      setCurrentPage(1);
       return;
     } catch (_) {
       styleAssignedHandler({
@@ -173,20 +177,21 @@ function AssignStyle() {
 
   const Summary = () => {
     return (
-      <div className="flex">
-        {!errorToast && <img src={GreenTick} alt="GreenTick" />}
-        {errorToast && <img src={RedCross} alt="RedCross" />}
+      <div className="flex h-full items-center">
+        {!errorToast && (
+          <img src={GreenTick} className="h-[28px]" alt="GreenTick" />
+        )}
+        {errorToast && (
+          <img src={RedCross} className="h-[28px]" alt="RedCross" />
+        )}
         <div className="flex flex-col ml-[20px]">
-          <p>
-            {!errorToast &&
-              `Succesfully ${
-                currentTab === "Assigned" ? "ReAssigned" : "Assigned"
-              }`}
+          <p className="font-bold">
+            {errorToast ? "Something went wrong !" : "Succesfully Assigned"}
           </p>
-          <p>{errorToast && "Something went wrong !"}</p>
           <p>
-            {!errorToast &&
-              `${toastAssignee} assigned as the ${userGroup} for ${styles}`}
+            {errorToast
+              ? `Please refresh the page or try again later`
+              : `${toastAssignee} assigned as the ${userGroup} for ${styles}`}
           </p>
         </div>
       </div>
