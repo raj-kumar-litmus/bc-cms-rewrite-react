@@ -42,6 +42,8 @@ function AssignStyle() {
     setCurrentTab,
     setCurrentPage,
     isModalVisible,
+    setShowFilters,
+    clearFilters,
     setIsModalVisible
   } = useContext(DashBoardContext) || {};
 
@@ -110,6 +112,8 @@ function AssignStyle() {
       setShowLoader(false);
       setIsFetching(false);
       setCurrentPage(1);
+      setShowFilters(false);
+      clearFilters();
       if (currentTab === "Assigned") {
         setCurrentTab("default");
         setTimeout(() => {
