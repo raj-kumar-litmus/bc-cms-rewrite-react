@@ -1,6 +1,6 @@
 # Product CMS rewrite UI
 
-Branch Names must be conform to following standards.
+Branch Names must be conform to following standards
 
 1. They should start with this enum [feature, bugfix, improvement, release, hotfix]
 2. Followed by hyphen
