@@ -44,8 +44,8 @@ function StatusBarsForNormalization() {
   }, [currentTab]);
 
   useEffect(() => {
-    getCount();
-  }, []);
+    if (isAdmin !== "default") getCount();
+  }, [isAdmin]);
 
   return (
     <>

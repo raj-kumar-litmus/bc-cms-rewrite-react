@@ -36,10 +36,7 @@ import Clear from "../logos/ClearFilters.svg";
 import { isAllEqual } from "../utils";
 
 export default function Table() {
-  const [searchByStyle, setSearchByStyle] = useState("");
-  const [searchByTitle, setSearchByTitle] = useState("");
   const [searchByUpdatedBy, setsearchByUpdatedBy] = useState("");
-  const [showFilters, setShowFilters] = useState(false);
   const [brands, setBrands] = useState([]);
   const [assigneeList, setAssignee] = useState([]);
   const [statuses, setStatus] = useState([]);
@@ -64,6 +61,12 @@ export default function Table() {
   const {
     setWorkflowId,
     setStyleId,
+    searchByTitle,
+    setSearchByTitle,
+    searchByStyle,
+    setSearchByStyle,
+    showFilters,
+    setShowFilters,
     setIsModalVisible,
     currentPage,
     setAssigneeType,
@@ -499,6 +502,7 @@ export default function Table() {
     return (
       <MultiSelect
         value={searchByAssignee}
+        showSelectAll={false}
         options={assigneeList}
         itemTemplate={statusItemTemplate}
         onChange={handleAssign}
@@ -524,7 +528,7 @@ export default function Table() {
     return (
       <span className="p-input-icon-left w-[100%] min-w-[80px]">
         <i className="pi pi-search" />
-        <InputText onChange={handleTitleChange} />
+        <InputText value={searchByTitle} onChange={handleTitleChange} />
       </span>
     );
   };
@@ -534,6 +538,7 @@ export default function Table() {
       <div>
         <MultiSelect
           value={selectedBrand}
+          showSelectAll={false}
           options={brands}
           itemTemplate={representativesItemTemplate}
           onChange={(e) => handleBrands(e.value)}
@@ -560,7 +565,7 @@ export default function Table() {
     return (
       <span className="p-input-icon-left w-[100%] min-w-[80px]">
         <i className="pi pi-search" />
-        <InputText onChange={handleStyleChanges} />
+        <InputText value={searchByStyle} onChange={handleStyleChanges} />
       </span>
     );
   };
@@ -628,6 +633,8 @@ export default function Table() {
         {(selectedBrand.length ||
           searchByStatus.length ||
           searchByAssignee ||
+          searchByTitle ||
+          searchByStyle ||
           searchByUpdatedAt != null) && (
           <button onClick={clearFilters}>
             <div className="flex">
@@ -761,17 +768,17 @@ export default function Table() {
               <Tooltip target=".assign" />
               <img
                 alt={`${
-                  currentTab == "Assigned" || currentTab == "InProgress"
+                  currentTab == "Assigned" || currentTab == "In Progress"
                     ? ReAssign
                     : AssigneEdit
                 } svg`}
                 src={
-                  currentTab == "Assigned" || currentTab == "InProgress"
+                  currentTab == "Assigned" || currentTab == "In Progress"
                     ? ReAssign
                     : AssigneEdit
                 }
                 data-pr-tooltip={
-                  currentTab == "Assigned" || currentTab == "InProgress"
+                  currentTab == "Assigned" || currentTab == "In Progress"
                     ? "Reassign"
                     : "Assign"
                 }
