@@ -978,7 +978,7 @@ export default function Table() {
                 filterElement={statusRowFilterTemplate}
               />
             )}
-            {isEditor && (
+            {isEditor && !isWriter && !isAdmin && (
               <Column
                 field="statusForUi"
                 header={
@@ -995,7 +995,7 @@ export default function Table() {
                 filterElement={statusRowFilterTemplate}
               />
             )}
-            {isWriter && currentTab !== "Assigned" && (
+            {isWriter && !isEditor && !isAdmin && currentTab !== "Assigned" && (
               <Column
                 field="statusForUi"
                 header={
