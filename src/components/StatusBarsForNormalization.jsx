@@ -34,7 +34,7 @@ function StatusBarsForNormalization() {
         setLoader(false);
         setShowToast(true);
       }
-    } catch {
+    } catch (error) {
       console.error(error);
     }
   }
