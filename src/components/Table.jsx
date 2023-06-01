@@ -75,6 +75,8 @@ export default function Table() {
     setSelectedProducts,
     currentTab,
     isAdmin,
+    isWriter,
+    isEditor,
     loader,
     setLoader,
     showToast,
@@ -256,7 +258,7 @@ export default function Table() {
       case "Assigned":
         status.push("ASSIGNED_TO_WRITER", "ASSIGNED_TO_EDITOR");
         break;
-      case "InProgress":
+      case "In Progress":
         status.push("WRITING_IN_PROGRESS", "EDITING_IN_PROGRESS");
         break;
       default:
@@ -958,7 +960,41 @@ export default function Table() {
               filter
               filterElement={brandRowFilterTemplate}
             />
-            {currentTab !== "Unassigned" && isAdmin && (
+            {isAdmin && currentTab !== "Unassigned" && (
+              <Column
+                field="statusForUi"
+                header={
+                  <TableHeaders
+                    headerName={"Status"}
+                    sortIcon={defaultSort}
+                    onClick={() => handleSort("Status")}
+                    currentSort={currentSort}
+                    ArrowSort={ArrowSort}
+                  />
+                }
+                showFilterMenu={false}
+                filter
+                filterElement={statusRowFilterTemplate}
+              />
+            )}
+            {isEditor && (
+              <Column
+                field="statusForUi"
+                header={
+                  <TableHeaders
+                    headerName={"Status"}
+                    sortIcon={defaultSort}
+                    onClick={() => handleSort("Status")}
+                    currentSort={currentSort}
+                    ArrowSort={ArrowSort}
+                  />
+                }
+                showFilterMenu={false}
+                filter
+                filterElement={statusRowFilterTemplate}
+              />
+            )}
+            {isWriter && currentTab !== "Assigned" && (
               <Column
                 field="statusForUi"
                 header={

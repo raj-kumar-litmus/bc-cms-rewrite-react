@@ -11,6 +11,8 @@ function DashBoardProvider({ children }) {
   const [styleId, setStyleId] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isAdmin, setIsAdmin] = useState("default");
+  const [isWriter, setIsWriter] = useState(false);
+  const [isEditor, setIsEditor] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [loader, setLoader] = useState(true);
   const [assigneeType, setAssigneeType] = useState(null);
@@ -27,12 +29,25 @@ function DashBoardProvider({ children }) {
   const [debouncedTitle, setDebouncedTitle] = useState("");
   const [debouncedStyle, setDebouncedStyle] = useState("");
   const [debouncedUpdatedBy, setDebouncedUpdatedBy] = useState("");
-  const { VITE_ADMIN_GROUP_NAME: ADMIN_GROUP_NAME } = process.env;
+  const {
+    VITE_ADMIN_GROUP_NAME: ADMIN_GROUP_NAME,
+    VITE_WRITER_GROUP_NAME: WRITER_GROUP_NAME,
+    VITE_EDITOR_GROUP_NAME: EDITOR_GROUP_NAME
+  } = process.env;
   const [groups] = useSessionStorage("userGroups");
 
   useEffect(() => {
+    setIsWriter(groups?.includes(WRITER_GROUP_NAME));
+    setIsEditor(groups?.includes(EDITOR_GROUP_NAME));
     setIsAdmin(groups?.includes(ADMIN_GROUP_NAME));
-  }, [ADMIN_GROUP_NAME, setIsAdmin]);
+  }, [
+    ADMIN_GROUP_NAME,
+    WRITER_GROUP_NAME,
+    EDITOR_GROUP_NAME,
+    setIsWriter,
+    setIsEditor,
+    setIsAdmin
+  ]);
 
   const clearFilters = () => {
     setClearAllFilters(true);
@@ -53,6 +68,8 @@ function DashBoardProvider({ children }) {
       value={{
         workflowId,
         isAdmin,
+        isWriter,
+        isEditor,
         debouncedTitle,
         setDebouncedTitle,
         debouncedStyle,
