@@ -470,7 +470,7 @@ console.log("showTabs>>",showTabs)
               </button>
             )}
 
-            {(currentTab == "Assigned" || currentTab == "InProgress") && (
+            {(currentTab == "Assigned" || currentTab == "In Progress") && (
               <button
                 className="flex"
                 onClick={() => {
