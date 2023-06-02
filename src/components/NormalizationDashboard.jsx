@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { DashBoardContext } from "../context/normalizationDashboard.jsx";
 import { useNavigate } from "react-router-dom";
-import { workFlowsUrl } from "../constants/index";
+import { workFlowsUrl, statusForUi } from "../constants/index";
 import StatusBarsForNormalization from "./StatusBarsForNormalization.jsx";
 import GlobalSearch from "./GlobalSearch.jsx";
 import WriterDashBoardTabs from "./WriterDashBoardTabs.jsx";
@@ -69,22 +69,29 @@ function NormalizationDashboard() {
         `${workFlowsUrl}/search?limit=10&page=1`,
         requestOptions
       );
-      const data = await response.json();
-      if (data?.success) {
+      if (response?.ok) {
+        const data = await response.json();
+        if (data?.data?.workflows) {
+          data.data.workflows = data?.data.workflows.map((e) => ({
+            ...e,
+            statusForUi: statusForUi[e?.status],
+            lastUpdatedByWithoutDomain: e?.lastUpdatedBy?.split("@")[0],
+            nameWithoutDomain: e?.assignee?.split("@")[0]
+          }));
+        }
         setCustomers(data?.data);
         setLoader(false);
-      }
-      if (!data?.success) {
+      } else {
         setLoader(false);
         setShowToast(true);
       }
-    } catch (err) {
-      setLoader(false);
-      setShowToast(true);
+    } catch (error) {
+      console.error(error);
     }
   };
 
   async function getGlobalSearch() {
+    try {
     const response = await fetch(
       `${workFlowsUrl}/search?limit=10&page=${currentPage}&globalSearch=${
         search && search
@@ -96,16 +103,25 @@ function NormalizationDashboard() {
         }
       }
     );
-    const data = await response.json();
-    if (data?.success) {
-      // debugger
+    if (response?.ok) {
+      const data = await response.json();
+      if (data?.data?.workflows) {
+        data.data.workflows = data?.data.workflows.map((e) => ({
+          ...e,
+          statusForUi: statusForUi[e?.status],
+          lastUpdatedByWithoutDomain: e?.lastUpdatedBy?.split("@")[0],
+          nameWithoutDomain: e?.assignee?.split("@")[0]
+        }));
+      }
       setCustomers(data?.data);
       setLoader(false);
-    }
-    if (!data?.success) {
+    } else {
       setLoader(false);
       setShowToast(true);
     }
+  } catch (error) {
+    console.error(error);
+  }
   }
 
   const handleSearchChange = (e) => {

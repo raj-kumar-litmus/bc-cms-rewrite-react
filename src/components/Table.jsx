@@ -394,10 +394,15 @@ console.log("showTabs>>",showTabs)
 
   const renderHeader = () => {
     return (
+      <>
+       {(!showTabs && !loader)  &&
+        <>
+         <span className="text-sm text-[#4D4D4D]">Showing </span>
+         <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">
+            {`${customers?.pagination?.total} Results`}
+          </span>
+        </>}
       <div className="flex justify-content-end gap-4">
-         {(!showTabs && !loader) &&<span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">
-            {`Showing ${customers?.workflows?.length} Results`}
-          </span>}
         {selectedProducts.length > 1 && canAssignOrReAssign && (
           <>
             {currentTab == "Completed" && (
@@ -488,6 +493,7 @@ console.log("showTabs>>",showTabs)
           </>
         )}
       </div>
+      </>
     );
   };
 
