@@ -98,6 +98,7 @@ export default function Table() {
     setDebouncedUpdatedBy,
     searchByUpdatedBy,
     setsearchByUpdatedBy,
+    showTabs,
     clearFilters
   } = useContext(DashBoardContext);
 
@@ -305,10 +306,10 @@ export default function Table() {
       setShowToast(true);
     }
   }
-
+console.log("showTabs>>",showTabs)
   useEffect(() => {
     setLoader(true);
-    getCustomers();
+      getCustomers();
   }, [
     searchByStyle,
     searchByTitle,
@@ -329,6 +330,13 @@ export default function Table() {
     isStatusSelected,
     clearAllFilters
   ]);
+
+  useEffect(() => {
+    setLoader(true);
+    if(showTabs){
+      getCustomers();
+    }
+  }, [showTabs]);
 
   useEffect(() => {
     if (customers?.pagination) {
@@ -382,8 +390,18 @@ export default function Table() {
     }
   }, [canAssignOrReAssign, selectedProducts]);
 
+  console.log("customers>>",customers)
+
   const renderHeader = () => {
     return (
+      <>
+       {(!showTabs && !loader)  &&
+        <>
+         <span className="text-sm text-[#4D4D4D]">Showing </span>
+         <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">
+            {`${customers?.pagination?.total} Results`}
+          </span>
+        </>}
       <div className="flex justify-content-end gap-4">
         {selectedProducts.length > 1 && canAssignOrReAssign && (
           <>
@@ -452,7 +470,7 @@ export default function Table() {
               </button>
             )}
 
-            {(currentTab == "Assigned" || currentTab == "InProgress") && (
+            {(currentTab == "Assigned" || currentTab == "In Progress") && (
               <button
                 className="flex"
                 onClick={() => {
@@ -475,6 +493,7 @@ export default function Table() {
           </>
         )}
       </div>
+      </>
     );
   };
 
@@ -961,7 +980,7 @@ export default function Table() {
               filter
               filterElement={brandRowFilterTemplate}
             />
-            {isAdmin && currentTab !== "Unassigned" && (
+            {((isAdmin && currentTab !== "Unassigned") || !showTabs) && (
               <Column
                 field="statusForUi"
                 header={
@@ -1012,9 +1031,9 @@ export default function Table() {
                 filterElement={statusRowFilterTemplate}
               />
             )}
-            {currentTab !== "Completed" &&
+            {((currentTab !== "Completed" &&
               currentTab !== "Unassigned" &&
-              isAdmin && (
+              isAdmin) || !showTabs) && (
                 <Column
                   field="nameWithoutDomain"
                   header={

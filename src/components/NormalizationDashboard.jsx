@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useContext } from "react";
 import { DashBoardContext } from "../context/normalizationDashboard.jsx";
 import { useNavigate } from "react-router-dom";
-import { workFlowsUrl } from "../constants/index";
+import { workFlowsUrl, statusForUi } from "../constants/index";
 import StatusBarsForNormalization from "./StatusBarsForNormalization.jsx";
 import GlobalSearch from "./GlobalSearch.jsx";
 import WriterDashBoardTabs from "./WriterDashBoardTabs.jsx";
 import AssignStyle from "../pages/assignStyle.jsx";
 import Table from "./Table.jsx";
 import useSessionStorage from "../hooks/useSessionStorage";
+import ClearSearch from '../logos/ClearSearch.svg'
 
 function NormalizationDashboard() {
   const navigate = useNavigate();
@@ -23,7 +24,9 @@ function NormalizationDashboard() {
     currentPage,
     setLoader,
     setShowToast,
-    clearFilters
+    clearFilters,
+    showTabs,
+    setShowTabs,
   } = useContext(DashBoardContext);
 
   useEffect(() => {
@@ -66,22 +69,29 @@ function NormalizationDashboard() {
         `${workFlowsUrl}/search?limit=10&page=1`,
         requestOptions
       );
-      const data = await response.json();
-      if (data?.success) {
+      if (response?.ok) {
+        const data = await response.json();
+        if (data?.data?.workflows) {
+          data.data.workflows = data?.data.workflows.map((e) => ({
+            ...e,
+            statusForUi: statusForUi[e?.status],
+            lastUpdatedByWithoutDomain: e?.lastUpdatedBy?.split("@")[0],
+            nameWithoutDomain: e?.assignee?.split("@")[0]
+          }));
+        }
         setCustomers(data?.data);
         setLoader(false);
-      }
-      if (!data?.success) {
+      } else {
         setLoader(false);
         setShowToast(true);
       }
-    } catch (err) {
-      setLoader(false);
-      setShowToast(true);
+    } catch (error) {
+      console.error(error);
     }
   };
 
   async function getGlobalSearch() {
+    try {
     const response = await fetch(
       `${workFlowsUrl}/search?limit=10&page=${currentPage}&globalSearch=${
         search && search
@@ -93,21 +103,32 @@ function NormalizationDashboard() {
         }
       }
     );
-    const data = await response.json();
-    if (data?.success) {
+    if (response?.ok) {
+      const data = await response.json();
+      if (data?.data?.workflows) {
+        data.data.workflows = data?.data.workflows.map((e) => ({
+          ...e,
+          statusForUi: statusForUi[e?.status],
+          lastUpdatedByWithoutDomain: e?.lastUpdatedBy?.split("@")[0],
+          nameWithoutDomain: e?.assignee?.split("@")[0]
+        }));
+      }
       setCustomers(data?.data);
       setLoader(false);
-    }
-    if (!data?.success) {
+    } else {
       setLoader(false);
       setShowToast(true);
     }
+  } catch (error) {
+    console.error(error);
+  }
   }
 
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
   };
   const handleSearchClick = () => {
+    setShowTabs(false)
     setLoader(true);
     if (search.includes(",")) {
       fetchBulkStyleSearch();
@@ -115,6 +136,11 @@ function NormalizationDashboard() {
       getGlobalSearch();
     }
   };
+
+  const handleClear =()=>{
+    setShowTabs(true)
+    setSearch("")
+  }
 
   return (
     <>
@@ -125,18 +151,19 @@ function NormalizationDashboard() {
             <GlobalSearch
               onChange={handleSearchChange}
               onClick={handleSearchClick}
+              handleClear={handleClear}
+              img={ClearSearch}
               value={search}
               searchString={"Search"}
               inputClasses={
-                "bg-white w-full h-[64px] items-center pl-[24px] text-sm placeholder-gray-20 placeholder-opacity-1 rounded border border-grey-30 shadow"
-              }
+                "bg-white w-full h-[64px] pl-[26px] pt-[18px] text-sm placeholder-gray-20 placeholder-opacity-1 rounded border border-grey-30 shadow"              }
               buttonClasses={
                 "text-white bg-black h-[64px] text-sm w-[131px] rounded ml-2"
               }
             />
           </div>
           <div className="mt-[49px]">
-            <WriterDashBoardTabs handleTabEvents={handleTabEvents} />
+           {showTabs && <WriterDashBoardTabs handleTabEvents={handleTabEvents} />}
           </div>
           <div className="mt-[49px]">
             <Table />
