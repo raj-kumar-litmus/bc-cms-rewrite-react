@@ -24,7 +24,9 @@ function NormalizationDashboard() {
     currentPage,
     setLoader,
     setShowToast,
-    clearFilters
+    clearFilters,
+    showTabs,
+    setShowTabs,
   } = useContext(DashBoardContext);
 
   useEffect(() => {
@@ -96,6 +98,7 @@ function NormalizationDashboard() {
     );
     const data = await response.json();
     if (data?.success) {
+      // debugger
       setCustomers(data?.data);
       setLoader(false);
     }
@@ -109,6 +112,7 @@ function NormalizationDashboard() {
     setSearch(e.target.value);
   };
   const handleSearchClick = () => {
+    setShowTabs(false)
     setLoader(true);
     if (search.includes(",")) {
       fetchBulkStyleSearch();
@@ -118,6 +122,7 @@ function NormalizationDashboard() {
   };
 
   const handleClear =()=>{
+    setShowTabs(true)
     setSearch("")
   }
 
@@ -142,7 +147,7 @@ function NormalizationDashboard() {
             />
           </div>
           <div className="mt-[49px]">
-            <WriterDashBoardTabs handleTabEvents={handleTabEvents} />
+           {showTabs && <WriterDashBoardTabs handleTabEvents={handleTabEvents} />}
           </div>
           <div className="mt-[49px]">
             <Table />

@@ -98,6 +98,7 @@ export default function Table() {
     setDebouncedUpdatedBy,
     searchByUpdatedBy,
     setsearchByUpdatedBy,
+    showTabs,
     clearFilters
   } = useContext(DashBoardContext);
 
@@ -305,10 +306,10 @@ export default function Table() {
       setShowToast(true);
     }
   }
-
+console.log("showTabs>>",showTabs)
   useEffect(() => {
     setLoader(true);
-    getCustomers();
+      getCustomers();
   }, [
     searchByStyle,
     searchByTitle,
@@ -329,6 +330,13 @@ export default function Table() {
     isStatusSelected,
     clearAllFilters
   ]);
+
+  useEffect(() => {
+    setLoader(true);
+    if(showTabs){
+      getCustomers();
+    }
+  }, [showTabs]);
 
   useEffect(() => {
     if (customers?.pagination) {
@@ -382,9 +390,14 @@ export default function Table() {
     }
   }, [canAssignOrReAssign, selectedProducts]);
 
+  console.log("customers>>",customers)
+
   const renderHeader = () => {
     return (
       <div className="flex justify-content-end gap-4">
+         {(!showTabs && !loader) &&<span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">
+            {`Showing ${customers?.workflows?.length} Results`}
+          </span>}
         {selectedProducts.length > 1 && canAssignOrReAssign && (
           <>
             {currentTab == "Completed" && (
@@ -961,7 +974,7 @@ export default function Table() {
               filter
               filterElement={brandRowFilterTemplate}
             />
-            {isAdmin && currentTab !== "Unassigned" && (
+            {((isAdmin && currentTab !== "Unassigned") || !showTabs) && (
               <Column
                 field="statusForUi"
                 header={
@@ -1012,9 +1025,9 @@ export default function Table() {
                 filterElement={statusRowFilterTemplate}
               />
             )}
-            {currentTab !== "Completed" &&
+            {((currentTab !== "Completed" &&
               currentTab !== "Unassigned" &&
-              isAdmin && (
+              isAdmin) || !showTabs) && (
                 <Column
                   field="nameWithoutDomain"
                   header={
