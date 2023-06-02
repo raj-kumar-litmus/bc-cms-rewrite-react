@@ -8,6 +8,7 @@ import WriterDashBoardTabs from "./WriterDashBoardTabs.jsx";
 import AssignStyle from "../pages/assignStyle.jsx";
 import Table from "./Table.jsx";
 import useSessionStorage from "../hooks/useSessionStorage";
+import ClearSearch from '../logos/ClearSearch.svg'
 
 function NormalizationDashboard() {
   const navigate = useNavigate();
@@ -116,6 +117,10 @@ function NormalizationDashboard() {
     }
   };
 
+  const handleClear =()=>{
+    setSearch("")
+  }
+
   return (
     <>
       <div className="bg-white pb-[20px]">
@@ -125,6 +130,8 @@ function NormalizationDashboard() {
             <GlobalSearch
               onChange={handleSearchChange}
               onClick={handleSearchClick}
+              handleClear={handleClear}
+              img={ClearSearch}
               value={search}
               searchString={"Search"}
               inputClasses={

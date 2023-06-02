@@ -1,12 +1,12 @@
 import React from 'react'
 import Button from './Button';
 
-function GlobalSearch({searchString, inputClasses, buttonClasses, onChange, onClick, value, handleClear}) {
+function GlobalSearch({searchString, inputClasses, buttonClasses, onChange, onClick, value, handleClear, img}) {
     return (
           <div className="flex">
              {value && <Button onClick={handleClear}>
                 <img
-                  className="h-[16px] w-[16px] relative top-[35px] left-[969px]"
+                  className="h-[16px] w-[16px] relative top-[-13px] left-[980px]"
                   src={img}
                   alt="NavBarSwitchingIcon SVG"
                 />
