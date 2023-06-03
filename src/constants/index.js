@@ -23,3 +23,5 @@ export const statusForUi = {
 };
 
 export const limit = 999;
+
+export const perPageLimitOptions = [1, 5, 10, 50, 100];

@@ -1,9 +1,12 @@
 import React, { useContext } from "react";
 import { DashBoardContext } from "../context/normalizationDashboard";
 import Button from "./Button";
+import DropDown from "./BasicDropdown";
+import { perPageLimitOptions } from "../constants";
 
 function Pagination({ count, preText, nextText, className }) {
-  const { currentPage, setCurrentPage } = useContext(DashBoardContext);
+  const { currentPage, setCurrentPage, setPerPageLimit } =
+    useContext(DashBoardContext);
   const pages = Array.from(Array(count).keys(), (item) => item + 1);
 
   const onPageChange = (pageNumber) => {
@@ -40,7 +43,7 @@ function Pagination({ count, preText, nextText, className }) {
   );
 
   return (
-    <div className="mt-3 mb-3">
+    <div className="mt-3 mb-3 flex justify-center">
       {pages.length > 0 && (
         <nav className="flex justify-center items-center">
           <Button
@@ -79,6 +82,16 @@ function Pagination({ count, preText, nextText, className }) {
           </Button>
         </nav>
       )}
+      <DropDown
+        placeholder={"page limit"}
+        showLabel={false}
+        onChange={(e) => setPerPageLimit(e.value)}
+        className={"w-[200px] !mt-0"}
+        options={perPageLimitOptions.map((e) => ({
+          value: e,
+          label: e
+        }))}
+      />
     </div>
   );
 }

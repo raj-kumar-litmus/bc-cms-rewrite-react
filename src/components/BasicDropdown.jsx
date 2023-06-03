@@ -35,6 +35,8 @@ const DropDown = ({
   placeholder,
   id,
   label,
+  showLabel = true,
+  className,
   onChange,
   defaultValue,
   options,
@@ -88,6 +90,7 @@ const DropDown = ({
     defaultValue,
     blurInputOnSelect: true,
     isMulti,
+    className,
     classNamePrefix,
     options: options || [
       { value: "purple", label: "Purple" },
@@ -118,9 +121,11 @@ const DropDown = ({
   );
   return (
     <>
-      <span className="text-[10px] ml-[12px] relative top-[10px] z-[1] bg-white color-gray-100">
-        {label || placeholder}
-      </span>
+      {showLabel && (
+        <span className="text-[10px] ml-[12px] relative top-[10px] z-[1] bg-white color-gray-100">
+          {label || placeholder}
+        </span>
+      )}
       {dropdown}
     </>
   );

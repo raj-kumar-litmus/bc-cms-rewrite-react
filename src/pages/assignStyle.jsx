@@ -47,9 +47,10 @@ function AssignStyle() {
     setIsModalVisible
   } = useContext(DashBoardContext) || {};
 
-  const buildStyleStrings = () => {
+  const buildStyleStrings = (styles) => {
     if (styles.length < 10) {
       setStylesString(styles.join(", "));
+      setMoreText(null);
     } else {
       const remaining = styles.length - 9;
       setStylesString(`${styles.splice(0, 9).join(", ")}`);
@@ -58,6 +59,7 @@ function AssignStyle() {
   };
 
   const fetchUserId = async () => {
+    setIsFetching(true);
     const requestOptions = {
       method: "GET"
     };
@@ -165,7 +167,7 @@ function AssignStyle() {
   }, [uri]);
 
   useEffect(() => {
-    if (Array.isArray(styles) && styles.length > 0) buildStyleStrings();
+    if (Array.isArray(styles) && styles.length > 0) buildStyleStrings(styles);
   }, [styles]);
 
   useEffect(() => {
@@ -258,7 +260,7 @@ function AssignStyle() {
                   SetAssigneeName(e.label);
                 }
               }}
-              isDisabled={!isActiveDropdown || isFetching}
+              isDisabled={!isActiveDropdown || isFetching || isChecked}
               options={options}
               clearValue={clearValue}
               setClearValue={setClearValue}

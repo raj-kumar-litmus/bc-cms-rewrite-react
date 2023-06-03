@@ -52,12 +52,13 @@ export default function Table() {
   const [isStatusSelected, setIsStatusSelected] = useState(false);
   const [canAssignOrReAssign, setCanAssignOrReAssign] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
-  const [tabChanged, setTabChanged] = useState(false);
   const [pageCount, setPageCount] = useState(1);
   const [defaultSort, setDefaultSort] = useState(ArrowSort);
   const [userEmail] = useSessionStorage("userEmail");
+  const [showLoaderInTableHeader, setShowLoaderInTableHeader] = useState(false);
   const navigate = useNavigate();
   const {
+    perPageLimit,
     setWorkflowId,
     setStyleId,
     searchByTitle,
@@ -104,17 +105,31 @@ export default function Table() {
   const toastBR = useRef(null);
 
   useEffect(() => {
-    setTabChanged(true);
-  }, [currentPage]);
-
-  useEffect(() => {
-    if (showFilters) {
-      getBrands();
-      getStatus();
-    }
-    if (showFilters && isAdmin) {
-      getAssignee();
-    }
+    (async () => {
+      setShowLoaderInTableHeader(true);
+      if (showFilters) {
+        if (isAdmin) {
+          if (currentTab === "Completed") {
+            await Promise.all([getBrands(), getStatus()]);
+          }
+          if (currentTab === "Unassigned") {
+            await getBrands();
+          }
+          if (currentTab === "Assigned" || currentTab === "In Progress") {
+            await Promise.all([getBrands(), getStatus(), getAssignee()]);
+          }
+        } else if (isEditor) {
+          await Promise.all([getBrands(), getStatus()]);
+        } else if (isWriter) {
+          if (currentTab === "Assigned") {
+            await getBrands();
+          } else {
+            await Promise.all([getBrands(), getStatus()]);
+          }
+        }
+        setShowLoaderInTableHeader(false);
+      }
+    })();
   }, [showFilters]);
 
   const showTopCenter = () => {
@@ -194,7 +209,9 @@ export default function Table() {
     };
     try {
       const response = await fetch(
-        `${workFlowsUrl}/search?limit=10&page=${currentPage}`,
+        `${workFlowsUrl}/search?limit=${
+          perPageLimit || 10
+        }&page=${currentPage}`,
         {
           method: "POST",
           body: JSON.stringify(body),
@@ -241,6 +258,7 @@ export default function Table() {
           .filter(Boolean)
           .map((item) => ({ brand: item }))
       );
+      return;
     }
     if (!data?.success) {
       setShowToast(true);
@@ -280,7 +298,8 @@ export default function Table() {
     );
     const data = await response.json();
     if (data?.success) {
-      setStatus(data?.data?.uniqueValues);
+      setStatus(data?.data?.uniqueValues.map((e) => statusForUi[e]));
+      return;
     }
     if (!data?.success) {
       setShowToast(true);
@@ -300,6 +319,7 @@ export default function Table() {
     const data = await response.json();
     if (data?.success) {
       setAssignee(data?.data?.uniqueValues.filter(Boolean));
+      return;
     }
     if (!data?.success) {
       setShowToast(true);
@@ -310,6 +330,7 @@ export default function Table() {
     setLoader(true);
     getCustomers();
   }, [
+    perPageLimit,
     searchByStyle,
     searchByTitle,
     selectedBrand,
@@ -389,7 +410,7 @@ export default function Table() {
           <>
             {currentTab == "Completed" && (
               <button
-                className="flex"
+                className="flex items-center"
                 onClick={() => {
                   setAssigneeType("writers");
                   setStyleId(selectedProducts.map((e) => e?.styleId));
@@ -411,7 +432,7 @@ export default function Table() {
 
             {currentTab == "Completed" && (
               <button
-                className="flex"
+                className="flex items-center"
                 onClick={() => {
                   setAssigneeType("editors");
                   setStyleId(selectedProducts.map((e) => e?.styleId));
@@ -433,7 +454,7 @@ export default function Table() {
 
             {currentTab == "Unassigned" && (
               <button
-                className="flex"
+                className="flex items-center"
                 onClick={() => {
                   setStyleId(selectedProducts.map((e) => e?.styleId));
                   setIsModalVisible(true);
@@ -452,9 +473,9 @@ export default function Table() {
               </button>
             )}
 
-            {(currentTab == "Assigned" || currentTab == "InProgress") && (
+            {(currentTab == "Assigned" || currentTab == "In Progress") && (
               <button
-                className="flex"
+                className="flex items-center"
                 onClick={() => {
                   setStyleId(selectedProducts.map((e) => e?.styleId));
                   setIsModalVisible(true);
@@ -499,10 +520,12 @@ export default function Table() {
   };
 
   const statusRowFilterTemplate = () => {
-    return (
+    return showLoaderInTableHeader ? (
+      <Loader className={"h-10"} />
+    ) : (
       <Dropdown
         style={{ width: "185px" }}
-        value={searchByStatus}
+        value={statusForUi[searchByStatus]}
         options={statuses}
         onChange={handleStatus}
         itemTemplate={statusItemTemplate}
@@ -512,7 +535,9 @@ export default function Table() {
   };
 
   const assigneeRowFilterTemplate = () => {
-    return (
+    return showLoaderInTableHeader ? (
+      <Loader className={"h-10"} />
+    ) : (
       <MultiSelect
         value={searchByAssignee}
         showSelectAll={false}
@@ -534,7 +559,11 @@ export default function Table() {
 
   const handleStatus = (e) => {
     setIsStatusSelected(true);
-    setSearchByStatus(e.target.value);
+    setSearchByStatus(
+      Object.keys(statusForUi).find(
+        (key) => statusForUi[key] === e.target.value
+      )
+    );
   };
 
   const titleRowFilterTemplate = () => {
@@ -547,7 +576,9 @@ export default function Table() {
   };
 
   const brandRowFilterTemplate = () => {
-    return (
+    return showLoaderInTableHeader ? (
+      <Loader className={"h-10"} />
+    ) : (
       <div>
         <MultiSelect
           value={selectedBrand}
@@ -622,15 +653,14 @@ export default function Table() {
   };
 
   const setFilters = () => {
-    setShowFilters(true);
-    setTabChanged(!tabChanged);
+    setShowFilters(!showFilters);
   };
 
   const handleFilterIcon = () => {
     return (
       <span>
         <button onClick={setFilters}>
-          {showFilters && !tabChanged ? (
+          {showFilters ? (
             <div className="bg-black text-white text-sm rounded-full border h-8 w-8 flex justify-center items-center">
               <img alt={`${FilterIcon} svg`} src={FilterIcon} />
             </div>
@@ -901,7 +931,7 @@ export default function Table() {
             dataKey="id"
             rows={100}
             selection={selectedProducts}
-            filterDisplay={showFilters && !tabChanged && "row"}
+            filterDisplay={showFilters && "row"}
             onRowMouseEnter={onRowSelect}
             onRowMouseLeave={onRowUnselect}
             footer={pagination}

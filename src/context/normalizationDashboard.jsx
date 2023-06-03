@@ -29,6 +29,7 @@ function DashBoardProvider({ children }) {
   const [debouncedTitle, setDebouncedTitle] = useState("");
   const [debouncedStyle, setDebouncedStyle] = useState("");
   const [debouncedUpdatedBy, setDebouncedUpdatedBy] = useState("");
+  const [perPageLimit, setPerPageLimit] = useState(null);
   const {
     VITE_ADMIN_GROUP_NAME: ADMIN_GROUP_NAME,
     VITE_WRITER_GROUP_NAME: WRITER_GROUP_NAME,
@@ -70,6 +71,8 @@ function DashBoardProvider({ children }) {
         isAdmin,
         isWriter,
         isEditor,
+        perPageLimit,
+        setPerPageLimit,
         debouncedTitle,
         setDebouncedTitle,
         debouncedStyle,
