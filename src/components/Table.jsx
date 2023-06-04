@@ -98,6 +98,7 @@ export default function Table() {
     setDebouncedUpdatedBy,
     searchByUpdatedBy,
     setsearchByUpdatedBy,
+    showTabs,
     clearFilters
   } = useContext(DashBoardContext);
 
@@ -305,7 +306,6 @@ export default function Table() {
       setShowToast(true);
     }
   }
-
   useEffect(() => {
     setLoader(true);
     getCustomers();
@@ -329,6 +329,13 @@ export default function Table() {
     isStatusSelected,
     clearAllFilters
   ]);
+
+  useEffect(() => {
+    setLoader(true);
+    if (showTabs) {
+      getCustomers();
+    }
+  }, [showTabs]);
 
   useEffect(() => {
     if (customers?.pagination) {
@@ -384,97 +391,107 @@ export default function Table() {
 
   const renderHeader = () => {
     return (
-      <div className="flex justify-content-end gap-4">
-        {selectedProducts.length > 1 && canAssignOrReAssign && (
+      <>
+        {!showTabs && !loader && (
           <>
-            {currentTab == "Completed" && (
-              <button
-                className="flex"
-                onClick={() => {
-                  setAssigneeType("writers");
-                  setStyleId(selectedProducts.map((e) => e?.styleId));
-                  setIsModalVisible(true);
-                }}
-              >
-                <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
-                  <img
-                    alt={`AssignToWriter svg`}
-                    src={AssignToWriter}
-                    className="w-[15px] h-[15px]"
-                  />
-                </span>
-                <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">
-                  Assign To Writer
-                </span>
-              </button>
-            )}
-
-            {currentTab == "Completed" && (
-              <button
-                className="flex"
-                onClick={() => {
-                  setAssigneeType("editors");
-                  setStyleId(selectedProducts.map((e) => e?.styleId));
-                  setIsModalVisible(true);
-                }}
-              >
-                <span className="bg-white flex rounded-full justify-center items-center border w-[30px] h-[30px] border-grey-30 mr-1">
-                  <img
-                    alt={`AssignToEditor svg`}
-                    src={AssignToEditor}
-                    className="w-[15px] h-[15px]"
-                  />
-                </span>
-                <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">
-                  Assign To Editor
-                </span>
-              </button>
-            )}
-
-            {currentTab == "Unassigned" && (
-              <button
-                className="flex"
-                onClick={() => {
-                  setStyleId(selectedProducts.map((e) => e?.styleId));
-                  setIsModalVisible(true);
-                }}
-              >
-                <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
-                  <img
-                    alt={`AssigneEdit svg`}
-                    src={AssigneEdit}
-                    className="w-[15px] h-[15px]"
-                  />
-                </span>
-                <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">
-                  Assign
-                </span>
-              </button>
-            )}
-
-            {(currentTab == "Assigned" || currentTab == "InProgress") && (
-              <button
-                className="flex"
-                onClick={() => {
-                  setStyleId(selectedProducts.map((e) => e?.styleId));
-                  setIsModalVisible(true);
-                }}
-              >
-                <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
-                  <img
-                    alt={`ReAssign svg`}
-                    src={ReAssign}
-                    className="w-[15px] h-[15px]"
-                  />
-                </span>
-                <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">
-                  Reassign
-                </span>
-              </button>
-            )}
+            <span className="text-sm text-[#4D4D4D]">Showing </span>
+            <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">
+              {`${customers?.pagination?.total} Results`}
+            </span>
           </>
         )}
-      </div>
+        <div className="flex justify-content-end gap-4">
+          {selectedProducts.length > 1 && canAssignOrReAssign && (
+            <>
+              {currentTab == "Completed" && (
+                <button
+                  className="flex"
+                  onClick={() => {
+                    setAssigneeType("writers");
+                    setStyleId(selectedProducts.map((e) => e?.styleId));
+                    setIsModalVisible(true);
+                  }}
+                >
+                  <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
+                    <img
+                      alt={`AssignToWriter svg`}
+                      src={AssignToWriter}
+                      className="w-[15px] h-[15px]"
+                    />
+                  </span>
+                  <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">
+                    Assign To Writer
+                  </span>
+                </button>
+              )}
+
+              {currentTab == "Completed" && (
+                <button
+                  className="flex"
+                  onClick={() => {
+                    setAssigneeType("editors");
+                    setStyleId(selectedProducts.map((e) => e?.styleId));
+                    setIsModalVisible(true);
+                  }}
+                >
+                  <span className="bg-white flex rounded-full justify-center items-center border w-[30px] h-[30px] border-grey-30 mr-1">
+                    <img
+                      alt={`AssignToEditor svg`}
+                      src={AssignToEditor}
+                      className="w-[15px] h-[15px]"
+                    />
+                  </span>
+                  <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">
+                    Assign To Editor
+                  </span>
+                </button>
+              )}
+
+              {currentTab == "Unassigned" && (
+                <button
+                  className="flex"
+                  onClick={() => {
+                    setStyleId(selectedProducts.map((e) => e?.styleId));
+                    setIsModalVisible(true);
+                  }}
+                >
+                  <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
+                    <img
+                      alt={`AssigneEdit svg`}
+                      src={AssigneEdit}
+                      className="w-[15px] h-[15px]"
+                    />
+                  </span>
+                  <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">
+                    Assign
+                  </span>
+                </button>
+              )}
+
+              {(currentTab == "Assigned" || currentTab == "In Progress") && (
+                <button
+                  className="flex"
+                  onClick={() => {
+                    setStyleId(selectedProducts.map((e) => e?.styleId));
+                    setIsModalVisible(true);
+                  }}
+                >
+                  <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
+                    <img
+                      alt={`ReAssign svg`}
+                      src={ReAssign}
+                      className="w-[15px] h-[15px]"
+                    />
+                  </span>
+                  <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">
+                    Reassign
+                  </span>
+                </button>
+              )}
+            </>
+          )}
+        </div>
+      </>
     );
   };
 
@@ -961,7 +978,7 @@ export default function Table() {
               filter
               filterElement={brandRowFilterTemplate}
             />
-            {isAdmin && currentTab !== "Unassigned" && (
+            {((isAdmin && currentTab !== "Unassigned") || !showTabs) && (
               <Column
                 field="statusForUi"
                 header={
@@ -1012,25 +1029,26 @@ export default function Table() {
                 filterElement={statusRowFilterTemplate}
               />
             )}
-            {currentTab !== "Completed" &&
+            {((currentTab !== "Completed" &&
               currentTab !== "Unassigned" &&
-              isAdmin && (
-                <Column
-                  field="nameWithoutDomain"
-                  header={
-                    <TableHeaders
-                      headerName={"Assignee"}
-                      sortIcon={defaultSort}
-                      onClick={() => handleSort("Assignee")}
-                      currentSort={currentSort}
-                      ArrowSort={ArrowSort}
-                    />
-                  }
-                  showFilterMenu={false}
-                  filter
-                  filterElement={assigneeRowFilterTemplate}
-                />
-              )}
+              isAdmin) ||
+              !showTabs) && (
+              <Column
+                field="nameWithoutDomain"
+                header={
+                  <TableHeaders
+                    headerName={"Assignee"}
+                    sortIcon={defaultSort}
+                    onClick={() => handleSort("Assignee")}
+                    currentSort={currentSort}
+                    ArrowSort={ArrowSort}
+                  />
+                }
+                showFilterMenu={false}
+                filter
+                filterElement={assigneeRowFilterTemplate}
+              />
+            )}
             <Column
               field="lastUpdatedByWithoutDomain"
               header={
