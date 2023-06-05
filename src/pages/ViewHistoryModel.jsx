@@ -13,10 +13,10 @@ function ViewHistoryModel({showHistoryPopup, setShowHistoryPopup}) {
   return (
     <>
       <Modal
-        className={"w-[500px]"}
+        className={"w-[500px] rounded-full"}
         visible={showHistoryPopup}
         setVisible={setShowHistoryPopup}
-        // header={<p className="text-xl font-semibold">{"header"}</p>}
+        header={<p className="text-[18px] text-[#2C2C2C] text-center ">{"History"}</p>}
       >
     <ol class="relative border-l border-[#2C2C2C]">                  
       <li class="mb-10 ml-4">
