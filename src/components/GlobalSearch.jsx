@@ -20,12 +20,13 @@ function GlobalSearch({
         placeholder="Search by Style or Title or Brand"
         onChange={onChange}
       ></textarea>
-       {value && (
+      {value && (
         <Button onClick={handleClear}>
           <img
             className="h-[16px] w-[16px] absolute top-[25%] right-[11%]"
             src={img}
             alt="NavBarSwitchingIcon SVG"
+            data-testid="test-img"
           />
         </Button>
       )}
