@@ -58,7 +58,7 @@ describe("<GlobalSearch />", () => {
     };
   };
 
-  it("OnChange", () => {
+  it("onChange of search input", () => {
     const { input } = setup();
     fireEvent.change(input, { target: { value: "test" } });
     expect(input.value).toBe("test");
@@ -66,7 +66,7 @@ describe("<GlobalSearch />", () => {
     expect(input.value).toBe("");
   });
 
-  it("onClick", () => {
+  it("onClick of search button", () => {
     const onClick = jest.fn();
     render(<GlobalSearch onClick={onClick}/>);
     fireEvent.click(screen.getByRole("button", /Search/i));
