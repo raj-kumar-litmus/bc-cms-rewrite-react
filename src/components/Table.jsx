@@ -393,12 +393,12 @@ export default function Table() {
     return (
       <>
         {!showTabs && !loader && (
-          <>
+          <div className="mb-2">
             <span className="text-sm text-[#4D4D4D]">Showing </span>
             <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">
               {`${customers?.pagination?.total} Results`}
             </span>
-          </>
+          </div>
         )}
         <div className="flex justify-content-end gap-4">
           {selectedProducts.length > 1 && canAssignOrReAssign && (

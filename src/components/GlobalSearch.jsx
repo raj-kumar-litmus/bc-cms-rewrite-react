@@ -12,16 +12,7 @@ function GlobalSearch({
   img
 }) {
   return (
-    <div className="flex">
-      {value && (
-        <Button onClick={handleClear}>
-          <img
-            className="h-[16px] w-[16px] absolute top-[0px] left-[908px]"
-            src={img}
-            alt="NavBarSwitchingIcon SVG"
-          />
-        </Button>
-      )}
+    <div className="flex relative">
       <textarea
         value={value}
         className={inputClasses}
@@ -29,6 +20,15 @@ function GlobalSearch({
         placeholder="Search by Style or Title or Brand"
         onChange={onChange}
       ></textarea>
+       {value && (
+        <Button onClick={handleClear}>
+          <img
+            className="h-[16px] w-[16px] absolute top-[25%] right-[13%]"
+            src={img}
+            alt="NavBarSwitchingIcon SVG"
+          />
+        </Button>
+      )}
       <Button className={buttonClasses} onClick={onClick} disabled={!value}>
         {" "}
         {searchString}{" "}

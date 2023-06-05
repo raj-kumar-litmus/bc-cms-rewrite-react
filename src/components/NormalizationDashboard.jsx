@@ -156,7 +156,7 @@ function NormalizationDashboard() {
               value={search}
               searchString={"Search"}
               inputClasses={
-                "bg-white text-[#4D4D4D] font-bold relative w-full h-[64px] pl-[26px] pt-[18px] text-sm placeholder-gray-20 placeholder-opacity-1 rounded border border-grey-30 shadow"
+                "bg-white text-[14px] text-black font-semibold w-full h-[64px] pl-[26px] pt-[18px] text-sm placeholder-gray-20 placeholder-opacity-1 rounded border border-grey-30 shadow"
               }
               buttonClasses={
                 "text-white bg-black h-[64px] text-sm w-[131px] rounded ml-2"
