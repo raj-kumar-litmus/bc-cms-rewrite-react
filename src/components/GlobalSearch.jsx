@@ -23,7 +23,7 @@ function GlobalSearch({
        {value && (
         <Button onClick={handleClear}>
           <img
-            className="h-[16px] w-[16px] absolute top-[25%] right-[13%]"
+            className="h-[16px] w-[16px] absolute top-[25%] right-[11%]"
             src={img}
             alt="NavBarSwitchingIcon SVG"
           />

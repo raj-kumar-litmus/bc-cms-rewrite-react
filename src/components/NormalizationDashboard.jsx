@@ -144,10 +144,10 @@ function NormalizationDashboard() {
 
   return (
     <>
-      <div className="bg-white pb-[20px]">
+      <div className="bg-white pb-[2%]">
         <div className="mx-[5%]">
           <StatusBarsForNormalization />
-          <div className="mt-[40px]">
+          <div className="mt-[3%]">
             <GlobalSearch
               onChange={handleSearchChange}
               onClick={handleSearchClick}
@@ -156,25 +156,22 @@ function NormalizationDashboard() {
               value={search}
               searchString={"Search"}
               inputClasses={
-                "bg-white text-[14px] text-black font-semibold w-full h-[64px] pl-[26px] pt-[18px] text-sm placeholder-gray-20 placeholder-opacity-1 rounded border border-grey-30 shadow"
+                "bg-white text-[14px] text-black font-semibold w-full h-[64px] pl-[2%] pt-[18px] text-sm placeholder-gray-20 placeholder-opacity-1 rounded border border-grey-30 shadow"
               }
               buttonClasses={
-                "text-white bg-black h-[64px] text-sm w-[131px] rounded ml-2"
+                "text-white bg-black h-[64px] text-sm w-[10%] rounded ml-2"
               }
             />
           </div>
-          <div className="mt-[49px]">
+          <div className="mt-[3%]">
             {showTabs && (
               <WriterDashBoardTabs handleTabEvents={handleTabEvents} />
             )}
           </div>
-          <div className="mt-[49px]">
+          <div className="mt-[3%]">
             <Table />
           </div>
           <AssignStyle />
-          <div className="m-10">
-            {/* <GlobalSearch searchString={"Search"} /> */}
-          </div>
         </div>
       </div>
     </>
