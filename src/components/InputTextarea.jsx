@@ -1,20 +1,21 @@
 import React, { useState } from "react";
 import { InputTextarea } from "primereact/inputtextarea";
 
-export default function Textarea({ label, val, className, labelClassName }) {
+export default function Textarea({ label, val, className, labelClassName, placeholder, onChange, rows, cols }) {
   const [value, setValue] = useState(val || "");
 
   return (
-    <div>
+    <div className="w-[90%]">
       <span className="p-float-label">
         <InputTextarea
           id={label}
           aria-label="text-area"
           className={className}
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          rows={5}
-          cols={30}
+          value={val}
+          onChange={onChange}
+          rows={rows}
+          cols={cols}
+          placeholder={placeholder}
         />
         <label
           className={labelClassName || "!top-[2px] !left-[15px] z-1 bg-white"}
