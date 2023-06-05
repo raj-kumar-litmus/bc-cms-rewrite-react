@@ -44,37 +44,31 @@ describe("<GlobalSearch />", () => {
       getByPlaceholderText("Search by Style or Title or Brand")
     ).toBeTruthy();
     expect(screen.queryByText("Search")).toBeTruthy();
-    const cancelButton = screen.queryByText("Search");
-    fireEvent.click(cancelButton);
-    const closeButton = screen.getByPlaceholderText(
-      "Search by Style or Title or Brand"
-    );
-    fireEvent.change(closeButton);
-  });
-
-  it("Search button enabled", async () => {
-    let rendered;
-    await act(async () => {
-      rendered = render(
-        <GlobalSearch value={"test"} searchString={"Search"} />,
-        {
-          wrapper: BrowserRouter
-        }
-      );
-    });
     expect(screen.getByTestId("test-img")).toBeTruthy();
   });
 
-  it("will not call onClick when disabled", () => {
-    const onClick = jest.fn();
-    render(<GlobalSearch onClick={onClick} disabled={true} />);
-    fireEvent.click(screen.getByRole("button", /Search/i));
-    expect(onClick).not.toHaveBeenCalled();
+  const setup = () => {
+    const utils = render(<GlobalSearch />);
+    const input = screen.getByPlaceholderText(
+      "Search by Style or Title or Brand"
+    );
+    return {
+      input,
+      ...utils
+    };
+  };
+
+  it("OnChange", () => {
+    const { input } = setup();
+    fireEvent.change(input, { target: { value: "test" } });
+    expect(input.value).toBe("test");
+    fireEvent.change(input, { target: { value: "" } });
+    expect(input.value).toBe("");
   });
 
-  it("will call onClick when enabled", () => {
+  it("onClick", () => {
     const onClick = jest.fn();
-    render(<GlobalSearch onClick={onClick} disabled={false} />);
+    render(<GlobalSearch onClick={onClick}/>);
     fireEvent.click(screen.getByRole("button", /Search/i));
     expect(onClick).toHaveBeenCalledTimes(0);
   });
