@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useContext } from "react";
 import { DashBoardContext } from "../context/normalizationDashboard.jsx";
 import { useNavigate } from "react-router-dom";
-import { workFlowsUrl } from "../constants/index";
+import { workFlowsUrl, statusForUi } from "../constants/index";
 import StatusBarsForNormalization from "./StatusBarsForNormalization.jsx";
 import GlobalSearch from "./GlobalSearch.jsx";
 import WriterDashBoardTabs from "./WriterDashBoardTabs.jsx";
 import AssignStyle from "../pages/assignStyle.jsx";
 import Table from "./Table.jsx";
 import useSessionStorage from "../hooks/useSessionStorage";
+import ClearSearch from "../logos/ClearSearch.svg";
 
 function NormalizationDashboard() {
   const navigate = useNavigate();
@@ -23,7 +24,9 @@ function NormalizationDashboard() {
     currentPage,
     setLoader,
     setShowToast,
-    clearFilters
+    clearFilters,
+    showTabs,
+    setShowTabs
   } = useContext(DashBoardContext);
 
   useEffect(() => {
@@ -66,41 +69,58 @@ function NormalizationDashboard() {
         `${workFlowsUrl}/search?limit=10&page=1`,
         requestOptions
       );
-      const data = await response.json();
-      if (data?.success) {
+      if (response?.ok) {
+        const data = await response.json();
+        if (data?.data?.workflows) {
+          data.data.workflows = data?.data.workflows.map((e) => ({
+            ...e,
+            statusForUi: statusForUi[e?.status],
+            lastUpdatedByWithoutDomain: e?.lastUpdatedBy?.split("@")[0],
+            nameWithoutDomain: e?.assignee?.split("@")[0]
+          }));
+        }
         setCustomers(data?.data);
         setLoader(false);
-      }
-      if (!data?.success) {
+      } else {
         setLoader(false);
         setShowToast(true);
       }
-    } catch (err) {
-      setLoader(false);
-      setShowToast(true);
+    } catch (error) {
+      console.error(error);
     }
   };
 
   async function getGlobalSearch() {
-    const response = await fetch(
-      `${workFlowsUrl}/search?limit=10&page=${currentPage}&globalSearch=${
-        search && search
-      }`,
-      {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json; charset=UTF-8"
+    try {
+      const response = await fetch(
+        `${workFlowsUrl}/search?limit=10&page=${currentPage}&globalSearch=${
+          search && search
+        }`,
+        {
+          method: "POST",
+          headers: {
+            "Content-type": "application/json; charset=UTF-8"
+          }
         }
+      );
+      if (response?.ok) {
+        const data = await response.json();
+        if (data?.data?.workflows) {
+          data.data.workflows = data?.data.workflows.map((e) => ({
+            ...e,
+            statusForUi: statusForUi[e?.status],
+            lastUpdatedByWithoutDomain: e?.lastUpdatedBy?.split("@")[0],
+            nameWithoutDomain: e?.assignee?.split("@")[0]
+          }));
+        }
+        setCustomers(data?.data);
+        setLoader(false);
+      } else {
+        setLoader(false);
+        setShowToast(true);
       }
-    );
-    const data = await response.json();
-    if (data?.success) {
-      setCustomers(data?.data);
-      setLoader(false);
-    }
-    if (!data?.success) {
-      setLoader(false);
-      setShowToast(true);
+    } catch (error) {
+      console.error(error);
     }
   }
 
@@ -108,6 +128,7 @@ function NormalizationDashboard() {
     setSearch(e.target.value);
   };
   const handleSearchClick = () => {
+    setShowTabs(false);
     setLoader(true);
     if (search.includes(",")) {
       fetchBulkStyleSearch();
@@ -116,35 +137,41 @@ function NormalizationDashboard() {
     }
   };
 
+  const handleClear = () => {
+    setShowTabs(true);
+    setSearch("");
+  };
+
   return (
     <>
-      <div className="bg-white pb-[20px]">
+      <div className="bg-white pb-[2%]">
         <div className="mx-[5%]">
           <StatusBarsForNormalization />
-          <div className="mt-[40px]">
+          <div className="mt-[3%]">
             <GlobalSearch
               onChange={handleSearchChange}
               onClick={handleSearchClick}
+              handleClear={handleClear}
+              img={ClearSearch}
               value={search}
               searchString={"Search"}
               inputClasses={
-                "bg-white w-full h-[64px] items-center pl-[24px] text-sm placeholder-gray-20 placeholder-opacity-1 rounded border border-grey-30 shadow"
+                "!bg-white !text-[14px] !text-black !font-semibold w-full h-[64px] !pl-[2%] !pt-[18px] text-sm !placeholder-gray-20 !placeholder-opacity-1 !rounded !border !border-grey-30 !shadow"
               }
               buttonClasses={
-                "text-white bg-black h-[64px] text-sm w-[131px] rounded ml-2"
+                "text-white bg-black h-[64px] text-sm w-[10%] rounded ml-2"
               }
             />
           </div>
-          <div className="mt-[49px]">
-            <WriterDashBoardTabs handleTabEvents={handleTabEvents} />
+          <div className="mt-[3%]">
+            {showTabs && (
+              <WriterDashBoardTabs handleTabEvents={handleTabEvents} />
+            )}
           </div>
-          <div className="mt-[49px]">
+          <div className="mt-[3%]">
             <Table />
           </div>
           <AssignStyle />
-          <div className="m-10">
-            {/* <GlobalSearch searchString={"Search"} /> */}
-          </div>
         </div>
       </div>
     </>
