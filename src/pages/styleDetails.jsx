@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, {useState, useEffect} from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import useSessionStorage from "../hooks/useSessionStorage";
 import DropDown from "../components/BasicDropdown";
@@ -9,6 +9,7 @@ import InputBox from "../components/InputBox";
 import Textarea from "../components/InputTextarea";
 import RichTextEditor from "../components/RichTextEditor";
 import BackLogo from "../logos/chevron-down.svg";
+import ViewHistoryModal from "../pages/ViewHistoryModal";
 
 export default function StyleDetails({ quickFix = false, styleId }) {
   const location = useLocation();
@@ -17,11 +18,17 @@ export default function StyleDetails({ quickFix = false, styleId }) {
   const { quickFix: quickFixFromLink, styleId: styleIdFromQuickFix } =
     location.state || {};
   const quick = quickFixFromLink || quickFix;
+  const [showHistoryPopup, setShowHistoryPopup] = useState(false);
   useEffect(() => {
     if (!accountDetails?.idTokenClaims?.exp) {
       navigate("/");
     }
   }, [accountDetails]);
+
+  const handleRecentHistory=()=>{
+    setShowHistoryPopup(true)
+  }
+
   return (
     <>
       <NavBar />
@@ -43,7 +50,7 @@ export default function StyleDetails({ quickFix = false, styleId }) {
               </p>
             </div>
             <div>
-              <Button className="border border-slate-800 rounded-md px-[18px] py-[6px] text-[14px]">
+              <Button className="border border-slate-800 rounded-md px-[18px] py-[6px] text-[14px]" onClick={handleRecentHistory}>
                 Recent History
               </Button>
             </div>
@@ -309,6 +316,9 @@ export default function StyleDetails({ quickFix = false, styleId }) {
           </div>
         </div>
       </div>
+      <>
+        <ViewHistoryModal setShowHistoryPopup={setShowHistoryPopup} showHistoryPopup={showHistoryPopup} />
+      </>
     </>
   );
 }

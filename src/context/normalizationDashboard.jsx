@@ -30,6 +30,7 @@ function DashBoardProvider({ children }) {
   const [debouncedStyle, setDebouncedStyle] = useState("");
   const [debouncedUpdatedBy, setDebouncedUpdatedBy] = useState("");
   const [showTabs, setShowTabs] = useState(true);
+  const [showHistoryPopup, setShowHistoryPopup] = useState(false);
 
   const {
     VITE_ADMIN_GROUP_NAME: ADMIN_GROUP_NAME,
@@ -117,7 +118,9 @@ function DashBoardProvider({ children }) {
         setsearchByUpdatedAt,
         showTabs,
         setShowTabs,
-        clearFilters
+        clearFilters,
+        showHistoryPopup,
+        setShowHistoryPopup
       }}
     >
       {children}
