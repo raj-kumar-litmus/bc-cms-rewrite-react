@@ -10,7 +10,8 @@
     "build": "vite build",
     "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "lint-fix": "eslint src --fix",
-    "postcss": "postcss src/index.css --no-map --dir public --watch",
+    "postcss": "postcss src/index.css --no-map --dir public",
+    "postcss:watch": "postcss src/index.css --no-map --dir public --watch",
     "preview": "vite preview",
     "test": "jest test --coverage"
   },
