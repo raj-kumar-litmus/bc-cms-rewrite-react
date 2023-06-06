@@ -23,6 +23,7 @@ export default function StyleDetails({ quickFix = false, styleId }) {
   const [defaultSpecies, setDefaultSpecies] = useState([]);
   const [isFetchingSpecies, setIsFetchingSpecies] = useState(false);
   const [isFetchingHattributes, setIsFetchingHattributes] = useState(false);
+  const [techSpecs, setTechSpecs] = useState(null);
   const [values, setValues] = useState({});
   const [accountDetails] = useSessionStorage("accountDetails");
   const { quickFix: quickFixFromLink, styleId: styleIdFromQuickFix } =
@@ -68,6 +69,7 @@ export default function StyleDetails({ quickFix = false, styleId }) {
             )) || {};
           const { data } = await response.json();
           setHattributes(data.hattributes);
+          setTechSpecs(data.techSpecs);
           setIsFetchingHattributes(false);
         } catch (err) {
           console.log(err);
@@ -226,7 +228,27 @@ export default function StyleDetails({ quickFix = false, styleId }) {
               {!isFetchingHattributes &&
                 hattributes &&
                 Object.keys(hattributes).map((e) => {
-                  return (
+                  return hattributes[e].filter((e) => e?.selected).length >
+                    0 ? (
+                    <MultiSelectDropDown
+                      labelClassName={"mb-[8px] text-[14px] text-[#4D4D4D]"}
+                      className={"text-[14px] text-[#4D4D4D] font-light"}
+                      placeholder={`Select ${e}`}
+                      defaultValues={hattributes[e]
+                        .filter((e) => e?.selected)
+                        .map(({ hattributevid, text }) => ({
+                          value: hattributevid,
+                          label: text
+                        }))}
+                      options={hattributes[e].map(
+                        ({ hattributevid, text }) => ({
+                          value: hattributevid,
+                          label: text
+                        })
+                      )}
+                      label={e}
+                    />
+                  ) : (
                     <MultiSelectDropDown
                       labelClassName={"mb-[8px] text-[14px] text-[#4D4D4D]"}
                       className={"text-[14px] text-[#4D4D4D] font-light"}
@@ -247,46 +269,16 @@ export default function StyleDetails({ quickFix = false, styleId }) {
           <div className="mt-[40px] flex-column">
             <p className="text-xl">Tech Specs</p>
             <div className="grid grid-cols-3 gap-3 mt-[20px]">
-              <InputBox
-                className={"w-[100%] mt-[20px] rounded-sm"}
-                label="Material"
-                val="2.0mm full grain leather"
-              />
-              <InputBox
-                className={"w-[100%] mt-[20px] rounded-sm"}
-                label="Responsible Collection"
-                val="Hiking"
-              />
-              <InputBox
-                className={"w-[100%] mt-[20px] rounded-sm"}
-                label="Closure"
-                val="lace"
-              />
-              <InputBox
-                className={"w-[100%] mt-[20px] rounded-sm"}
-                label="Sole"
-                val="Vibram Fuga"
-              />
-              <InputBox
-                className={"w-[100%] mt-[20px] rounded-sm"}
-                label="Mid sole"
-                val="nylon shank"
-              />
-              <InputBox
-                className={"w-[100%] mt-[20px] rounded-sm"}
-                label="Footbed"
-                val="Ortholite"
-              />
-              <InputBox
-                className={"w-[100%] mt-[20px] rounded-sm"}
-                label="Manufacturer Warranty"
-                val="1 year"
-              />
-              <InputBox
-                className={"w-[100%] mt-[20px] rounded-sm"}
-                label="Activity"
-                val="Hiking"
-              />
+              {!isFetchingHattributes &&
+                techSpecs &&
+                techSpecs.map(({ label, value }) => (
+                  <InputBox
+                    className={"w-[100%] mt-[20px] rounded-sm"}
+                    label={label}
+                    val={value}
+                  />
+                ))}
+              {isFetchingHattributes && <Loader className={"!h-full"} />}
             </div>
           </div>
           <div className="mt-[40px] flex-column">

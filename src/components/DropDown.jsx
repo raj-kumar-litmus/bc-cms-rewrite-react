@@ -39,10 +39,11 @@ const MultiSelectDropDown = ({
   label,
   placeholder,
   options,
+  defaultValues,
   labelClassName,
   className
 }) => {
-  const [selected, setSelected] = useState([]);
+  const [selected, setSelected] = useState(defaultValues || []);
   const customValueRenderer = (selected) => {
     return selected.length
       ? selected.map(({ label }, index) =>
