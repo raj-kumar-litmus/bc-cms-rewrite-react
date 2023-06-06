@@ -7,6 +7,7 @@ export default ({ mode }) => {
     define: {
       "process.env": env
     },
+    root: "dist",
     plugins: [react()],
     server: {
       port: 3000
