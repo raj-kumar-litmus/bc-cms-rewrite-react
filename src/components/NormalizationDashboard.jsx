@@ -15,18 +15,34 @@ function NormalizationDashboard() {
   const [accountDetails] = useSessionStorage("accountDetails");
   const [search, setSearch] = useState("");
   const {
-    setSelectedProducts,
+    searchByTitle,
+    searchByStyle,
     setShowFilters,
-    setCurrentTab,
-    setCurrentPage,
-    isAdmin,
-    setCustomers,
     currentPage,
+    setCustomers,
+    setSelectedProducts,
+    currentTab,
+    isAdmin,
     setLoader,
     setShowToast,
-    clearFilters,
+    selectedBrand,
+    searchByStatus,
+    searchByAssignee,
+    searchByUpdatedAt,
+    searchByUpdatedBy,
     showTabs,
-    setShowTabs
+    clearFilters,
+    setCurrentTab,
+    setShowTabs,
+    currentSort,
+    styleSort,
+    titleSort,
+    brandSort,
+    statusSort,
+    updatedBySort,
+    updatedAtSort,
+    assigneeSort,
+    setCurrentPage,
   } = useContext(DashBoardContext);
 
   useEffect(() => {
@@ -50,9 +66,43 @@ function NormalizationDashboard() {
   };
 
   const fetchBulkStyleSearch = async () => {
+    var date = new Date(searchByUpdatedAt);
+    const newDate = date.toDateString().split(" ");
+    const finalDate = `${newDate[3]}-${newDate[1]}-${newDate[2]}`;
+    const newSelectedBrand = selectedBrand.map((item) => item.brand);
+    const status = ["WAITING_FOR_WRITER","WRITING_COMPLETE", "EDITING_COMPLETE", "ASSIGNED_TO_WRITER", "ASSIGNED_TO_EDITOR", "WRITING_IN_PROGRESS", "EDITING_IN_PROGRESS"];
+    const body = {
+      filters: {
+        ...(searchByStyle && { styleId: searchByStyle }),
+        ...(searchByTitle && { title: searchByTitle }),
+        ...(newSelectedBrand.length && { brand: newSelectedBrand }),
+        ...(searchByUpdatedBy && { lastUpdatedBy: searchByUpdatedBy }),
+        ...((searchByAssignee || !isAdmin) && {
+          assignee: !isAdmin ? userEmail : searchByAssignee
+        }),
+        ...(searchByUpdatedAt && { lastUpdateTs: finalDate }),
+        status: searchByStatus.length ? [searchByStatus] : status
+      },
+      orderBy: {
+        ...(currentSort == "Style" && { styleId: styleSort }),
+        ...(currentSort == "Title" && { title: titleSort }),
+        ...(currentSort == "Brand" && { brand: brandSort }),
+        ...(currentSort == "Updated By" && { lastUpdatedBy: updatedBySort }),
+        ...(currentSort == "Assignee" && { assignee: assigneeSort }),
+        ...(currentSort == "Status" && { status: statusSort }),
+        ...((currentSort == "Updated At" ||
+          (currentSort != "Style" &&
+            currentSort != "Title" &&
+            currentSort != "Brand" &&
+            currentSort != "Updated By" &&
+            currentSort != "Assignee" &&
+            currentSort != "Status")) && { lastUpdateTs: updatedAtSort })
+      }
+    };
     try {
       const requestOptions = {
         method: "POST",
+        body: JSON.stringify(body),
         headers: {
           "Content-type": "application/json"
         },
@@ -91,6 +141,39 @@ function NormalizationDashboard() {
   };
 
   async function getGlobalSearch() {
+    var date = new Date(searchByUpdatedAt);
+    const newDate = date.toDateString().split(" ");
+    const finalDate = `${newDate[3]}-${newDate[1]}-${newDate[2]}`;
+    const newSelectedBrand = selectedBrand.map((item) => item.brand);
+    const status = ["WAITING_FOR_WRITER","WRITING_COMPLETE", "EDITING_COMPLETE", "ASSIGNED_TO_WRITER", "ASSIGNED_TO_EDITOR", "WRITING_IN_PROGRESS", "EDITING_IN_PROGRESS"];
+    const body = {
+      filters: {
+        ...(searchByStyle && { styleId: searchByStyle }),
+        ...(searchByTitle && { title: searchByTitle }),
+        ...(newSelectedBrand.length && { brand: newSelectedBrand }),
+        ...(searchByUpdatedBy && { lastUpdatedBy: searchByUpdatedBy }),
+        ...((searchByAssignee || !isAdmin) && {
+          assignee: !isAdmin ? userEmail : searchByAssignee
+        }),
+        ...(searchByUpdatedAt && { lastUpdateTs: finalDate }),
+        status: searchByStatus.length ? [searchByStatus] : status
+      },
+      orderBy: {
+        ...(currentSort == "Style" && { styleId: styleSort }),
+        ...(currentSort == "Title" && { title: titleSort }),
+        ...(currentSort == "Brand" && { brand: brandSort }),
+        ...(currentSort == "Updated By" && { lastUpdatedBy: updatedBySort }),
+        ...(currentSort == "Assignee" && { assignee: assigneeSort }),
+        ...(currentSort == "Status" && { status: statusSort }),
+        ...((currentSort == "Updated At" ||
+          (currentSort != "Style" &&
+            currentSort != "Title" &&
+            currentSort != "Brand" &&
+            currentSort != "Updated By" &&
+            currentSort != "Assignee" &&
+            currentSort != "Status")) && { lastUpdateTs: updatedAtSort })
+      }
+    };
     try {
       const response = await fetch(
         `${workFlowsUrl}/search?limit=10&page=${currentPage}&globalSearch=${
@@ -98,6 +181,7 @@ function NormalizationDashboard() {
         }`,
         {
           method: "POST",
+          body: JSON.stringify(body),
           headers: {
             "Content-type": "application/json; charset=UTF-8"
           }
@@ -128,6 +212,7 @@ function NormalizationDashboard() {
     setSearch(e.target.value);
   };
   const handleSearchClick = () => {
+    setShowFilters(false);
     setShowTabs(false);
     setLoader(true);
     if (search.includes(",")) {
@@ -169,7 +254,11 @@ function NormalizationDashboard() {
             )}
           </div>
           <div className="mt-[3%]">
-            <Table />
+            <Table
+              search={search}
+              fetchBulkStyleSearch={fetchBulkStyleSearch}
+              getGlobalSearch={getGlobalSearch}
+            />
           </div>
           <AssignStyle />
         </div>
