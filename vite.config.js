@@ -8,6 +8,9 @@ export default ({ mode }) => {
       "process.env": env
     },
     root: "dist",
+    build: {
+      outDir: "../dist"
+    },
     plugins: [react()],
     server: {
       port: 3000
