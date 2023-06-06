@@ -35,19 +35,15 @@ import ArrowSortUpLine from "../logos/ArrowSortUpLine.svg";
 import Clear from "../logos/ClearFilters.svg";
 import { isAllEqual } from "../utils";
 
-export default function Table() {
+export default function Table({
+  search,
+  fetchBulkStyleSearch,
+  getGlobalSearch
+}) {
   const [brands, setBrands] = useState([]);
   const [assigneeList, setAssignee] = useState([]);
   const [statuses, setStatus] = useState([]);
   const [showEdit, setShowEdit] = useState(null);
-  const [styleSort, setStyleSort] = useState("desc");
-  const [titleSort, setTitleSort] = useState("desc");
-  const [brandSort, setBrandSort] = useState("desc");
-  const [statusSort, setStatusSort] = useState("desc");
-  const [updatedBySort, setUpdatedBySort] = useState("desc");
-  const [updatedAtSort, setUpdatedAtSort] = useState("desc");
-  const [assigneeSort, setAssigneeSort] = useState("desc");
-  const [currentSort, setCurrentSort] = useState("");
   const [isRowSelected, setIsRowSelected] = useState(false);
   const [isStatusSelected, setIsStatusSelected] = useState(false);
   const [canAssignOrReAssign, setCanAssignOrReAssign] = useState(false);
@@ -99,7 +95,23 @@ export default function Table() {
     searchByUpdatedBy,
     setsearchByUpdatedBy,
     showTabs,
-    clearFilters
+    clearFilters,
+    currentSort,
+    setCurrentSort,
+    styleSort,
+    setStyleSort,
+    titleSort,
+    setTitleSort,
+    brandSort,
+    setBrandSort,
+    statusSort,
+    setStatusSort,
+    updatedBySort,
+    setUpdatedBySort,
+    updatedAtSort,
+    setUpdatedAtSort,
+    assigneeSort,
+    setAssigneeSort
   } = useContext(DashBoardContext);
 
   const toastBR = useRef(null);
@@ -107,6 +119,16 @@ export default function Table() {
   useEffect(() => {
     setTabChanged(true);
   }, [currentPage]);
+
+  // useEffect(() => {
+  //   if (showFilters && search == "") {
+  //     getBrands();
+  //     getStatus();
+  //   }
+  //   if (showFilters && isAdmin) {
+  //     getAssignee();
+  //   }
+  // }, [showFilters, currentTab]);
 
   useEffect(() => {
     if (showFilters) {
@@ -250,22 +272,27 @@ export default function Table() {
 
   async function getStatus() {
     const status = [];
-    switch (currentTab) {
-      case "Unassigned":
-        status.push("WAITING_FOR_WRITER");
-        break;
-      case "Completed":
-        status.push("WRITING_COMPLETE", "EDITING_COMPLETE");
-        break;
-      case "Assigned":
-        status.push("ASSIGNED_TO_WRITER", "ASSIGNED_TO_EDITOR");
-        break;
-      case "In Progress":
-        status.push("WRITING_IN_PROGRESS", "EDITING_IN_PROGRESS");
-        break;
-      default:
-        status;
+    if(search == ""){
+      switch (currentTab) {
+        case "Unassigned":
+          status.push("WAITING_FOR_WRITER");
+          break;
+        case "Completed":
+          status.push("WRITING_COMPLETE", "EDITING_COMPLETE");
+          break;
+        case "Assigned":
+          status.push("ASSIGNED_TO_WRITER", "ASSIGNED_TO_EDITOR");
+          break;
+        case "In Progress":
+          status.push("WRITING_IN_PROGRESS", "EDITING_IN_PROGRESS");
+          break;
+        default:
+          status;
+      }
+    }else{
+      status.push("WAITING_FOR_WRITER","WRITING_COMPLETE", "EDITING_COMPLETE", "ASSIGNED_TO_WRITER", "ASSIGNED_TO_EDITOR", "WRITING_IN_PROGRESS", "EDITING_IN_PROGRESS");
     }
+   
     const body = {
       filters: { status }
     };
@@ -308,7 +335,15 @@ export default function Table() {
   }
   useEffect(() => {
     setLoader(true);
-    getCustomers();
+    if (search == "") {
+      getCustomers();
+    } else {
+      if (search.includes(",")) {
+        fetchBulkStyleSearch();
+      } else {
+        getGlobalSearch();
+      }
+    }
   }, [
     searchByStyle,
     searchByTitle,
