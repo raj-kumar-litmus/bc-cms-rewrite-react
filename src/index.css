@@ -62,3 +62,6 @@
 #single-option-dropdown {
   @apply mt-0
 }
+.species-dropdown__menu, .genus-dropdown__menu {
+  @apply !z-[10]
+}

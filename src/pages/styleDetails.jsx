@@ -110,10 +110,12 @@ export default function StyleDetails({ quickFix = false, styleId }) {
   };
 
   const onSpeciesChangeHandler = async (e) => {
-    setValues({
-      ...values,
-      species: e.value
-    });
+    if (e?.value) {
+      setValues({
+        ...values,
+        species: e.value
+      });
+    }
   };
 
   return (
@@ -191,6 +193,7 @@ export default function StyleDetails({ quickFix = false, styleId }) {
                 {!isFetchingGenus && (
                   <DropDown
                     id="single-option-dropdown"
+                    classNamePrefix="genus-dropdown"
                     options={genus}
                     onChange={onGenusChangeHandler}
                     defaultValue={[
@@ -205,6 +208,7 @@ export default function StyleDetails({ quickFix = false, styleId }) {
                 {!isFetchingSpecies && (
                   <DropDown
                     id="single-option-dropdown"
+                    classNamePrefix="species-dropdown"
                     options={species}
                     onChange={onSpeciesChangeHandler}
                     defaultValue={defaultSpecies}
