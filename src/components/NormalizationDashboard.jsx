@@ -153,7 +153,7 @@ function NormalizationDashboard() {
               onClick={handleSearchClick}
               handleClear={handleClear}
               img={ClearSearch}
-              value={search}
+              searchValue={search}
               searchString={"Search"}
               inputClasses={
                 "!bg-white !text-[14px] !text-black !font-semibold w-full h-[64px] !pl-[2%] !pt-[18px] text-sm !placeholder-gray-20 !placeholder-opacity-1 !rounded !border !border-grey-30 !shadow"
