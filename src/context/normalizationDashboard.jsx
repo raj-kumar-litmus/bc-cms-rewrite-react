@@ -32,6 +32,13 @@ function DashBoardProvider({ children }) {
   const [debouncedUpdatedBy, setDebouncedUpdatedBy] = useState("");
   const [showTabs, setShowTabs] = useState(true);
   const { adminGroupName, writerGroupName, editorGroupName } = properties;
+  const [showHistoryPopup, setShowHistoryPopup] = useState(false);
+
+  const {
+    VITE_ADMIN_GROUP_NAME: ADMIN_GROUP_NAME,
+    VITE_WRITER_GROUP_NAME: WRITER_GROUP_NAME,
+    VITE_EDITOR_GROUP_NAME: EDITOR_GROUP_NAME
+  } = process.env;
   const [groups] = useSessionStorage("userGroups");
 
   useEffect(() => {
@@ -113,7 +120,9 @@ function DashBoardProvider({ children }) {
         setsearchByUpdatedAt,
         showTabs,
         setShowTabs,
-        clearFilters
+        clearFilters,
+        showHistoryPopup,
+        setShowHistoryPopup
       }}
     >
       {children}

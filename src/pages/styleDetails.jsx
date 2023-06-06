@@ -11,6 +11,7 @@ import RichTextEditor from "../components/RichTextEditor";
 import BackLogo from "../logos/chevron-down.svg";
 import Loader from "../components/loader";
 import properties from "../properties";
+import ViewHistoryModal from "../pages/ViewHistoryModal";
 
 export default function StyleDetails({ quickFix = false, styleId }) {
   const { serverHostName } = properties;
@@ -50,6 +51,7 @@ export default function StyleDetails({ quickFix = false, styleId }) {
     })();
   }, []);
 
+  const [showHistoryPopup, setShowHistoryPopup] = useState(false);
   useEffect(() => {
     if (!accountDetails?.idTokenClaims?.exp) {
       navigate("/");
@@ -117,6 +119,9 @@ export default function StyleDetails({ quickFix = false, styleId }) {
       });
     }
   };
+  const handleRecentHistory=()=>{
+    setShowHistoryPopup(true)
+  }
 
   return (
     <>
@@ -139,7 +144,7 @@ export default function StyleDetails({ quickFix = false, styleId }) {
               </p>
             </div>
             <div>
-              <Button className="border border-slate-800 rounded-md px-[18px] py-[6px] text-[14px]">
+              <Button className="border border-slate-800 rounded-md px-[18px] py-[6px] text-[14px]" onClick={handleRecentHistory}>
                 Recent History
               </Button>
             </div>
@@ -397,6 +402,9 @@ export default function StyleDetails({ quickFix = false, styleId }) {
           </div>
         </div>
       </div>
+      <>
+        <ViewHistoryModal setShowHistoryPopup={setShowHistoryPopup} showHistoryPopup={showHistoryPopup} />
+      </>
     </>
   );
 }
