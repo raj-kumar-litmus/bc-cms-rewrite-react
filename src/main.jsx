@@ -17,6 +17,8 @@ const ManualWorkFlowDashboard = lazy(() =>
 );
 const StyleDetails = lazy(() => import("./pages/styleDetails"));
 const Loader = lazy(() => import("./components/loader"));
+const ViewMoreHistoryPage = lazy(() => import("./pages/ViewMoreHistoryPage"));
+
 
 const root = createRoot(document.getElementById("root"));
 
@@ -29,6 +31,11 @@ root.render(
           path="/styleDetails"
           element={<StyleDetails quickFix={false} styleId="CGHD23Y" />}
         />
+        <Route
+          path="/viewMoreHistory"
+          element={<ViewMoreHistoryPage/>}
+        />
+        <Route path="/redirect/web" element={<Token />} />
         <Route
           path="/menuChooser"
           element={
