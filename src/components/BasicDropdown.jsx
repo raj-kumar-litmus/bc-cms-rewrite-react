@@ -89,14 +89,7 @@ const DropDown = ({
     blurInputOnSelect: true,
     isMulti,
     classNamePrefix,
-    options: options || [
-      { value: "purple", label: "Purple" },
-      { value: "orange", label: "Orange" },
-      { value: "yellow", label: "Yellow" },
-      { value: "blue", label: "Blue" },
-      { value: "green", label: "Green" },
-      { value: "pink", label: "Pink" }
-    ],
+    options,
     styles: { ...tempStyles }
   };
 

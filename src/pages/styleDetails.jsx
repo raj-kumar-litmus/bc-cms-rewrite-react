@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import useSessionStorage from "../hooks/useSessionStorage";
 import DropDown from "../components/BasicDropdown";
@@ -9,19 +9,113 @@ import InputBox from "../components/InputBox";
 import Textarea from "../components/InputTextarea";
 import RichTextEditor from "../components/RichTextEditor";
 import BackLogo from "../logos/chevron-down.svg";
+import Loader from "../components/loader";
 
 export default function StyleDetails({ quickFix = false, styleId }) {
+  const { VITE_SERVER_HOST_NAME } = process.env;
   const location = useLocation();
   const navigate = useNavigate();
+  const [genus, setGenus] = useState([]);
+  const [species, setSpecies] = useState([]);
+  const [hattributes, setHattributes] = useState(null);
+  const [isFetchingGenus, setIsFetchingGenus] = useState(false);
+  const [defaultSpecies, setDefaultSpecies] = useState([]);
+  const [isFetchingSpecies, setIsFetchingSpecies] = useState(false);
+  const [isFetchingHattributes, setIsFetchingHattributes] = useState(false);
+  const [values, setValues] = useState({});
   const [accountDetails] = useSessionStorage("accountDetails");
   const { quickFix: quickFixFromLink, styleId: styleIdFromQuickFix } =
     location.state || {};
   const quick = quickFixFromLink || quickFix;
+
+  useEffect(() => {
+    (async () => {
+      try {
+        setIsFetchingGenus(true);
+        const response =
+          (await fetch(
+            `${VITE_SERVER_HOST_NAME}/api/v1/dataNormalization/genus`
+          )) || {};
+        const { data } = await response.json();
+        setGenus(
+          data?.genus?.map(({ id, name }) => ({
+            value: id,
+            label: name
+          }))
+        );
+        setIsFetchingGenus(false);
+      } catch (_) {
+        setIsFetchingGenus(false);
+      }
+    })();
+  }, []);
+
   useEffect(() => {
     if (!accountDetails?.idTokenClaims?.exp) {
       navigate("/");
     }
   }, [accountDetails]);
+
+  useEffect(() => {
+    const { genus, species } = values;
+    if (genus && species) {
+      (async () => {
+        try {
+          setIsFetchingHattributes(true);
+          const response =
+            (await fetch(
+              `${VITE_SERVER_HOST_NAME}/api/v1/dataNormalization/genus/${genus}/species/${species}/hAttributes`
+            )) || {};
+          const { data } = await response.json();
+          setHattributes(data.hattributes);
+          setIsFetchingHattributes(false);
+        } catch (err) {
+          console.log(err);
+          setIsFetchingHattributes(false);
+        }
+      })();
+    }
+  }, [values]);
+
+  const onGenusChangeHandler = async (e) => {
+    try {
+      setIsFetchingSpecies(true);
+      setSpecies([]);
+      setValues({
+        ...values,
+        genus: e.value,
+        species: null
+      });
+      const response =
+        (await fetch(
+          `${VITE_SERVER_HOST_NAME}/api/v1/dataNormalization/genus/${e.value}/species`
+        )) || {};
+      const { data } = await response.json();
+      setSpecies(
+        data?.result?.map(({ dattributevid, text }) => ({
+          value: dattributevid,
+          label: text
+        }))
+      );
+      setDefaultSpecies([
+        {
+          value: data.label[0].dattributevid,
+          label: data.label[0].name
+        }
+      ]);
+      setIsFetchingSpecies(false);
+    } catch (_) {
+      setIsFetchingSpecies(false);
+    }
+  };
+
+  const onSpeciesChangeHandler = async (e) => {
+    setValues({
+      ...values,
+      species: e.value
+    });
+  };
+
   return (
     <>
       <NavBar />
@@ -94,66 +188,56 @@ export default function StyleDetails({ quickFix = false, styleId }) {
             <p className="text-xl">Category</p>
             <div className="flex mt-[5px]">
               <div className="mr-[20px] flex-1">
-                <DropDown
-                  id="single-option-dropdown"
-                  defaultValue={[{ value: "purple", label: "Purple" }]}
-                  placeholder="Genus"
-                />
+                {!isFetchingGenus && (
+                  <DropDown
+                    id="single-option-dropdown"
+                    options={genus}
+                    onChange={onGenusChangeHandler}
+                    defaultValue={[
+                      { value: "Select Genus", label: "Select Genus" }
+                    ]}
+                    placeholder="Genus"
+                  />
+                )}
+                {isFetchingGenus && <Loader className={"!h-full"} />}
               </div>
               <div className="flex-1">
-                <DropDown
-                  id="single-option-dropdown"
-                  isClearable={true}
-                  placeholder="Species"
-                />
+                {!isFetchingSpecies && (
+                  <DropDown
+                    id="single-option-dropdown"
+                    options={species}
+                    onChange={onSpeciesChangeHandler}
+                    defaultValue={defaultSpecies}
+                    isClearable={true}
+                    placeholder="Species"
+                  />
+                )}
+                {isFetchingSpecies && <Loader className={"!h-full"} />}
               </div>
             </div>
           </div>
           <div className="mt-[40px] flex-column">
             <p className="text-xl">Harmonizing Attributes</p>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-[20px]">
-              <MultiSelectDropDown
-                labelClassName={"mb-[8px] text-[14px] text-[#4D4D4D]"}
-                className={"text-[14px] text-[#4D4D4D] font-light"}
-                placeholder={"Select Activity"}
-                label="Activity"
-              />
-              <MultiSelectDropDown
-                labelClassName={"mb-[8px] text-[14px] text-[#4D4D4D]"}
-                className={"text-[14px] text-[#4D4D4D] font-light"}
-                placeholder={"Select Features"}
-                label="Features"
-              />
-              <MultiSelectDropDown
-                labelClassName={"mb-[8px] text-[14px] text-[#4D4D4D]"}
-                className={"text-[14px] text-[#4D4D4D] font-light"}
-                placeholder={"Select Fit"}
-                label="Fit"
-              />
-              <MultiSelectDropDown
-                labelClassName={"mb-[8px] text-[14px] text-[#4D4D4D]"}
-                className={"text-[14px] text-[#4D4D4D] font-light"}
-                placeholder={"Select Sole"}
-                label="Sole"
-              />
-              <MultiSelectDropDown
-                labelClassName={"mb-[8px] text-[14px] text-[#4D4D4D]"}
-                className={"text-[14px] text-[#4D4D4D] font-light"}
-                placeholder={"Select Style"}
-                label="Style"
-              />
-              <MultiSelectDropDown
-                labelClassName={"mb-[8px] text-[14px] text-[#4D4D4D]"}
-                className={"text-[14px] text-[#4D4D4D] font-light"}
-                placeholder={"Select Shop By"}
-                label="Shop By"
-              />
-              <MultiSelectDropDown
-                labelClassName={"mb-[8px] text-[14px] text-[#4D4D4D]"}
-                className={"text-[14px] text-[#4D4D4D] font-light"}
-                placeholder={"Select Special"}
-                label="Special"
-              />
+              {!isFetchingHattributes &&
+                hattributes &&
+                Object.keys(hattributes).map((e) => {
+                  return (
+                    <MultiSelectDropDown
+                      labelClassName={"mb-[8px] text-[14px] text-[#4D4D4D]"}
+                      className={"text-[14px] text-[#4D4D4D] font-light"}
+                      placeholder={`Select ${e}`}
+                      options={hattributes[e].map(
+                        ({ hattributevid, text }) => ({
+                          value: hattributevid,
+                          label: text
+                        })
+                      )}
+                      label={e}
+                    />
+                  );
+                })}
+              {isFetchingHattributes && <Loader className={"!h-full"} />}
             </div>
           </div>
           <div className="mt-[40px] flex-column">
