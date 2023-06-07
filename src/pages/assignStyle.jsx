@@ -44,6 +44,7 @@ function AssignStyle() {
     isModalVisible,
     setShowFilters,
     clearFilters,
+    setSelectedProducts,
     setIsModalVisible
   } = useContext(DashBoardContext) || {};
 
@@ -112,6 +113,7 @@ function AssignStyle() {
       setShowLoader(false);
       setIsFetching(false);
       setCurrentPage(1);
+      setSelectedProducts([]);
       setShowFilters(false);
       clearFilters();
       if (currentTab === "Assigned") {
@@ -123,7 +125,9 @@ function AssignStyle() {
         setCurrentTab("Assigned");
       }
       return;
-    } catch (_) {
+    } catch (err) {
+      console.log("Error");
+      console.log(err);
       styleAssignedHandler({
         styleId: styles,
         error: true,
