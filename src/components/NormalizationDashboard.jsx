@@ -66,6 +66,7 @@ function NormalizationDashboard() {
   };
 
   const fetchBulkStyleSearch = async () => {
+    console.log("searchByStatus>>",searchByStatus)
     var date = new Date(searchByUpdatedAt);
     const newDate = date.toDateString().split(" ");
     const finalDate = `${newDate[3]}-${newDate[1]}-${newDate[2]}`;
@@ -73,7 +74,8 @@ function NormalizationDashboard() {
     const status = ["WAITING_FOR_WRITER","WRITING_COMPLETE", "EDITING_COMPLETE", "ASSIGNED_TO_WRITER", "ASSIGNED_TO_EDITOR", "WRITING_IN_PROGRESS", "EDITING_IN_PROGRESS"];
     const body = {
       filters: {
-        ...(searchByStyle && { styleId: searchByStyle }),
+          styleId: search.replaceAll(" ", "").split(","),
+        // ...(searchByStyle && { styleId: searchByStyle }),
         ...(searchByTitle && { title: searchByTitle }),
         ...(newSelectedBrand.length && { brand: newSelectedBrand }),
         ...(searchByUpdatedBy && { lastUpdatedBy: searchByUpdatedBy }),
@@ -81,7 +83,7 @@ function NormalizationDashboard() {
           assignee: !isAdmin ? userEmail : searchByAssignee
         }),
         ...(searchByUpdatedAt && { lastUpdateTs: finalDate }),
-        status: searchByStatus.length ? [searchByStatus] : status
+        ...(searchByStatus && { status: searchByStatus ? [searchByStatus] : status}),
       },
       orderBy: {
         ...(currentSort == "Style" && { styleId: styleSort }),
@@ -106,14 +108,14 @@ function NormalizationDashboard() {
         headers: {
           "Content-type": "application/json"
         },
-        body: JSON.stringify({
-          filters: {
-            styleId: search.replaceAll(" ", "").split(",")
-          },
-          orderBy: {
-            styleId: "desc"
-          }
-        })
+        // body: JSON.stringify({
+        //   filters: {
+        //     styleId: search.replaceAll(" ", "").split(",")
+        //   },
+        //   orderBy: {
+        //     styleId: "desc"
+        //   }
+        // })
       };
       const response = await fetch(
         `${workFlowsUrl}/search?limit=10&page=1`,

@@ -399,7 +399,13 @@ export default function Table({
   };
   useEffect(() => {
     setCanAssignOrReAssign(isAllEqual(selectedProducts.map((e) => e.status)));
+    if(isAllEqual(selectedProducts.map((e) => e.statusForUi))){
+      setSelectedStatus(selectedProducts[0]?.statusForUi)
+    }else{
+      setSelectedStatus("")
+    }
   }, [selectedProducts]);
+
 
   useEffect(() => {
     if (canAssignOrReAssign && selectedProducts.length > 1) {
@@ -423,6 +429,9 @@ export default function Table({
     }
   }, [canAssignOrReAssign, selectedProducts]);
 
+ 
+
+
   const renderHeader = () => {
     return (
       <>
@@ -434,7 +443,7 @@ export default function Table({
             </span>
           </div>
         )}
-        <div className="flex justify-content-end gap-4">
+       <> {showTabs ? <div className="flex justify-content-end gap-4">
           {selectedProducts.length > 1 && canAssignOrReAssign && (
             <>
               {currentTab == "Completed" && (
@@ -524,7 +533,103 @@ export default function Table({
               )}
             </>
           )}
-        </div>
+        </div> :
+        <div className="flex justify-content-end gap-4">
+        {selectedProducts.length > 1 && canAssignOrReAssign && (
+          <>
+            {(selectedStatus == "Writing Complete" || selectedStatus == "Editing Complete")
+            && (
+              <button
+                className="flex"
+                onClick={() => {
+                  setAssigneeType("writers");
+                  setStyleId(selectedProducts.map((e) => e?.styleId));
+                  setIsModalVisible(true);
+                }}
+              >
+                <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
+                  <img
+                    alt={`AssignToWriter svg`}
+                    src={AssignToWriter}
+                    className="w-[15px] h-[15px]"
+                  />
+                </span>
+                <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">
+                  Assign To Writer
+                </span>
+              </button>
+            )}
+
+            {(selectedStatus == "Writing Complete" || selectedStatus == "Editing Complete") && (
+              <button
+                className="flex"
+                onClick={() => {
+                  setAssigneeType("editors");
+                  setStyleId(selectedProducts.map((e) => e?.styleId));
+                  setIsModalVisible(true);
+                }}
+              >
+                <span className="bg-white flex rounded-full justify-center items-center border w-[30px] h-[30px] border-grey-30 mr-1">
+                  <img
+                    alt={`AssignToEditor svg`}
+                    src={AssignToEditor}
+                    className="w-[15px] h-[15px]"
+                  />
+                </span>
+                <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">
+                  Assign To Editor
+                </span>
+              </button>
+            )}
+
+            { selectedStatus == "Waiting For Writer" && (
+              <button
+                className="flex"
+                onClick={() => {
+                  setStyleId(selectedProducts.map((e) => e?.styleId));
+                  setIsModalVisible(true);
+                }}
+              >
+                <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
+                  <img
+                    alt={`AssigneEdit svg`}
+                    src={AssigneEdit}
+                    className="w-[15px] h-[15px]"
+                  />
+                </span>
+                <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">
+                  Assign
+                </span>
+              </button>
+            )}
+
+            {(selectedStatus == "Assigned To Writer" || selectedStatus == "Assigned To Editor" ||
+             selectedStatus == "Writing In Progress" || selectedStatus == "Editing In Progress")
+              && (
+              <button
+                className="flex"
+                onClick={() => {
+                  setStyleId(selectedProducts.map((e) => e?.styleId));
+                  setIsModalVisible(true);
+                }}
+              >
+                <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
+                  <img
+                    alt={`ReAssign svg`}
+                    src={ReAssign}
+                    className="w-[15px] h-[15px]"
+                  />
+                </span>
+                <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">
+                  Reassign
+                </span>
+              </button>
+            )}
+          </>
+        )}
+      </div>
+        
+        }</>
       </>
     );
   };
@@ -900,7 +1005,6 @@ export default function Table({
   const handleMoreIconClick = () => {
     setShowPopup(true);
   };
-  console.log("showTabs>>", showTabs);
 
   const handleMoreIcon = (rowData) => {
     return (
@@ -958,7 +1062,6 @@ export default function Table({
   };
 
   const onRowClick = ({ data }) => {
-    // On admin dashboard, if click on the row is not on the checkbox then navigate to styleDetails.
     if (userEmail === data.assignee) {
       navigate("/styleDetails", {
         state: {
@@ -970,7 +1073,6 @@ export default function Table({
   };
 
   const onRowSelect = (e) => {
-    setSelectedStatus(e?.data?.statusForUi);
     setIsRowSelected(true);
     setShowEdit(e?.data?.id);
   };
