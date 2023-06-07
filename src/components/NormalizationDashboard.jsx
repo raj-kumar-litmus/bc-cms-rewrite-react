@@ -21,7 +21,6 @@ function NormalizationDashboard() {
     currentPage,
     setCustomers,
     setSelectedProducts,
-    currentTab,
     isAdmin,
     setLoader,
     setShowToast,
@@ -43,7 +42,6 @@ function NormalizationDashboard() {
     updatedAtSort,
     assigneeSort,
     setCurrentPage,
-    setClearAllFilters
   } = useContext(DashBoardContext);
 
   useEffect(() => {
@@ -67,7 +65,6 @@ function NormalizationDashboard() {
   };
 
   const fetchBulkStyleSearch = async () => {
-    console.log("searchByStatus>>", searchByStatus);
     var date = new Date(searchByUpdatedAt);
     const newDate = date.toDateString().split(" ");
     const finalDate = `${newDate[3]}-${newDate[1]}-${newDate[2]}`;
@@ -231,11 +228,6 @@ function NormalizationDashboard() {
     setShowFilters(false);
     setShowTabs(false);
     setLoader(true);
-    if (search.includes(",")) {
-      fetchBulkStyleSearch();
-    } else {
-      getGlobalSearch();
-    }
   };
 
   const handleClear = () => {

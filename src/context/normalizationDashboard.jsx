@@ -40,11 +40,6 @@ function DashBoardProvider({ children }) {
   const [updatedBySort, setUpdatedBySort] = useState("desc");
   const [updatedAtSort, setUpdatedAtSort] = useState("desc");
   const [assigneeSort, setAssigneeSort] = useState("desc");
-  const {
-    VITE_ADMIN_GROUP_NAME: ADMIN_GROUP_NAME,
-    VITE_WRITER_GROUP_NAME: WRITER_GROUP_NAME,
-    VITE_EDITOR_GROUP_NAME: EDITOR_GROUP_NAME
-  } = process.env;
   const [groups] = useSessionStorage("userGroups");
 
   useEffect(() => {
