@@ -42,7 +42,8 @@ function NormalizationDashboard() {
     updatedBySort,
     updatedAtSort,
     assigneeSort,
-    setCurrentPage
+    setCurrentPage,
+    setClearAllFilters
   } = useContext(DashBoardContext);
 
   useEffect(() => {
@@ -222,9 +223,11 @@ function NormalizationDashboard() {
   }
 
   const handleSearchChange = (e) => {
-    setSearch(e.target.value);
+      setSearch(e.target.value);
   };
+
   const handleSearchClick = () => {
+    clearFilters()
     setShowFilters(false);
     setShowTabs(false);
     setLoader(true);
