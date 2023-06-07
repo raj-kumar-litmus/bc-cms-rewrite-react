@@ -23,7 +23,10 @@ function GlobalSearch({
         onChange={onChange}
       />
       {searchValue && (
-        <Button onClick={handleClear} className="absolute top-[36%] right-[14%]">
+        <Button
+          onClick={handleClear}
+          className="absolute top-[36%] right-[14%]"
+        >
           <img
             className="h-[12px] w-[12px]"
             src={img}
