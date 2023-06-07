@@ -19,5 +19,5 @@ export const properties = {
   writerGroupName: "product-content-writer",
   editorGroupName: "product-content-editor",
   adminGroupId: "e9a23c1e-633a-4415-9482-e03159793bf5",
-  serverHostName: "http://product-content-api.test.gcp.bcinfra.net"
+  serverHostName: "https://product-content-api.test.gcp.bcinfra.net"
 };
