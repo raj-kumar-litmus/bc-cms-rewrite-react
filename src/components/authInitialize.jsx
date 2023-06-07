@@ -1,7 +1,7 @@
 import * as msal from "@azure/msal-browser";
+import properties from "../properties";
 
-const { VITE_CLIENT_ID: clientId, VITE_TENANT_ID: tenantId } = process.env;
-
+const { clientId, tenantId } = properties;
 const msalConfig = {
   auth: {
     clientId,

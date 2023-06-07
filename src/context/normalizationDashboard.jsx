@@ -1,5 +1,6 @@
 import React, { useEffect, createContext, useState } from "react";
 import useSessionStorage from "../hooks/useSessionStorage";
+import properties from "../properties";
 
 const DashBoardContext = createContext(undefined);
 
@@ -30,22 +31,17 @@ function DashBoardProvider({ children }) {
   const [debouncedStyle, setDebouncedStyle] = useState("");
   const [debouncedUpdatedBy, setDebouncedUpdatedBy] = useState("");
   const [showTabs, setShowTabs] = useState(true);
-
-  const {
-    VITE_ADMIN_GROUP_NAME: ADMIN_GROUP_NAME,
-    VITE_WRITER_GROUP_NAME: WRITER_GROUP_NAME,
-    VITE_EDITOR_GROUP_NAME: EDITOR_GROUP_NAME
-  } = process.env;
+  const { adminGroupName, writerGroupName, editorGroupName } = properties;
   const [groups] = useSessionStorage("userGroups");
 
   useEffect(() => {
-    setIsWriter(groups?.includes(WRITER_GROUP_NAME));
-    setIsEditor(groups?.includes(EDITOR_GROUP_NAME));
-    setIsAdmin(groups?.includes(ADMIN_GROUP_NAME));
+    setIsWriter(groups?.includes(writerGroupName));
+    setIsEditor(groups?.includes(editorGroupName));
+    setIsAdmin(groups?.includes(adminGroupName));
   }, [
-    ADMIN_GROUP_NAME,
-    WRITER_GROUP_NAME,
-    EDITOR_GROUP_NAME,
+    adminGroupName,
+    writerGroupName,
+    editorGroupName,
     setIsWriter,
     setIsEditor,
     setIsAdmin

@@ -7,7 +7,6 @@ import "primereact/resources/primereact.min.css";
 import "../public/index.css";
 
 const SSOLogin = lazy(() => import("./components/sso"));
-const Token = lazy(() => import("./components/token"));
 const MenuChooser = lazy(() => import("./components/menuChooser"));
 const NavBar = lazy(() => import("./components/NavBar"));
 const NormalizationDashboard = lazy(() =>
@@ -30,7 +29,6 @@ root.render(
           path="/styleDetails"
           element={<StyleDetails quickFix={false} styleId="CGHD23Y" />}
         />
-        <Route path="/redirect/web" element={<Token />} />
         <Route
           path="/menuChooser"
           element={

@@ -10,9 +10,10 @@ import Textarea from "../components/InputTextarea";
 import RichTextEditor from "../components/RichTextEditor";
 import BackLogo from "../logos/chevron-down.svg";
 import Loader from "../components/loader";
+import properties from "../properties";
 
 export default function StyleDetails({ quickFix = false, styleId }) {
-  const { VITE_SERVER_HOST_NAME } = process.env;
+  const { serverHostName } = properties;
   const location = useLocation();
   const navigate = useNavigate();
   const [genus, setGenus] = useState([]);
@@ -33,9 +34,8 @@ export default function StyleDetails({ quickFix = false, styleId }) {
       try {
         setIsFetchingGenus(true);
         const response =
-          (await fetch(
-            `${VITE_SERVER_HOST_NAME}/api/v1/dataNormalization/genus`
-          )) || {};
+          (await fetch(`${serverHostName}/api/v1/dataNormalization/genus`)) ||
+          {};
         const { data } = await response.json();
         setGenus(
           data?.genus?.map(({ id, name }) => ({
@@ -64,7 +64,7 @@ export default function StyleDetails({ quickFix = false, styleId }) {
           setIsFetchingHattributes(true);
           const response =
             (await fetch(
-              `${VITE_SERVER_HOST_NAME}/api/v1/dataNormalization/genus/${genus}/species/${species}/hAttributes`
+              `${serverHostName}/api/v1/dataNormalization/genus/${genus}/species/${species}/hAttributes`
             )) || {};
           const { data } = await response.json();
           setHattributes(data.hattributes);
@@ -88,7 +88,7 @@ export default function StyleDetails({ quickFix = false, styleId }) {
       });
       const response =
         (await fetch(
-          `${VITE_SERVER_HOST_NAME}/api/v1/dataNormalization/genus/${e.value}/species`
+          `${serverHostName}/api/v1/dataNormalization/genus/${e.value}/species`
         )) || {};
       const { data } = await response.json();
       setSpecies(

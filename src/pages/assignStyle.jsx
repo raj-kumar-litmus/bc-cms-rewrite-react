@@ -10,10 +10,11 @@ import GreenTick from "../logos/green-tick.svg";
 import RedCross from "../logos/red-cross-in-circle.svg";
 import useSessionStorage from "../hooks/useSessionStorage";
 import Loader from "../components/loader";
+import properties from "../properties";
 
 function AssignStyle() {
   const toastBR = useRef(null);
-  const { VITE_SERVER_HOST_NAME } = process.env;
+  const { serverHostName } = properties;
   const [options, setOptions] = useState([]);
   const [isFetching, setIsFetching] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
@@ -102,7 +103,7 @@ function AssignStyle() {
     };
     try {
       setIsFetching(true);
-      const uri = `${VITE_SERVER_HOST_NAME}/api/v1/workflows/assign?email=${userEmail}`;
+      const uri = `${serverHostName}/api/v1/workflows/assign?email=${userEmail}`;
       const { status } = (await fetch(uri, requestOptions)) || {};
       styleAssignedHandler({
         error: status != 200,
@@ -150,12 +151,12 @@ function AssignStyle() {
   useEffect(() => {
     if (userGroup === "writers") {
       setHeader("Assign Writer for");
-      setUri(`${VITE_SERVER_HOST_NAME}/api/v1/groups/writers/members`);
+      setUri(`${serverHostName}/api/v1/groups/writers/members`);
       setPlaceHolder("Writer");
     }
     if (userGroup === "editors") {
       setHeader("Assign Editor for");
-      setUri(`${VITE_SERVER_HOST_NAME}/api/v1/groups/editors/members`);
+      setUri(`${serverHostName}/api/v1/groups/editors/members`);
       setPlaceHolder("Editor");
     }
   }, [userGroup]);

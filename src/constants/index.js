@@ -1,6 +1,6 @@
-const { VITE_SERVER_HOST_NAME: HOST_NAME } = process.env;
+import properties from "../properties";
 
-export const workFlowsUrl = `${HOST_NAME}/api/v1/workflows`;
+export const workFlowsUrl = `${properties.serverHostName}/api/v1/workflows`;
 
 export const status = {
   waitingForWriter: "WAITING_FOR_WRITER",
