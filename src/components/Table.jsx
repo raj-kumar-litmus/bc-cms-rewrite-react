@@ -34,6 +34,7 @@ import ArrowSortDownLine from "../logos/ArrowSortDownLine.svg";
 import ArrowSortUpLine from "../logos/ArrowSortUpLine.svg";
 import Clear from "../logos/ClearFilters.svg";
 import { isAllEqual } from "../utils";
+import CheckBox from "./CheckBox";
 
 export default function Table({
   search,
@@ -160,11 +161,6 @@ export default function Table({
     searchByUpdatedAt,
     searchByStatus
   ]);
-
-  useEffect(() => {
-    console.log(`appliedFilters has changed`);
-    console.log(appliedFilters);
-  }, [appliedFilters]);
 
   const showTopCenter = () => {
     toastBR.current.show({
@@ -1153,7 +1149,27 @@ export default function Table({
             }
             onRowClick={onRowClick}
           >
-            {isAdmin && <Column selectionMode="multiple"></Column>}
+            {isAdmin && (
+              <Column
+                onClick={() => console.log("hellloeoeo")}
+                cellEditValidator={(e) => console.log(e)}
+                header={
+                  <CheckBox
+                    inputClassName={
+                      "w-5 h-5 border solid border-gray-600 accent-gray-900"
+                    }
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectedProducts(customers?.workflows);
+                      } else {
+                        setSelectedProducts([]);
+                      }
+                    }}
+                  />
+                }
+                selectionMode="multiple"
+              ></Column>
+            )}
             <Column
               field="styleId"
               header={

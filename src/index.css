@@ -65,3 +65,6 @@
 .species-dropdown__menu, .genus-dropdown__menu {
   @apply !z-[10]
 }
+.p-column-header-content .p-component .p-checkbox-box {
+  @apply hidden;
+}
