@@ -10,7 +10,7 @@ import GreenTick from "../logos/green-tick.svg";
 import RedCross from "../logos/red-cross-in-circle.svg";
 import useSessionStorage from "../hooks/useSessionStorage";
 import Loader from "../components/loader";
-import properties from "../properties";
+import { properties } from "../properties";
 
 function AssignStyle() {
   const toastBR = useRef(null);

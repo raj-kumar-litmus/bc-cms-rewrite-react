@@ -5,7 +5,7 @@ import WriterInterfaceImg from "../logos/WriterInterfaceImg.svg";
 import SizingAppImg from "../logos/sizing-app-chooser.svg";
 import ChoosingAppArrow from "../logos/ChoosingApp-arrow.svg";
 import MenuChooserAppDetails from "./MenuChooserAppDetails";
-import properties from "../properties";
+import { properties } from "../properties";
 
 const { sizingGroupName, adminGroupName, writerGroupName, editorGroupName } =
   properties;

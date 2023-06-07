@@ -1,4 +1,4 @@
-import properties from "../properties";
+import { properties } from "../properties";
 
 export const workFlowsUrl = `${properties.serverHostName}/api/v1/workflows`;
 

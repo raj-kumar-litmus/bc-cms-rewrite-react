@@ -1,5 +1,5 @@
 import * as msal from "@azure/msal-browser";
-import properties from "../properties";
+import { properties } from "../properties";
 
 const { clientId, tenantId, postLogoutRedirectUri } = properties;
 console.log(postLogoutRedirectUri);
