@@ -117,7 +117,7 @@ function NormalizationDashboard() {
         }
       };
       const response = await fetch(
-        `${workFlowsUrl}/search?limit=10&page=1`,
+        `${workFlowsUrl}/search?limit=10&page=${currentPage}`,
         requestOptions
       );
       if (response?.ok) {
