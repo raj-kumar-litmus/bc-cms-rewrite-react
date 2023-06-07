@@ -257,7 +257,7 @@ function NormalizationDashboard() {
                 "!pr-[5%] !bg-white !text-[14px] !text-black !font-semibold w-full h-[64px] !pl-[2%] !pt-[18px] text-sm !placeholder-gray-20 !placeholder-opacity-1 !rounded !border !border-grey-30 !shadow"
               }
               buttonClasses={
-                "text-white bg-black h-[64px] text-sm w-[10%] rounded ml-2"
+                !search ? "text-white bg-stone-300 h-[64px] text-sm w-[10%] rounded ml-2": "text-white bg-black h-[64px] text-sm w-[10%] rounded ml-2"
               }
             />
           </div>
