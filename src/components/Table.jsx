@@ -75,6 +75,8 @@ export default function Table({
     isAdmin,
     isWriter,
     isEditor,
+    appliedFilters,
+    setAppliedFilters,
     loader,
     setLoader,
     showToast,
@@ -131,6 +133,38 @@ export default function Table({
       getAssignee();
     }
   }, [showFilters]);
+
+  useEffect(() => {
+    const newDate = new Date(searchByUpdatedAt).toDateString().split(" ");
+    const finalDate = `${newDate[3]}-${newDate[1]}-${newDate[2]}`;
+    const newSelectedBrand = selectedBrand.map((item) => item.brand);
+    setAppliedFilters({
+      ...appliedFilters,
+      ...(searchByStyle && { styleId: searchByStyle }),
+      ...(searchByTitle && { title: searchByTitle }),
+      ...(newSelectedBrand.length && { brand: newSelectedBrand }),
+      ...(searchByUpdatedBy && { lastUpdatedBy: searchByUpdatedBy }),
+      ...((searchByAssignee || !isAdmin) && {
+        assignee: !isAdmin ? userEmail : searchByAssignee
+      }),
+      ...(searchByUpdatedAt && { lastUpdateTs: finalDate }),
+      ...(searchByStatus.length && { status: [searchByStatus] }),
+      ...(currentTab === "Unassigned" && { status: ["WAITING_FOR_WRITER"] })
+    });
+  }, [
+    searchByStyle,
+    searchByTitle,
+    selectedBrand,
+    searchByUpdatedBy,
+    searchByAssignee,
+    searchByUpdatedAt,
+    searchByStatus
+  ]);
+
+  useEffect(() => {
+    console.log(`appliedFilters has changed`);
+    console.log(appliedFilters);
+  }, [appliedFilters]);
 
   const showTopCenter = () => {
     toastBR.current.show({

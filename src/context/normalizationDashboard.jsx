@@ -26,6 +26,7 @@ function DashBoardProvider({ children }) {
   const [searchByStatus, setSearchByStatus] = useState([]);
   const [searchByAssignee, setSearchByAssignee] = useState("");
   const [searchByUpdatedAt, setsearchByUpdatedAt] = useState(null);
+  const [appliedFilters, setAppliedFilters] = useState({});
   const [searchByUpdatedBy, setsearchByUpdatedBy] = useState("");
   const [debouncedTitle, setDebouncedTitle] = useState("");
   const [debouncedStyle, setDebouncedStyle] = useState("");
@@ -71,6 +72,7 @@ function DashBoardProvider({ children }) {
     setDebouncedTitle("");
     setDebouncedStyle("");
     setDebouncedUpdatedBy("");
+    setAppliedFilters({});
   };
 
   return (
@@ -90,6 +92,8 @@ function DashBoardProvider({ children }) {
         setsearchByUpdatedBy,
         searchByTitle,
         setSearchByTitle,
+        appliedFilters,
+        setAppliedFilters,
         searchByStyle,
         setSearchByStyle,
         showFilters,
