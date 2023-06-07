@@ -22,7 +22,7 @@ function NavBar() {
 
   useEffect(() => {
     setIsAdmin(groups?.includes(properties.adminGroupName));
-  }, [adminGroupId, setIsAdmin]);
+  }, [properties.adminGroupId, setIsAdmin]);
 
   const signOut = () => {
     msalInstance
