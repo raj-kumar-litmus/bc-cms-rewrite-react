@@ -121,16 +121,6 @@ export default function Table({
     setTabChanged(true);
   }, [currentPage]);
 
-  // useEffect(() => {
-  //   if (showFilters && search == "") {
-  //     getBrands();
-  //     getStatus();
-  //   }
-  //   if (showFilters && isAdmin) {
-  //     getAssignee();
-  //   }
-  // }, [showFilters, currentTab]);
-
   useEffect(() => {
     if (showFilters) {
       getBrands();
@@ -840,8 +830,8 @@ export default function Table({
             </button>
           ) : (
             <>
-              {search && selectedStatus !== "Writing Complete" ? (
-                <button
+              {!showTabs ? (
+                <>{selectedStatus !== "Writing Complete" &&<button
                   className="bg-white flex rounded-full justify-center items-center border border-grey-30  h-[30px] w-[30px]"
                   onClick={handleEditIcon}
                 >
@@ -859,13 +849,13 @@ export default function Table({
                     }
                     data-pr-tooltip={
                       selectedStatus == "Waiting For Writer"
-                        ? AssigneEdit
-                        : ReAssign
+                        ? "Assign"
+                        : "Reassign"
                     }
                     data-pr-position="top"
                     className="assign"
                   />
-                </button>
+                </button>}</>
               ) : (
                 <>
                   {currentTab !== "Completed" && (
