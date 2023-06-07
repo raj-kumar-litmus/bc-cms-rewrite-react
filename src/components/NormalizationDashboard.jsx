@@ -42,7 +42,7 @@ function NormalizationDashboard() {
     updatedBySort,
     updatedAtSort,
     assigneeSort,
-    setCurrentPage,
+    setCurrentPage
   } = useContext(DashBoardContext);
 
   useEffect(() => {
@@ -66,16 +66,23 @@ function NormalizationDashboard() {
   };
 
   const fetchBulkStyleSearch = async () => {
-    console.log("searchByStatus>>",searchByStatus)
+    console.log("searchByStatus>>", searchByStatus);
     var date = new Date(searchByUpdatedAt);
     const newDate = date.toDateString().split(" ");
     const finalDate = `${newDate[3]}-${newDate[1]}-${newDate[2]}`;
     const newSelectedBrand = selectedBrand.map((item) => item.brand);
-    const status = ["WAITING_FOR_WRITER","WRITING_COMPLETE", "EDITING_COMPLETE", "ASSIGNED_TO_WRITER", "ASSIGNED_TO_EDITOR", "WRITING_IN_PROGRESS", "EDITING_IN_PROGRESS"];
+    const status = [
+      "WAITING_FOR_WRITER",
+      "WRITING_COMPLETE",
+      "EDITING_COMPLETE",
+      "ASSIGNED_TO_WRITER",
+      "ASSIGNED_TO_EDITOR",
+      "WRITING_IN_PROGRESS",
+      "EDITING_IN_PROGRESS"
+    ];
     const body = {
       filters: {
-          styleId: search.replaceAll(" ", "").split(","),
-        // ...(searchByStyle && { styleId: searchByStyle }),
+        styleId: search.replaceAll(" ", "").split(","),
         ...(searchByTitle && { title: searchByTitle }),
         ...(newSelectedBrand.length && { brand: newSelectedBrand }),
         ...(searchByUpdatedBy && { lastUpdatedBy: searchByUpdatedBy }),
@@ -83,7 +90,9 @@ function NormalizationDashboard() {
           assignee: !isAdmin ? userEmail : searchByAssignee
         }),
         ...(searchByUpdatedAt && { lastUpdateTs: finalDate }),
-        ...(searchByStatus && { status: searchByStatus ? [searchByStatus] : status}),
+        ...(searchByStatus.length && {
+          status: searchByStatus.length ? [searchByStatus] : status
+        })
       },
       orderBy: {
         ...(currentSort == "Style" && { styleId: styleSort }),
@@ -107,15 +116,7 @@ function NormalizationDashboard() {
         body: JSON.stringify(body),
         headers: {
           "Content-type": "application/json"
-        },
-        // body: JSON.stringify({
-        //   filters: {
-        //     styleId: search.replaceAll(" ", "").split(",")
-        //   },
-        //   orderBy: {
-        //     styleId: "desc"
-        //   }
-        // })
+        }
       };
       const response = await fetch(
         `${workFlowsUrl}/search?limit=10&page=1`,
@@ -147,7 +148,15 @@ function NormalizationDashboard() {
     const newDate = date.toDateString().split(" ");
     const finalDate = `${newDate[3]}-${newDate[1]}-${newDate[2]}`;
     const newSelectedBrand = selectedBrand.map((item) => item.brand);
-    const status = ["WAITING_FOR_WRITER","WRITING_COMPLETE", "EDITING_COMPLETE", "ASSIGNED_TO_WRITER", "ASSIGNED_TO_EDITOR", "WRITING_IN_PROGRESS", "EDITING_IN_PROGRESS"];
+    const status = [
+      "WAITING_FOR_WRITER",
+      "WRITING_COMPLETE",
+      "EDITING_COMPLETE",
+      "ASSIGNED_TO_WRITER",
+      "ASSIGNED_TO_EDITOR",
+      "WRITING_IN_PROGRESS",
+      "EDITING_IN_PROGRESS"
+    ];
     const body = {
       filters: {
         ...(searchByStyle && { styleId: searchByStyle }),
@@ -158,7 +167,9 @@ function NormalizationDashboard() {
           assignee: !isAdmin ? userEmail : searchByAssignee
         }),
         ...(searchByUpdatedAt && { lastUpdateTs: finalDate }),
-        status: searchByStatus.length ? [searchByStatus] : status
+        ...(searchByStatus.length && {
+          status: searchByStatus.length ? [searchByStatus] : status
+        })
       },
       orderBy: {
         ...(currentSort == "Style" && { styleId: styleSort }),
