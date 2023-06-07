@@ -45,6 +45,7 @@ export default function Table({
   const [statuses, setStatus] = useState([]);
   const [showEdit, setShowEdit] = useState(null);
   const [isRowSelected, setIsRowSelected] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState("");
   const [isStatusSelected, setIsStatusSelected] = useState(false);
   const [canAssignOrReAssign, setCanAssignOrReAssign] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
@@ -272,7 +273,7 @@ export default function Table({
 
   async function getStatus() {
     const status = [];
-    if(search == ""){
+    if (search == "") {
       switch (currentTab) {
         case "Unassigned":
           status.push("WAITING_FOR_WRITER");
@@ -289,10 +290,18 @@ export default function Table({
         default:
           status;
       }
-    }else{
-      status.push("WAITING_FOR_WRITER","WRITING_COMPLETE", "EDITING_COMPLETE", "ASSIGNED_TO_WRITER", "ASSIGNED_TO_EDITOR", "WRITING_IN_PROGRESS", "EDITING_IN_PROGRESS");
+    } else {
+      status.push(
+        "WAITING_FOR_WRITER",
+        "WRITING_COMPLETE",
+        "EDITING_COMPLETE",
+        "ASSIGNED_TO_WRITER",
+        "ASSIGNED_TO_EDITOR",
+        "WRITING_IN_PROGRESS",
+        "EDITING_IN_PROGRESS"
+      );
     }
-   
+
     const body = {
       filters: { status }
     };
@@ -830,31 +839,68 @@ export default function Table({
               ></img>
             </button>
           ) : (
-            <button
-              className="bg-white flex rounded-full justify-center items-center border border-grey-30  h-[30px] w-[30px]"
-              onClick={handleEditIcon}
-            >
-              <Tooltip target=".assign" />
-              <img
-                alt={`${
-                  currentTab == "Assigned" || currentTab == "In Progress"
-                    ? ReAssign
-                    : AssigneEdit
-                } svg`}
-                src={
-                  currentTab == "Assigned" || currentTab == "In Progress"
-                    ? ReAssign
-                    : AssigneEdit
-                }
-                data-pr-tooltip={
-                  currentTab == "Assigned" || currentTab == "In Progress"
-                    ? "Reassign"
-                    : "Assign"
-                }
-                data-pr-position="top"
-                className="assign"
-              />
-            </button>
+            <>
+              {search && selectedStatus !== "Writing Complete" ? (
+                <button
+                  className="bg-white flex rounded-full justify-center items-center border border-grey-30  h-[30px] w-[30px]"
+                  onClick={handleEditIcon}
+                >
+                  <Tooltip target=".assign" />
+                  <img
+                    alt={`${
+                      selectedStatus == "Waiting For Writer"
+                        ? AssigneEdit
+                        : ReAssign
+                    } svg`}
+                    src={
+                      selectedStatus == "Waiting For Writer"
+                        ? AssigneEdit
+                        : ReAssign
+                    }
+                    data-pr-tooltip={
+                      selectedStatus == "Waiting For Writer"
+                        ? AssigneEdit
+                        : ReAssign
+                    }
+                    data-pr-position="top"
+                    className="assign"
+                  />
+                </button>
+              ) : (
+                <>
+                  {currentTab !== "Completed" && (
+                    <button
+                      className="bg-white flex rounded-full justify-center items-center border border-grey-30  h-[30px] w-[30px]"
+                      onClick={handleEditIcon}
+                    >
+                      <Tooltip target=".assign" />
+                      <img
+                        alt={`${
+                          currentTab == "Assigned" ||
+                          currentTab == "In Progress"
+                            ? ReAssign
+                            : AssigneEdit
+                        } svg`}
+                        src={
+                          currentTab == "Assigned" ||
+                          currentTab == "In Progress"
+                            ? ReAssign
+                            : AssigneEdit
+                        }
+                        data-pr-tooltip={
+                          currentTab == "Assigned" ||
+                          currentTab == "In Progress"
+                            ? "Reassign"
+                            : "Assign"
+                        }
+                        data-pr-position="top"
+                        className="assign"
+                      />
+                    </button>
+                  )}
+                </>
+              )}
+            </>
           )}
         </span>
       </div>
@@ -864,6 +910,7 @@ export default function Table({
   const handleMoreIconClick = () => {
     setShowPopup(true);
   };
+  console.log("showTabs>>", showTabs);
 
   const handleMoreIcon = (rowData) => {
     return (
@@ -878,14 +925,16 @@ export default function Table({
               : "invisible"
           } justify-content-end relative`}
         >
-          <span>
-            <button onClick={handleMoreIconClick}>
-              <span className="bg-white flex rounded-full justify-center items-center border border-grey-30  h-[30px] w-[30px]">
-                <img alt={`${MoreIcons} svg`} src={MoreIcons} />
-              </span>
-            </button>
-          </span>
-
+          {((currentTab === "Completed" && showTabs) ||
+            (selectedStatus == "Writing Complete" && !showTabs)) && (
+            <span>
+              <button onClick={handleMoreIconClick}>
+                <span className="bg-white flex rounded-full justify-center items-center border border-grey-30  h-[30px] w-[30px]">
+                  <img alt={`${MoreIcons} svg`} src={MoreIcons} />
+                </span>
+              </button>
+            </span>
+          )}
           {rowData.id == showEdit && showPopup && (
             <div className="absolute top-0 right-0">
               <MoreIconPopUp rowData={rowData} />
@@ -931,8 +980,9 @@ export default function Table({
   };
 
   const onRowSelect = (e) => {
+    setSelectedStatus(e?.data?.statusForUi);
     setIsRowSelected(true);
-    setShowEdit(e.data.id);
+    setShowEdit(e?.data?.id);
   };
 
   const onRowUnselect = () => {
@@ -1117,10 +1167,11 @@ export default function Table({
               filterElement={dateFilterTemplate}
             />
             <Column body={(e) => handleRowSelectIcons(e, "edit")} />
-            {currentTab !== "Completed" && (
-              <Column body={(e) => handleRowSelectIcons(e, "assign")} />
-            )}
-            {currentTab === "Completed" && <Column body={handleMoreIcon} />}
+            {/* {currentTab !== "Completed" && ( */}
+            <Column body={(e) => handleRowSelectIcons(e, "assign")} />
+            {/* )} */}
+            {/* {currentTab === "Completed" &&  */}
+            <Column body={handleMoreIcon} />
             <Column
               header={handleFilterIcon}
               filter
