@@ -1,4 +1,5 @@
 const properties = {
+  postLogoutRedirectUri: process.env.POST_LOGOUT_REDIRECT_URI,
   clientId: process.env.VITE_CLIENT_ID,
   tenantId: process.env.VITE_TENANT_ID,
   sizingGroupName: process.env.VITE_SIZING_GROUP_NAME,
