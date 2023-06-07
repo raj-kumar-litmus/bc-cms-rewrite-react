@@ -6,7 +6,7 @@ import NavBarSwitchingIcon from "../logos/NavBarSwitchingIcon.svg";
 import useSessionStorage from "../hooks/useSessionStorage";
 import Button from "./Button";
 import msalInstance from "./authInitialize";
-import properties from "../properties";
+import { properties } from "../properties";
 
 function NavBar() {
   const navigate = useNavigate();

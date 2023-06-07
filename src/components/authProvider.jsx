@@ -2,7 +2,7 @@
 
 import { MsalAuthProvider, LoginType } from "react-aad-msal";
 import regeneratorRuntime from "regenerator-runtime";
-import properties from "../properties";
+import { properties } from "../properties";
 
 const { clientId, tenantId } = properties;
 

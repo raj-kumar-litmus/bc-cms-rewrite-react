@@ -5,9 +5,11 @@ import { DashBoardProvider } from "./context/normalizationDashboard";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
 import "../public/index.css";
-import properties from "./properties";
+import { properties, staticProperties } from "./properties";
 console.log(`properties`);
 console.log(properties);
+console.log(`staticProperties`);
+console.log(staticProperties);
 
 const SSOLogin = lazy(() => import("./components/sso"));
 const MenuChooser = lazy(() => import("./components/menuChooser"));

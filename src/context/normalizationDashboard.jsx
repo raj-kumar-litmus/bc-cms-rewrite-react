@@ -1,6 +1,6 @@
 import React, { useEffect, createContext, useState } from "react";
 import useSessionStorage from "../hooks/useSessionStorage";
-import properties from "../properties";
+import { properties } from "../properties";
 
 const DashBoardContext = createContext(undefined);
 

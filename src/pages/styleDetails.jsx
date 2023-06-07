@@ -10,7 +10,7 @@ import Textarea from "../components/InputTextarea";
 import RichTextEditor from "../components/RichTextEditor";
 import BackLogo from "../logos/chevron-down.svg";
 import Loader from "../components/loader";
-import properties from "../properties";
+import { properties } from "../properties";
 
 export default function StyleDetails({ quickFix = false, styleId }) {
   const { serverHostName } = properties;

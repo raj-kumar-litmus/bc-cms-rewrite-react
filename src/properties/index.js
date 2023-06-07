@@ -1,4 +1,4 @@
-const properties = {
+export const staticProperties = {
   postLogoutRedirectUri: process.env.POST_LOGOUT_REDIRECT_URI,
   clientId: process.env.VITE_CLIENT_ID,
   tenantId: process.env.VITE_TENANT_ID,
@@ -10,4 +10,14 @@ const properties = {
   serverHostName: process.env.VITE_SERVER_HOST_NAME
 };
 
-export default properties;
+export const properties = {
+  postLogoutRedirectUri: "https://product-content-ui.test.gcp.bcinfra.net/",
+  clientId: "31f2cd65-fe16-4b64-8cbf-cb3055f5415c",
+  tenantId: "d32b7c3a-c5e1-4dd3-b973-3d6a36b058b2",
+  sizingGroupName: "Product-Content-Sizing",
+  adminGroupName: "product-content-admin",
+  writerGroupName: "product-content-writer",
+  editorGroupName: "product-content-editor",
+  adminGroupId: "e9a23c1e-633a-4415-9482-e03159793bf5",
+  serverHostName: "http://product-content-api.test.gcp.bcinfra.net"
+};
