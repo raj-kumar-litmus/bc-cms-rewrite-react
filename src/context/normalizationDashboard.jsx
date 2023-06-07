@@ -31,17 +31,29 @@ function DashBoardProvider({ children }) {
   const [debouncedStyle, setDebouncedStyle] = useState("");
   const [debouncedUpdatedBy, setDebouncedUpdatedBy] = useState("");
   const [showTabs, setShowTabs] = useState(true);
-  const { adminGroupName, writerGroupName, editorGroupName } = properties;
+  const [currentSort, setCurrentSort] = useState("");
+  const [styleSort, setStyleSort] = useState("desc");
+  const [titleSort, setTitleSort] = useState("desc");
+  const [brandSort, setBrandSort] = useState("desc");
+  const [statusSort, setStatusSort] = useState("desc");
+  const [updatedBySort, setUpdatedBySort] = useState("desc");
+  const [updatedAtSort, setUpdatedAtSort] = useState("desc");
+  const [assigneeSort, setAssigneeSort] = useState("desc");
+  const {
+    VITE_ADMIN_GROUP_NAME: ADMIN_GROUP_NAME,
+    VITE_WRITER_GROUP_NAME: WRITER_GROUP_NAME,
+    VITE_EDITOR_GROUP_NAME: EDITOR_GROUP_NAME
+  } = process.env;
   const [groups] = useSessionStorage("userGroups");
 
   useEffect(() => {
-    setIsWriter(groups?.includes(writerGroupName));
-    setIsEditor(groups?.includes(editorGroupName));
-    setIsAdmin(groups?.includes(adminGroupName));
+    setIsWriter(groups?.includes(WRITER_GROUP_NAME));
+    setIsEditor(groups?.includes(EDITOR_GROUP_NAME));
+    setIsAdmin(groups?.includes(ADMIN_GROUP_NAME));
   }, [
-    adminGroupName,
-    writerGroupName,
-    editorGroupName,
+    ADMIN_GROUP_NAME,
+    WRITER_GROUP_NAME,
+    EDITOR_GROUP_NAME,
     setIsWriter,
     setIsEditor,
     setIsAdmin
@@ -113,7 +125,23 @@ function DashBoardProvider({ children }) {
         setsearchByUpdatedAt,
         showTabs,
         setShowTabs,
-        clearFilters
+        clearFilters,
+        currentSort,
+        setCurrentSort,
+        styleSort,
+        setStyleSort,
+        titleSort,
+        setTitleSort,
+        brandSort,
+        setBrandSort,
+        statusSort,
+        setStatusSort,
+        updatedBySort,
+        setUpdatedBySort,
+        updatedAtSort,
+        setUpdatedAtSort,
+        assigneeSort,
+        setAssigneeSort
       }}
     >
       {children}

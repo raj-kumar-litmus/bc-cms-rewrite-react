@@ -8,31 +8,38 @@ function GlobalSearch({
   buttonClasses,
   onChange,
   onClick,
-  value,
+  searchValue,
   handleClear,
   img
 }) {
   return (
     <div className="flex relative">
       <Textarea
-      val={value}
-      className={inputClasses}
-      rows={4}
-      cols={0}
-      placeholder="Search by Style or Title or Brand"
-      onChange={onChange}
+        val={searchValue}
+        className={inputClasses}
+        rows={4}
+        cols={0}
+        placeholder="Search by Style or Title or Brand"
+        onChange={onChange}
       />
-      {value && (
-        <Button onClick={handleClear}>
+      {searchValue && (
+        <Button
+          onClick={handleClear}
+          className="absolute top-[36%] right-[14%]"
+        >
           <img
-            className="h-[16px] w-[16px] absolute top-[25%] right-[12%]"
+            className="h-[12px] w-[12px]"
             src={img}
             alt="NavBarSwitchingIcon SVG"
             data-testid="test-img"
           />
         </Button>
       )}
-      <Button className={buttonClasses} onClick={onClick} disabled={!value}>
+      <Button
+        className={buttonClasses}
+        onClick={onClick}
+        disabled={!searchValue}
+      >
         {" "}
         {searchString}{" "}
       </Button>
