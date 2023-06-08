@@ -15,8 +15,6 @@ function StatusBarsForNormalization() {
   const [email] = useSessionStorage("userEmail");
 
   async function getCount() {
-    console.log(`workFlowsUrl`);
-    console.log(workFlowsUrl);
     let url = `${workFlowsUrl}/counts?`;
     try {
       const response = await fetch(

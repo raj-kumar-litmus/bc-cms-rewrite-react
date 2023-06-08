@@ -14,6 +14,7 @@ function NormalizationDashboard() {
   const navigate = useNavigate();
   const [accountDetails] = useSessionStorage("accountDetails");
   const [search, setSearch] = useState("");
+  const [searchCount, setSearchCount] = useState(false);
   const {
     searchByTitle,
     searchByStyle,
@@ -218,7 +219,13 @@ function NormalizationDashboard() {
   }
 
   const handleSearchChange = (e) => {
-    setSearch(e.target.value);
+    if(e.target.value !== ""){
+      const countOfEnteredSearch = e.target.value.replaceAll(" ", "").split(",")
+      setSearchCount(countOfEnteredSearch?.length >500 ? true : false)
+    if(countOfEnteredSearch?.length<=500){
+      setSearch(e.target.value);
+     }
+    }
   };
 
   const handleSearchClick = () => {
@@ -246,6 +253,8 @@ function NormalizationDashboard() {
               img={ClearSearch}
               searchValue={search}
               searchString={"Search"}
+              searchCount={searchCount}
+              setSearchCount={setSearchCount}
               inputClasses={
                 "!pr-[5%] !bg-white !text-[14px] !text-black !font-semibold w-full h-[64px] !pl-[2%] !pt-[18px] text-sm !placeholder-gray-20 !placeholder-opacity-1 !rounded !border !border-grey-30 !shadow"
               }
