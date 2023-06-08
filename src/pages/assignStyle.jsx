@@ -45,17 +45,28 @@ function AssignStyle() {
     isModalVisible,
     setShowFilters,
     clearFilters,
+    workflowCount,
+    selectAll,
+    appliedFilters,
     setSelectedProducts,
     setIsModalVisible
   } = useContext(DashBoardContext) || {};
 
   const buildStyleStrings = () => {
-    if (styles.length < 10) {
+    if (selectAll) {
       setStylesString(styles.join(", "));
+      if (styles.length !== workflowCount) {
+        setMoreText(`+${workflowCount - styles.length} More`);
+      }
     } else {
-      const remaining = styles.length - 9;
-      setStylesString(`${styles.splice(0, 9).join(", ")}`);
-      setMoreText(`+${remaining} More`);
+      if (styles.length < 10) {
+        setStylesString(styles.join(", "));
+        setMoreText("");
+      } else {
+        const remaining = styles.length - 9;
+        setStylesString(`${styles.splice(0, 9).join(", ")}`);
+        setMoreText(`+${remaining} More`);
+      }
     }
   };
 
@@ -87,16 +98,24 @@ function AssignStyle() {
   };
 
   const assignStyleToUser = async () => {
+    const body = selectAll
+      ? JSON.stringify({
+          filters: appliedFilters,
+          assignments: {
+            [userGroup === "writers" ? "writer" : "editor"]: assignee
+          }
+        })
+      : JSON.stringify({
+          filters: {
+            id: workflowId
+          },
+          assignments: {
+            [userGroup === "writers" ? "writer" : "editor"]: assignee
+          }
+        });
     const requestOptions = {
       method: "PATCH",
-      body: JSON.stringify({
-        filters: {
-          id: workflowId
-        },
-        assignments: {
-          [userGroup === "writers" ? "writer" : "editor"]: assignee
-        }
-      }),
+      body,
       headers: {
         "Content-type": "application/json"
       }
@@ -127,8 +146,6 @@ function AssignStyle() {
       }
       return;
     } catch (err) {
-      console.log("Error");
-      console.log(err);
       styleAssignedHandler({
         styleId: styles,
         error: true,
@@ -176,7 +193,7 @@ function AssignStyle() {
   useEffect(() => {
     setIsFetching(true);
     setIsActiveDropdown(false);
-  }, []);
+  }, [isModalVisible]);
 
   useEffect(() => {
     if (!isChecked && !assignee && !assigneeName) {

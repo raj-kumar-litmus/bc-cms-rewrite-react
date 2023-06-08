@@ -13,7 +13,7 @@ import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
 import { MultiSelect } from "primereact/multiselect";
 import { Calendar } from "primereact/calendar";
-import { workFlowsUrl, statusForUi } from "../constants/index";
+import { workFlowsUrl, statusForUi, tabStatus } from "../constants/index";
 import Pagination from "./Pagination";
 import AssigneEdit from "../logos/AssigneEdit.svg";
 import ReAssign from "../logos/ReAssign.svg";
@@ -115,6 +115,11 @@ export default function Table({
     setUpdatedBySort,
     updatedAtSort,
     setUpdatedAtSort,
+    reselectSelectedProducts,
+    selectAll,
+    setSelectAll,
+    workflowCount,
+    setWorkflowCount,
     assigneeSort,
     setAssigneeSort
   } = useContext(DashBoardContext);
@@ -135,7 +140,7 @@ export default function Table({
     }
   }, [showFilters]);
 
-  useEffect(() => {
+  const applyFilters = () => {
     const newDate = new Date(searchByUpdatedAt).toDateString().split(" ");
     const finalDate = `${newDate[3]}-${newDate[1]}-${newDate[2]}`;
     const newSelectedBrand = selectedBrand.map((item) => item.brand);
@@ -150,17 +155,12 @@ export default function Table({
       }),
       ...(searchByUpdatedAt && { lastUpdateTs: finalDate }),
       ...(searchByStatus.length && { status: [searchByStatus] }),
-      ...(currentTab === "Unassigned" && { status: ["WAITING_FOR_WRITER"] })
+      ...(currentTab === "Unassigned" && { status: ["WAITING_FOR_WRITER"] }),
+      ...(selectedProducts.length > 0 && {
+        status: [selectedProducts[0].status]
+      })
     });
-  }, [
-    searchByStyle,
-    searchByTitle,
-    selectedBrand,
-    searchByUpdatedBy,
-    searchByAssignee,
-    searchByUpdatedAt,
-    searchByStatus
-  ]);
+  };
 
   const showTopCenter = () => {
     toastBR.current.show({
@@ -260,6 +260,22 @@ export default function Table({
         }
         setCustomers(data?.data);
         setLoader(false);
+        if (reselectSelectedProducts) {
+          if (
+            Array.isArray(appliedFilters?.excludeId) &&
+            appliedFilters.excludeId.length > 0
+          ) {
+            setSelectedProducts(
+              data?.data?.workflows.filter(
+                (e) => !appliedFilters.excludeId.includes(e.id)
+              )
+            );
+          } else {
+            setSelectedProducts(data?.data?.workflows);
+          }
+        } else {
+          setSelectedProducts([]);
+        }
       } else {
         setLoader(false);
         setShowToast(true);
@@ -366,6 +382,9 @@ export default function Table({
   useEffect(() => {
     setLoader(true);
     if (search == "") {
+      if (!selectAll) {
+        setAppliedFilters({});
+      }
       getCustomers();
     } else {
       if (search.includes(",")) {
@@ -406,6 +425,8 @@ export default function Table({
     if (customers?.pagination) {
       setPageCount(customers?.pagination?.pageCount);
     }
+    setWorkflowCount(customers?.pagination?.total);
+    applyFilters();
   }, [customers]);
 
   const handleStyleChanges = (e) => {
@@ -459,6 +480,17 @@ export default function Table({
     }
   }, [canAssignOrReAssign, selectedProducts]);
 
+  const assignHeaderIconClickHandler = () => {
+    setStyleId(selectedProducts.map((e) => e?.styleId));
+    setIsModalVisible(true);
+    if (selectAll) {
+      setAppliedFilters({
+        ...appliedFilters,
+        ...{ status: [selectedProducts[0].status] }
+      });
+    }
+  };
+
   const renderHeader = () => {
     return (
       <>
@@ -483,6 +515,9 @@ export default function Table({
                         setAssigneeType("writers");
                         setStyleId(selectedProducts.map((e) => e?.styleId));
                         setIsModalVisible(true);
+                        if (selectAll) {
+                          applyFilters();
+                        }
                       }}
                     >
                       <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
@@ -503,8 +538,7 @@ export default function Table({
                       className="flex"
                       onClick={() => {
                         setAssigneeType("editors");
-                        setStyleId(selectedProducts.map((e) => e?.styleId));
-                        setIsModalVisible(true);
+                        assignHeaderIconClickHandler();
                       }}
                     >
                       <span className="bg-white flex rounded-full justify-center items-center border w-[30px] h-[30px] border-grey-30 mr-1">
@@ -523,10 +557,7 @@ export default function Table({
                   {currentTab == "Unassigned" && (
                     <button
                       className="flex"
-                      onClick={() => {
-                        setStyleId(selectedProducts.map((e) => e?.styleId));
-                        setIsModalVisible(true);
-                      }}
+                      onClick={assignHeaderIconClickHandler}
                     >
                       <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
                         <img
@@ -545,10 +576,7 @@ export default function Table({
                     currentTab == "In Progress") && (
                     <button
                       className="flex"
-                      onClick={() => {
-                        setStyleId(selectedProducts.map((e) => e?.styleId));
-                        setIsModalVisible(true);
-                      }}
+                      onClick={assignHeaderIconClickHandler}
                     >
                       <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
                         <img
@@ -575,8 +603,7 @@ export default function Table({
                       className="flex"
                       onClick={() => {
                         setAssigneeType("writers");
-                        setStyleId(selectedProducts.map((e) => e?.styleId));
-                        setIsModalVisible(true);
+                        assignHeaderIconClickHandler();
                       }}
                     >
                       <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
@@ -598,8 +625,7 @@ export default function Table({
                       className="flex"
                       onClick={() => {
                         setAssigneeType("editors");
-                        setStyleId(selectedProducts.map((e) => e?.styleId));
-                        setIsModalVisible(true);
+                        assignHeaderIconClickHandler();
                       }}
                     >
                       <span className="bg-white flex rounded-full justify-center items-center border w-[30px] h-[30px] border-grey-30 mr-1">
@@ -618,10 +644,7 @@ export default function Table({
                   {selectedStatus == "Waiting For Writer" && (
                     <button
                       className="flex"
-                      onClick={() => {
-                        setStyleId(selectedProducts.map((e) => e?.styleId));
-                        setIsModalVisible(true);
-                      }}
+                      onClick={assignHeaderIconClickHandler}
                     >
                       <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
                         <img
@@ -642,10 +665,7 @@ export default function Table({
                     selectedStatus == "Editing In Progress") && (
                     <button
                       className="flex"
-                      onClick={() => {
-                        setStyleId(selectedProducts.map((e) => e?.styleId));
-                        setIsModalVisible(true);
-                      }}
+                      onClick={assignHeaderIconClickHandler}
                     >
                       <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
                         <img
@@ -1119,11 +1139,32 @@ export default function Table({
     setShowEdit(e?.data?.id);
   };
 
-  const onRowUnselect = () => {
+  const onMouseLeaveHandler = () => {
     setIsRowSelected(false);
     setShowPopup(false);
   };
 
+  const onRowUnselectHandler = (e) => {
+    if (selectAll) {
+      setAppliedFilters({
+        ...appliedFilters,
+        excludeId: appliedFilters.excludeId
+          ? appliedFilters.excludeId.concat(e.data.id)
+          : [e.data.id]
+      });
+      setWorkflowCount(workflowCount - 1);
+    }
+  };
+
+  const onRowSelectHandler = (e) => {
+    if (selectAll && appliedFilters?.excludeId?.includes(e.data.id)) {
+      setAppliedFilters({
+        ...appliedFilters,
+        excludeId: appliedFilters.excludeId.filter((el) => el !== e.data.id)
+      });
+      setWorkflowCount(workflowCount + 1);
+    }
+  };
   return (
     <>
       <div className="mb-[4px]">{renderHeader()}</div>
@@ -1139,9 +1180,11 @@ export default function Table({
             selection={selectedProducts}
             filterDisplay={showFilters && !tabChanged && "row"}
             onRowMouseEnter={onRowSelect}
-            onRowMouseLeave={onRowUnselect}
+            onRowMouseLeave={onMouseLeaveHandler}
             footer={pagination}
             onSelectionChange={onSelectionChange}
+            onRowUnselect={onRowUnselectHandler}
+            onRowSelect={onRowSelectHandler}
             emptyMessage={
               <p className="m-auto w-[200px] font-bold text-lg">
                 No Workflows found
@@ -1160,9 +1203,12 @@ export default function Table({
                     }
                     onChange={(e) => {
                       if (e.target.checked) {
+                        setSelectAll(true);
                         setSelectedProducts(customers?.workflows);
                       } else {
+                        setSelectAll(false);
                         setSelectedProducts([]);
+                        setAppliedFilters({});
                       }
                     }}
                   />

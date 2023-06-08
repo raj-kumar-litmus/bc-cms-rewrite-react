@@ -32,6 +32,10 @@ function DashBoardProvider({ children }) {
   const [debouncedStyle, setDebouncedStyle] = useState("");
   const [debouncedUpdatedBy, setDebouncedUpdatedBy] = useState("");
   const [showTabs, setShowTabs] = useState(true);
+  const [selectAll, setSelectAll] = useState(false);
+  const [reselectSelectedProducts, setReselectSelectedProducts] =
+    useState(false);
+  const [workflowCount, setWorkflowCount] = useState(0);
   const [currentSort, setCurrentSort] = useState("");
   const [styleSort, setStyleSort] = useState("desc");
   const [titleSort, setTitleSort] = useState("desc");
@@ -82,6 +86,12 @@ function DashBoardProvider({ children }) {
         isAdmin,
         isWriter,
         isEditor,
+        selectAll,
+        setSelectAll,
+        workflowCount,
+        setWorkflowCount,
+        reselectSelectedProducts,
+        setReselectSelectedProducts,
         debouncedTitle,
         setDebouncedTitle,
         debouncedStyle,
