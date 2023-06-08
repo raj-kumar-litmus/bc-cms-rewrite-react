@@ -13,7 +13,7 @@ import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
 import { MultiSelect } from "primereact/multiselect";
 import { Calendar } from "primereact/calendar";
-import { workFlowsUrl, statusForUi } from "../constants/index";
+import { workFlowsUrl, statusForUi, tabStatus } from "../constants/index";
 import Pagination from "./Pagination";
 import AssigneEdit from "../logos/AssigneEdit.svg";
 import ReAssign from "../logos/ReAssign.svg";
@@ -34,6 +34,7 @@ import ArrowSortDownLine from "../logos/ArrowSortDownLine.svg";
 import ArrowSortUpLine from "../logos/ArrowSortUpLine.svg";
 import Clear from "../logos/ClearFilters.svg";
 import { isAllEqual } from "../utils";
+import CheckBox from "./CheckBox";
 
 export default function Table({
   search,
@@ -75,6 +76,8 @@ export default function Table({
     isAdmin,
     isWriter,
     isEditor,
+    appliedFilters,
+    setAppliedFilters,
     loader,
     setLoader,
     showToast,
@@ -112,6 +115,11 @@ export default function Table({
     setUpdatedBySort,
     updatedAtSort,
     setUpdatedAtSort,
+    reselectSelectedProducts,
+    selectAll,
+    setSelectAll,
+    workflowCount,
+    setWorkflowCount,
     assigneeSort,
     setAssigneeSort
   } = useContext(DashBoardContext);
@@ -131,6 +139,28 @@ export default function Table({
       getAssignee();
     }
   }, [showFilters]);
+
+  const applyFilters = () => {
+    const newDate = new Date(searchByUpdatedAt).toDateString().split(" ");
+    const finalDate = `${newDate[3]}-${newDate[1]}-${newDate[2]}`;
+    const newSelectedBrand = selectedBrand.map((item) => item.brand);
+    setAppliedFilters({
+      ...appliedFilters,
+      ...(searchByStyle && { styleId: searchByStyle }),
+      ...(searchByTitle && { title: searchByTitle }),
+      ...(newSelectedBrand.length && { brand: newSelectedBrand }),
+      ...(searchByUpdatedBy && { lastUpdatedBy: searchByUpdatedBy }),
+      ...((searchByAssignee || !isAdmin) && {
+        assignee: !isAdmin ? userEmail : searchByAssignee
+      }),
+      ...(searchByUpdatedAt && { lastUpdateTs: finalDate }),
+      ...(searchByStatus.length && { status: [searchByStatus] }),
+      ...(currentTab === "Unassigned" && { status: ["WAITING_FOR_WRITER"] }),
+      ...(selectedProducts.length > 0 && {
+        status: [selectedProducts[0].status]
+      })
+    });
+  };
 
   const showTopCenter = () => {
     toastBR.current.show({
@@ -230,6 +260,22 @@ export default function Table({
         }
         setCustomers(data?.data);
         setLoader(false);
+        if (reselectSelectedProducts) {
+          if (
+            Array.isArray(appliedFilters?.excludeId) &&
+            appliedFilters.excludeId.length > 0
+          ) {
+            setSelectedProducts(
+              data?.data?.workflows.filter(
+                (e) => !appliedFilters.excludeId.includes(e.id)
+              )
+            );
+          } else {
+            setSelectedProducts(data?.data?.workflows);
+          }
+        } else {
+          setSelectedProducts([]);
+        }
       } else {
         setLoader(false);
         setShowToast(true);
@@ -336,6 +382,9 @@ export default function Table({
   useEffect(() => {
     setLoader(true);
     if (search == "") {
+      if (!selectAll) {
+        setAppliedFilters({});
+      }
       getCustomers();
     } else {
       if (search.includes(",")) {
@@ -376,6 +425,8 @@ export default function Table({
     if (customers?.pagination) {
       setPageCount(customers?.pagination?.pageCount);
     }
+    setWorkflowCount(customers?.pagination?.total);
+    applyFilters();
   }, [customers]);
 
   const handleStyleChanges = (e) => {
@@ -429,6 +480,17 @@ export default function Table({
     }
   }, [canAssignOrReAssign, selectedProducts]);
 
+  const assignHeaderIconClickHandler = () => {
+    setStyleId(selectedProducts.map((e) => e?.styleId));
+    setIsModalVisible(true);
+    if (selectAll) {
+      setAppliedFilters({
+        ...appliedFilters,
+        ...{ status: [selectedProducts[0].status] }
+      });
+    }
+  };
+
   const renderHeader = () => {
     return (
       <>
@@ -453,6 +515,9 @@ export default function Table({
                         setAssigneeType("writers");
                         setStyleId(selectedProducts.map((e) => e?.styleId));
                         setIsModalVisible(true);
+                        if (selectAll) {
+                          applyFilters();
+                        }
                       }}
                     >
                       <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
@@ -473,8 +538,7 @@ export default function Table({
                       className="flex"
                       onClick={() => {
                         setAssigneeType("editors");
-                        setStyleId(selectedProducts.map((e) => e?.styleId));
-                        setIsModalVisible(true);
+                        assignHeaderIconClickHandler();
                       }}
                     >
                       <span className="bg-white flex rounded-full justify-center items-center border w-[30px] h-[30px] border-grey-30 mr-1">
@@ -493,10 +557,7 @@ export default function Table({
                   {currentTab == "Unassigned" && (
                     <button
                       className="flex"
-                      onClick={() => {
-                        setStyleId(selectedProducts.map((e) => e?.styleId));
-                        setIsModalVisible(true);
-                      }}
+                      onClick={assignHeaderIconClickHandler}
                     >
                       <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
                         <img
@@ -515,10 +576,7 @@ export default function Table({
                     currentTab == "In Progress") && (
                     <button
                       className="flex"
-                      onClick={() => {
-                        setStyleId(selectedProducts.map((e) => e?.styleId));
-                        setIsModalVisible(true);
-                      }}
+                      onClick={assignHeaderIconClickHandler}
                     >
                       <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
                         <img
@@ -545,8 +603,7 @@ export default function Table({
                       className="flex"
                       onClick={() => {
                         setAssigneeType("writers");
-                        setStyleId(selectedProducts.map((e) => e?.styleId));
-                        setIsModalVisible(true);
+                        assignHeaderIconClickHandler();
                       }}
                     >
                       <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
@@ -568,8 +625,7 @@ export default function Table({
                       className="flex"
                       onClick={() => {
                         setAssigneeType("editors");
-                        setStyleId(selectedProducts.map((e) => e?.styleId));
-                        setIsModalVisible(true);
+                        assignHeaderIconClickHandler();
                       }}
                     >
                       <span className="bg-white flex rounded-full justify-center items-center border w-[30px] h-[30px] border-grey-30 mr-1">
@@ -588,10 +644,7 @@ export default function Table({
                   {selectedStatus == "Waiting For Writer" && (
                     <button
                       className="flex"
-                      onClick={() => {
-                        setStyleId(selectedProducts.map((e) => e?.styleId));
-                        setIsModalVisible(true);
-                      }}
+                      onClick={assignHeaderIconClickHandler}
                     >
                       <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
                         <img
@@ -612,10 +665,7 @@ export default function Table({
                     selectedStatus == "Editing In Progress") && (
                     <button
                       className="flex"
-                      onClick={() => {
-                        setStyleId(selectedProducts.map((e) => e?.styleId));
-                        setIsModalVisible(true);
-                      }}
+                      onClick={assignHeaderIconClickHandler}
                     >
                       <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
                         <img
@@ -1089,11 +1139,32 @@ export default function Table({
     setShowEdit(e?.data?.id);
   };
 
-  const onRowUnselect = () => {
+  const onMouseLeaveHandler = () => {
     setIsRowSelected(false);
     setShowPopup(false);
   };
 
+  const onRowUnselectHandler = (e) => {
+    if (selectAll) {
+      setAppliedFilters({
+        ...appliedFilters,
+        excludeId: appliedFilters.excludeId
+          ? appliedFilters.excludeId.concat(e.data.id)
+          : [e.data.id]
+      });
+      setWorkflowCount(workflowCount - 1);
+    }
+  };
+
+  const onRowSelectHandler = (e) => {
+    if (selectAll && appliedFilters?.excludeId?.includes(e.data.id)) {
+      setAppliedFilters({
+        ...appliedFilters,
+        excludeId: appliedFilters.excludeId.filter((el) => el !== e.data.id)
+      });
+      setWorkflowCount(workflowCount + 1);
+    }
+  };
   return (
     <>
       <div className="mb-[4px]">{renderHeader()}</div>
@@ -1109,9 +1180,11 @@ export default function Table({
             selection={selectedProducts}
             filterDisplay={showFilters && !tabChanged && "row"}
             onRowMouseEnter={onRowSelect}
-            onRowMouseLeave={onRowUnselect}
+            onRowMouseLeave={onMouseLeaveHandler}
             footer={pagination}
             onSelectionChange={onSelectionChange}
+            onRowUnselect={onRowUnselectHandler}
+            onRowSelect={onRowSelectHandler}
             emptyMessage={
               <p className="m-auto w-[200px] font-bold text-lg">
                 No Workflows found
@@ -1119,7 +1192,30 @@ export default function Table({
             }
             onRowClick={onRowClick}
           >
-            {isAdmin && <Column selectionMode="multiple"></Column>}
+            {isAdmin && (
+              <Column
+                onClick={() => console.log("hellloeoeo")}
+                cellEditValidator={(e) => console.log(e)}
+                header={
+                  <CheckBox
+                    inputClassName={
+                      "w-5 h-5 border solid border-gray-600 accent-gray-900"
+                    }
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectAll(true);
+                        setSelectedProducts(customers?.workflows);
+                      } else {
+                        setSelectAll(false);
+                        setSelectedProducts([]);
+                        setAppliedFilters({});
+                      }
+                    }}
+                  />
+                }
+                selectionMode="multiple"
+              ></Column>
+            )}
             <Column
               field="styleId"
               header={

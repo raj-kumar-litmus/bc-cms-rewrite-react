@@ -22,4 +22,11 @@ export const statusForUi = {
   EDITING_COMPLETE: "Editing Complete"
 };
 
+export const tabStatus = {
+  Unassigned: ["WAITING_FOR_WRITER"],
+  Completed: ["WRITING_COMPLETE", "EDITING_COMPLETE"],
+  Assigned: ["ASSIGNED_TO_WRITER", "ASSIGNED_TO_EDITOR"],
+  "In Progress": ["WRITING_IN_PROGRESS", "EDITING_IN_PROGRESS"]
+};
+
 export const limit = 999;

@@ -3,18 +3,28 @@ import { DashBoardContext } from "../context/normalizationDashboard";
 import Button from "./Button";
 
 function Pagination({ count, preText, nextText, className }) {
-  const { currentPage, setCurrentPage } = useContext(DashBoardContext);
+  const {
+    currentPage,
+    setCurrentPage,
+    selectAll,
+    setReselectSelectedProducts
+  } = useContext(DashBoardContext);
   const pages = Array.from(Array(count).keys(), (item) => item + 1);
 
   const onPageChange = (pageNumber) => {
+    if (selectAll) setReselectSelectedProducts(true);
     setCurrentPage(pageNumber.target.innerText);
   };
   const onPrevClick = () => {
-    if (currentPage > 1) setCurrentPage(parseInt(currentPage) - 1);
+    if (currentPage > 1) {
+      setCurrentPage(parseInt(currentPage) - 1);
+      if (selectAll) setReselectSelectedProducts(true);
+    }
   };
   const onNextClick = () => {
     if (count > currentPage) {
       setCurrentPage(parseInt(currentPage) + 1);
+      if (selectAll) setReselectSelectedProducts(true);
     }
   };
 

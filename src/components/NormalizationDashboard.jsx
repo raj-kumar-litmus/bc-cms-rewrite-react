@@ -29,8 +29,9 @@ function NormalizationDashboard() {
     searchByAssignee,
     searchByUpdatedAt,
     searchByUpdatedBy,
-    showTabs,
+    setAppliedFilters,
     clearFilters,
+    showTabs,
     setCurrentTab,
     setShowTabs,
     currentSort,
@@ -41,7 +42,7 @@ function NormalizationDashboard() {
     updatedBySort,
     updatedAtSort,
     assigneeSort,
-    setCurrentPage,
+    setCurrentPage
   } = useContext(DashBoardContext);
 
   useEffect(() => {
@@ -62,6 +63,7 @@ function NormalizationDashboard() {
     setSelectedProducts([]);
     clearFilters();
     setShowFilters(false);
+    setAppliedFilters({});
   };
 
   const fetchBulkStyleSearch = async () => {
@@ -220,11 +222,11 @@ function NormalizationDashboard() {
   }
 
   const handleSearchChange = (e) => {
-      setSearch(e.target.value);
+    setSearch(e.target.value);
   };
 
   const handleSearchClick = () => {
-    clearFilters()
+    clearFilters();
     setShowFilters(false);
     setShowTabs(false);
     setLoader(true);
@@ -252,7 +254,9 @@ function NormalizationDashboard() {
                 "!pr-[5%] !bg-white !text-[14px] !text-black !font-semibold w-full h-[64px] !pl-[2%] !pt-[18px] text-sm !placeholder-gray-20 !placeholder-opacity-1 !rounded !border !border-grey-30 !shadow"
               }
               buttonClasses={
-                !search ? "text-white bg-stone-300 h-[64px] text-sm w-[10%] rounded ml-2": "text-white bg-black h-[64px] text-sm w-[10%] rounded ml-2"
+                !search
+                  ? "text-white bg-stone-300 h-[64px] text-sm w-[10%] rounded ml-2"
+                  : "text-white bg-black h-[64px] text-sm w-[10%] rounded ml-2"
               }
             />
           </div>
