@@ -223,13 +223,11 @@ function NormalizationDashboard() {
   }
 
   const handleSearchChange = (e) => {
-    if(e.target.value !== ""){
-      const countOfEnteredSearch = e.target.value.replaceAll(" ", "").split(",")
-      setSearchCount(countOfEnteredSearch?.length >500 ? true : false)
+    const countOfEnteredSearch = e.target.value?.replaceAll(" ", "")?.split(",")
+    setSearchCount(countOfEnteredSearch?.length >500 ? true : false)
     if(countOfEnteredSearch?.length<=500){
       setSearch(e.target.value);
      }
-    }
   };
 
   const handleSearchClick = () => {
