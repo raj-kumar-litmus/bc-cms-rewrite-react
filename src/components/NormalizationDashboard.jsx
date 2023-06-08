@@ -14,7 +14,6 @@ function NormalizationDashboard() {
   const navigate = useNavigate();
   const [accountDetails] = useSessionStorage("accountDetails");
   const [search, setSearch] = useState("");
-  const [userEmail] = useSessionStorage("userEmail");
   const {
     searchByTitle,
     searchByStyle,
@@ -87,9 +86,7 @@ function NormalizationDashboard() {
         ...(searchByTitle && { title: searchByTitle }),
         ...(newSelectedBrand.length && { brand: newSelectedBrand }),
         ...(searchByUpdatedBy && { lastUpdatedBy: searchByUpdatedBy }),
-        ...((searchByAssignee || !isAdmin) && {
-          assignee: !isAdmin ? userEmail : searchByAssignee
-        }),
+        ...(searchByAssignee && { assignee: searchByAssignee }),
         ...(searchByUpdatedAt && { lastUpdateTs: finalDate }),
         ...(searchByStatus.length && {
           status: searchByStatus.length ? [searchByStatus] : status
@@ -156,7 +153,7 @@ function NormalizationDashboard() {
       "ASSIGNED_TO_WRITER",
       "ASSIGNED_TO_EDITOR",
       "WRITING_IN_PROGRESS",
-      "EDITING_IN_PROGRESS"
+      "EDITING_IN_PROGRESS",
     ];
     const body = {
       filters: {
@@ -164,9 +161,7 @@ function NormalizationDashboard() {
         ...(searchByTitle && { title: searchByTitle }),
         ...(newSelectedBrand.length && { brand: newSelectedBrand }),
         ...(searchByUpdatedBy && { lastUpdatedBy: searchByUpdatedBy }),
-        ...((searchByAssignee || !isAdmin) && {
-          assignee: !isAdmin ? userEmail : searchByAssignee
-        }),
+        ...(searchByAssignee && { assignee: searchByAssignee }),
         ...(searchByUpdatedAt && { lastUpdateTs: finalDate }),
         ...(searchByStatus.length && {
           status: searchByStatus.length ? [searchByStatus] : status
