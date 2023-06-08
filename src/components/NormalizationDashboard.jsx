@@ -14,6 +14,7 @@ function NormalizationDashboard() {
   const navigate = useNavigate();
   const [accountDetails] = useSessionStorage("accountDetails");
   const [search, setSearch] = useState("");
+  const [userEmail] = useSessionStorage("userEmail");
   const {
     searchByTitle,
     searchByStyle,
@@ -255,7 +256,7 @@ function NormalizationDashboard() {
               }
               buttonClasses={
                 !search
-                  ? "text-white bg-stone-300 h-[64px] text-sm w-[10%] rounded ml-2"
+                  ? "text-white bg-black bg-opacity-25 h-[64px] text-sm w-[10%] rounded ml-2"
                   : "text-white bg-black h-[64px] text-sm w-[10%] rounded ml-2"
               }
             />
