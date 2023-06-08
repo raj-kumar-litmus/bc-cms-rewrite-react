@@ -191,9 +191,9 @@ function AssignStyle() {
   }, [styles]);
 
   useEffect(() => {
-    setIsFetching(true);
-    setIsActiveDropdown(false);
-  }, [isModalVisible]);
+    setIsFetching(!options.length > 0);
+    setIsActiveDropdown(options.length > 0);
+  }, [isModalVisible, options]);
 
   useEffect(() => {
     if (!isChecked && !assignee && !assigneeName) {
