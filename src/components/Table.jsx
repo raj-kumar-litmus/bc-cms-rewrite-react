@@ -804,13 +804,8 @@ export default function Table({
       </div>
     );
   };
-console.log("selectedStyleId>>",selectedStyleId)
   const styleRowFilterTemplate = () => {
     return (
-      // <span className="p-input-icon-left w-[100%] min-w-[80px]">
-      //   <i className="pi pi-search" />
-      //   <InputText value={debouncedStyle} onChange={handleStyleChanges} />
-      // </span>
       <div>
       <MultiSelect
         value={selectedStyleId}
