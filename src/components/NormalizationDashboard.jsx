@@ -15,6 +15,7 @@ function NormalizationDashboard() {
   const [accountDetails] = useSessionStorage("accountDetails");
   const [search, setSearch] = useState("");
   const [searchCount, setSearchCount] = useState(false);
+  const [getSearchedStyles, setgetSearchedStyles] = useState([]);
   const {
     searchByTitle,
     searchByStyle,
@@ -131,6 +132,9 @@ function NormalizationDashboard() {
             nameWithoutDomain: e?.assignee?.split("@")[0]
           }));
         }
+        setgetSearchedStyles(data?.data?.workflows.filter(Boolean)
+          .map((item) => ({ styleId : item?.styleId }))
+          )
         setCustomers(data?.data);
         setLoader(false);
       } else {
@@ -275,6 +279,7 @@ function NormalizationDashboard() {
               search={search}
               fetchBulkStyleSearch={fetchBulkStyleSearch}
               getGlobalSearch={getGlobalSearch}
+              getSearchedStyles={getSearchedStyles}
             />
           </div>
           <AssignStyle />

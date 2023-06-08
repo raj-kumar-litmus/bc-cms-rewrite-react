@@ -23,6 +23,7 @@ function DashBoardProvider({ children }) {
   const [showToast, setShowToast] = useState(false);
   const [clearAllFilters, setClearAllFilters] = useState(false);
   const [selectedBrand, setSelectedBrand] = useState([]);
+  const [selectedStyleId, setSelectedStyleId] = useState([]);
   const [searchByStatus, setSearchByStatus] = useState([]);
   const [searchByAssignee, setSearchByAssignee] = useState("");
   const [searchByUpdatedAt, setsearchByUpdatedAt] = useState(null);
@@ -155,7 +156,9 @@ function DashBoardProvider({ children }) {
         updatedAtSort,
         setUpdatedAtSort,
         assigneeSort,
-        setAssigneeSort
+        setAssigneeSort,
+        selectedStyleId,
+       setSelectedStyleId,
       }}
     >
       {children}

@@ -39,7 +39,8 @@ import CheckBox from "./CheckBox";
 export default function Table({
   search,
   fetchBulkStyleSearch,
-  getGlobalSearch
+  getGlobalSearch,
+  getSearchedStyles
 }) {
   const [brands, setBrands] = useState([]);
   const [assigneeList, setAssignee] = useState([]);
@@ -85,6 +86,8 @@ export default function Table({
     clearAllFilters,
     selectedBrand,
     setSelectedBrand,
+    selectedStyleId,
+    setSelectedStyleId,
     searchByStatus,
     setSearchByStatus,
     searchByAssignee,
@@ -93,8 +96,6 @@ export default function Table({
     setsearchByUpdatedAt,
     debouncedTitle,
     setDebouncedTitle,
-    debouncedStyle,
-    setDebouncedStyle,
     debouncedUpdatedBy,
     setDebouncedUpdatedBy,
     searchByUpdatedBy,
@@ -144,11 +145,13 @@ export default function Table({
     const newDate = new Date(searchByUpdatedAt).toDateString().split(" ");
     const finalDate = `${newDate[3]}-${newDate[1]}-${newDate[2]}`;
     const newSelectedBrand = selectedBrand.map((item) => item.brand);
+    const newSelectedStyleId = selectedStyleId.map((item) => item.styleId);
+
     setAppliedFilters({
       ...appliedFilters,
-      ...(searchByStyle && { styleId: searchByStyle }),
+      ...(newSelectedStyleId?.length && { styleId: newSelectedStyleId }),
       ...(searchByTitle && { title: searchByTitle }),
-      ...(newSelectedBrand.length && { brand: newSelectedBrand }),
+      ...(newSelectedBrand?.length && { brand: newSelectedBrand }),
       ...(searchByUpdatedBy && { lastUpdatedBy: searchByUpdatedBy }),
       ...((searchByAssignee || !isAdmin) && {
         assignee: !isAdmin ? userEmail : searchByAssignee
@@ -192,6 +195,8 @@ export default function Table({
     const newDate = date.toDateString().split(" ");
     const finalDate = `${newDate[3]}-${newDate[1]}-${newDate[2]}`;
     const newSelectedBrand = selectedBrand.map((item) => item.brand);
+    const newSelectedStyleId = selectedStyleId.map((item) => item.styleId);
+
     const status = [];
     switch (currentTab) {
       case "Unassigned":
@@ -211,7 +216,7 @@ export default function Table({
     }
     const body = {
       filters: {
-        ...(searchByStyle && { styleId: searchByStyle }),
+        ...(newSelectedStyleId.length && { styleId: newSelectedStyleId }),
         ...(searchByTitle && { title: searchByTitle }),
         ...(newSelectedBrand.length && { brand: newSelectedBrand }),
         ...(searchByUpdatedBy && { lastUpdatedBy: searchByUpdatedBy }),
@@ -397,6 +402,7 @@ export default function Table({
     searchByStyle,
     searchByTitle,
     selectedBrand,
+    selectedStyleId,
     searchByStatus,
     searchByAssignee,
     searchByUpdatedBy,
@@ -429,12 +435,12 @@ export default function Table({
     applyFilters();
   }, [customers]);
 
-  const handleStyleChanges = (e) => {
-    setDebouncedStyle(e.target.value);
-    setTimeout(() => {
-      setSearchByStyle(e.target.value);
-    }, 1000);
-  };
+  // const handleStyleChanges = (e) => {
+  //   setDebouncedStyle(e.target.value);
+  //   setTimeout(() => {
+  //     setSearchByStyle(e.target.value);
+  //   }, 1000);
+  // };
 
   const handleTitleChange = (e) => {
     setDebouncedTitle(e.target.value);
@@ -704,6 +710,10 @@ export default function Table({
     );
   };
 
+  const handleStyleId = (value) => {
+    setSelectedStyleId(value);
+  };
+
   const handleBrands = (value) => {
     setSelectedBrand(value);
   };
@@ -787,12 +797,34 @@ export default function Table({
     );
   };
 
+  const styleListForDropDown = (option) => {
+    return (
+      <div className="flex align-items-center gap-2">
+        <span>{option.styleId}</span>
+      </div>
+    );
+  };
+console.log("selectedStyleId>>",selectedStyleId)
   const styleRowFilterTemplate = () => {
     return (
-      <span className="p-input-icon-left w-[100%] min-w-[80px]">
-        <i className="pi pi-search" />
-        <InputText value={debouncedStyle} onChange={handleStyleChanges} />
-      </span>
+      // <span className="p-input-icon-left w-[100%] min-w-[80px]">
+      //   <i className="pi pi-search" />
+      //   <InputText value={debouncedStyle} onChange={handleStyleChanges} />
+      // </span>
+      <div>
+      <MultiSelect
+        value={selectedStyleId}
+        showSelectAll={false}
+        options={getSearchedStyles}
+        itemTemplate={styleListForDropDown}
+        onChange={(e)=>handleStyleId(e.value)}
+        optionLabel="styleId"
+        placeholder="Select"
+        filter
+        maxSelectedLabels={1}
+        style={{ width: "100px" }}
+      />
+    </div>
     );
   };
 
@@ -858,6 +890,7 @@ export default function Table({
       <span>
         {(selectedBrand.length ||
           searchByStatus.length ||
+          selectedStyleId.length||
           searchByAssignee ||
           searchByTitle ||
           searchByStyle ||
