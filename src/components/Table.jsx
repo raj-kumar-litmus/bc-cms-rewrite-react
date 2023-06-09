@@ -1270,7 +1270,7 @@ export default function Table({ search, fetchBulkStyleSearch }) {
               filter
               filterElement={brandRowFilterTemplate}
             />
-            {((isAdmin && currentTab !== "Unassigned") || !showTabs) && (
+            {((isAdmin && !isEditor && !isWriter&& currentTab !== "Unassigned") || !showTabs) && (
               <Column
                 field="statusForUi"
                 header={
@@ -1287,7 +1287,7 @@ export default function Table({ search, fetchBulkStyleSearch }) {
                 filterElement={statusRowFilterTemplate}
               />
             )}
-            {isEditor && !isWriter && !isAdmin && (
+            {isEditor && !isWriter && !isAdmin && currentTab !== "Assigned" && (
               <Column
                 field="statusForUi"
                 header={
