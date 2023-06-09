@@ -36,11 +36,7 @@ import Clear from "../logos/ClearFilters.svg";
 import { isAllEqual } from "../utils";
 import CheckBox from "./CheckBox";
 
-export default function Table({
-  search,
-  fetchBulkStyleSearch,
-  getGlobalSearch
-}) {
+export default function Table({ search, fetchBulkStyleSearch }) {
   const [brands, setBrands] = useState([]);
   const [assigneeList, setAssignee] = useState([]);
   const [statuses, setStatus] = useState([]);
@@ -85,6 +81,8 @@ export default function Table({
     clearAllFilters,
     selectedBrand,
     setSelectedBrand,
+    selectedStyleId,
+    setSelectedStyleId,
     searchByStatus,
     setSearchByStatus,
     searchByAssignee,
@@ -93,8 +91,6 @@ export default function Table({
     setsearchByUpdatedAt,
     debouncedTitle,
     setDebouncedTitle,
-    debouncedStyle,
-    setDebouncedStyle,
     debouncedUpdatedBy,
     setDebouncedUpdatedBy,
     searchByUpdatedBy,
@@ -121,7 +117,10 @@ export default function Table({
     workflowCount,
     setWorkflowCount,
     assigneeSort,
-    setAssigneeSort
+    setAssigneeSort,
+    debouncedStyle,
+    setDebouncedStyle,
+    showStyleFilter
   } = useContext(DashBoardContext);
 
   const toastBR = useRef(null);
@@ -144,11 +143,13 @@ export default function Table({
     const newDate = new Date(searchByUpdatedAt).toDateString().split(" ");
     const finalDate = `${newDate[3]}-${newDate[1]}-${newDate[2]}`;
     const newSelectedBrand = selectedBrand.map((item) => item.brand);
+    const newSelectedStyleId = selectedStyleId.map((item) => item.styleId);
+
     setAppliedFilters({
       ...appliedFilters,
-      ...(searchByStyle && { styleId: searchByStyle }),
+      ...(newSelectedStyleId?.length && { styleId: newSelectedStyleId }),
       ...(searchByTitle && { title: searchByTitle }),
-      ...(newSelectedBrand.length && { brand: newSelectedBrand }),
+      ...(newSelectedBrand?.length && { brand: newSelectedBrand }),
       ...(searchByUpdatedBy && { lastUpdatedBy: searchByUpdatedBy }),
       ...((searchByAssignee || !isAdmin) && {
         assignee: !isAdmin ? userEmail : searchByAssignee
@@ -387,16 +388,13 @@ export default function Table({
       }
       getCustomers();
     } else {
-      if (search.includes(",")) {
-        fetchBulkStyleSearch();
-      } else {
-        getGlobalSearch();
-      }
+      fetchBulkStyleSearch();
     }
   }, [
     searchByStyle,
     searchByTitle,
     selectedBrand,
+    selectedStyleId,
     searchByStatus,
     searchByAssignee,
     searchByUpdatedBy,
@@ -428,13 +426,6 @@ export default function Table({
     setWorkflowCount(customers?.pagination?.total);
     applyFilters();
   }, [customers]);
-
-  const handleStyleChanges = (e) => {
-    setDebouncedStyle(e.target.value);
-    setTimeout(() => {
-      setSearchByStyle(e.target.value);
-    }, 1000);
-  };
 
   const handleTitleChange = (e) => {
     setDebouncedTitle(e.target.value);
@@ -704,6 +695,10 @@ export default function Table({
     );
   };
 
+  const handleStyleId = (value) => {
+    setSelectedStyleId(value);
+  };
+
   const handleBrands = (value) => {
     setSelectedBrand(value);
   };
@@ -787,12 +782,23 @@ export default function Table({
     );
   };
 
+  const handleStyleChanges = (e) => {
+    setDebouncedStyle(e.target.value);
+    setTimeout(() => {
+      setSearchByStyle(e.target.value);
+    }, 1000);
+  };
+
   const styleRowFilterTemplate = () => {
     return (
-      <span className="p-input-icon-left w-[100%] min-w-[80px]">
-        <i className="pi pi-search" />
-        <InputText value={debouncedStyle} onChange={handleStyleChanges} />
-      </span>
+      <>
+        {showStyleFilter && (
+          <span className="p-input-icon-left w-[100%] min-w-[80px]">
+            <i className="pi pi-search" />
+            <InputText value={debouncedStyle} onChange={handleStyleChanges} />
+          </span>
+        )}
+      </>
     );
   };
 
@@ -858,6 +864,7 @@ export default function Table({
       <span>
         {(selectedBrand.length ||
           searchByStatus.length ||
+          selectedStyleId.length ||
           searchByAssignee ||
           searchByTitle ||
           searchByStyle ||
@@ -1263,7 +1270,7 @@ export default function Table({
               filter
               filterElement={brandRowFilterTemplate}
             />
-            {((isAdmin && currentTab !== "Unassigned") || !showTabs) && (
+            {((isAdmin && !isEditor && !isWriter&& currentTab !== "Unassigned") || !showTabs) && (
               <Column
                 field="statusForUi"
                 header={
@@ -1280,7 +1287,7 @@ export default function Table({
                 filterElement={statusRowFilterTemplate}
               />
             )}
-            {isEditor && !isWriter && !isAdmin && (
+            {isEditor && !isWriter && !isAdmin && currentTab !== "Assigned" && (
               <Column
                 field="statusForUi"
                 header={
@@ -1367,10 +1374,7 @@ export default function Table({
               filterElement={dateFilterTemplate}
             />
             <Column body={(e) => handleRowSelectIcons(e, "edit")} />
-            {/* {currentTab !== "Completed" && ( */}
             <Column body={(e) => handleRowSelectIcons(e, "assign")} />
-            {/* )} */}
-            {/* {currentTab === "Completed" &&  */}
             <Column body={handleMoreIcon} />
             <Column
               header={handleFilterIcon}
