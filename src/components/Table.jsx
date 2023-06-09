@@ -133,8 +133,6 @@ export default function Table({ search, fetchBulkStyleSearch }) {
     if (showFilters) {
       getBrands();
       getStatus();
-    }
-    if (showFilters && isAdmin) {
       getAssignee();
     }
   }, [showFilters]);
@@ -221,21 +219,6 @@ export default function Table({ search, fetchBulkStyleSearch }) {
         }),
         ...(searchByUpdatedAt && { lastUpdateTs: finalDate }),
         status: searchByStatus.length ? [searchByStatus] : status
-      },
-      orderBy: {
-        ...(currentSort == "Style" && { styleId: styleSort }),
-        ...(currentSort == "Title" && { title: titleSort }),
-        ...(currentSort == "Brand" && { brand: brandSort }),
-        ...(currentSort == "Updated By" && { lastUpdatedBy: updatedBySort }),
-        ...(currentSort == "Assignee" && { assignee: assigneeSort }),
-        ...(currentSort == "Status" && { status: statusSort }),
-        ...((currentSort == "Updated At" ||
-          (currentSort != "Style" &&
-            currentSort != "Title" &&
-            currentSort != "Brand" &&
-            currentSort != "Updated By" &&
-            currentSort != "Assignee" &&
-            currentSort != "Status")) && { lastUpdateTs: updatedAtSort })
       }
     };
     try {
@@ -287,10 +270,18 @@ export default function Table({ search, fetchBulkStyleSearch }) {
   }
 
   async function getBrands() {
+    const body = {
+      filters: {
+        ...(search && {
+          globalSearch: search?.replaceAll(" ", "")?.split(",")
+        })
+      }
+    };
     const response = await fetch(
       `${workFlowsUrl}/search?limit=${limit}&page=${currentPage}&unique=brand`,
       {
         method: "POST",
+        body: JSON.stringify(body),
         headers: {
           "Content-type": "application/json; charset=UTF-8"
         }
@@ -311,37 +302,29 @@ export default function Table({ search, fetchBulkStyleSearch }) {
 
   async function getStatus() {
     const status = [];
-    if (search == "") {
-      switch (currentTab) {
-        case "Unassigned":
-          status.push("WAITING_FOR_WRITER");
-          break;
-        case "Completed":
-          status.push("WRITING_COMPLETE", "EDITING_COMPLETE");
-          break;
-        case "Assigned":
-          status.push("ASSIGNED_TO_WRITER", "ASSIGNED_TO_EDITOR");
-          break;
-        case "In Progress":
-          status.push("WRITING_IN_PROGRESS", "EDITING_IN_PROGRESS");
-          break;
-        default:
-          status;
-      }
-    } else {
-      status.push(
-        "WAITING_FOR_WRITER",
-        "WRITING_COMPLETE",
-        "EDITING_COMPLETE",
-        "ASSIGNED_TO_WRITER",
-        "ASSIGNED_TO_EDITOR",
-        "WRITING_IN_PROGRESS",
-        "EDITING_IN_PROGRESS"
-      );
+    switch (currentTab) {
+      case "Unassigned":
+        status.push("WAITING_FOR_WRITER");
+        break;
+      case "Completed":
+        status.push("WRITING_COMPLETE", "EDITING_COMPLETE");
+        break;
+      case "Assigned":
+        status.push("ASSIGNED_TO_WRITER", "ASSIGNED_TO_EDITOR");
+        break;
+      case "In Progress":
+        status.push("WRITING_IN_PROGRESS", "EDITING_IN_PROGRESS");
+        break;
+      default:
+        status;
     }
-
     const body = {
-      filters: { status }
+      filters: {
+        ...(search && {
+          globalSearch:
+            search.split(",").length && search?.replaceAll(" ", "")?.split(",")
+        })
+      }
     };
     const response = await fetch(
       `${workFlowsUrl}/search?limit=10&page=${currentPage}&unique=status`,
@@ -355,7 +338,7 @@ export default function Table({ search, fetchBulkStyleSearch }) {
     );
     const data = await response.json();
     if (data?.success) {
-      setStatus(data?.data?.uniqueValues);
+      !search ? setStatus(status) : setStatus(data?.data?.uniqueValues);
     }
     if (!data?.success) {
       setShowToast(true);
@@ -363,10 +346,18 @@ export default function Table({ search, fetchBulkStyleSearch }) {
   }
 
   async function getAssignee() {
+    const body = {
+      filters: {
+        ...(search && {
+          globalSearch: search?.replaceAll(" ", "")?.split(",")
+        })
+      }
+    };
     const response = await fetch(
       `${workFlowsUrl}/search?limit=${limit}&page=${currentPage}&unique=assignee`,
       {
         method: "POST",
+        body: JSON.stringify(body),
         headers: {
           "Content-type": "application/json; charset=UTF-8"
         }
@@ -792,12 +783,10 @@ export default function Table({ search, fetchBulkStyleSearch }) {
   const styleRowFilterTemplate = () => {
     return (
       <>
-        {showStyleFilter && (
           <span className="p-input-icon-left w-[100%] min-w-[80px]">
             <i className="pi pi-search" />
-            <InputText value={debouncedStyle} onChange={handleStyleChanges} />
+            <InputText value={debouncedStyle} onChange={handleStyleChanges} disabled={!showStyleFilter} />
           </span>
-        )}
       </>
     );
   };
@@ -1268,7 +1257,11 @@ export default function Table({ search, fetchBulkStyleSearch }) {
               filter
               filterElement={brandRowFilterTemplate}
             />
-            {((isAdmin && !isEditor && !isWriter&& currentTab !== "Unassigned") || !showTabs) && (
+            {((isAdmin &&
+              !isEditor &&
+              !isWriter &&
+              currentTab !== "Unassigned") ||
+              !showTabs) && (
               <Column
                 field="statusForUi"
                 header={

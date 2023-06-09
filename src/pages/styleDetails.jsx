@@ -131,7 +131,6 @@ export default function StyleDetails({ quickFix = false, styleId }) {
 
   const fetchProductInfo = async () => {
     try {
-      debugger;
       const response =
         (await fetch(
           `${serverHostName}/api/v1/dataNormalization/productInfo/${STYLE_ID}`
