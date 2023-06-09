@@ -79,7 +79,7 @@ function DashBoardProvider({ children }) {
     setDebouncedStyle("");
     setDebouncedUpdatedBy("");
     setAppliedFilters({});
-    setCurrentSort("")
+    setCurrentSort("");
   };
 
   return (
@@ -160,9 +160,9 @@ function DashBoardProvider({ children }) {
         assigneeSort,
         setAssigneeSort,
         selectedStyleId,
-       setSelectedStyleId,
-       showStyleFilter, 
-       setShowStyleFilter
+        setSelectedStyleId,
+        showStyleFilter,
+        setShowStyleFilter
       }}
     >
       {children}
