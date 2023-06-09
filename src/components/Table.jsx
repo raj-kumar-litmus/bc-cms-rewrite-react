@@ -221,6 +221,21 @@ export default function Table({ fetchBulkStyleSearch }) {
         }),
         ...(searchByUpdatedAt && { lastUpdateTs: finalDate }),
         status: searchByStatus.length ? [searchByStatus] : status
+      },
+      orderBy: {
+        ...(currentSort == "Style" && { styleId: styleSort }),
+        ...(currentSort == "Title" && { title: titleSort }),
+        ...(currentSort == "Brand" && { brand: brandSort }),
+        ...(currentSort == "Updated By" && { lastUpdatedBy: updatedBySort }),
+        ...(currentSort == "Assignee" && { assignee: assigneeSort }),
+        ...(currentSort == "Status" && { status: statusSort }),
+        ...((currentSort == "Updated At" ||
+          (currentSort != "Style" &&
+            currentSort != "Title" &&
+            currentSort != "Brand" &&
+            currentSort != "Updated By" &&
+            currentSort != "Assignee" &&
+            currentSort != "Status")) && { lastUpdateTs: updatedAtSort })
       }
     };
     try {
