@@ -87,7 +87,7 @@ function NormalizationDashboard() {
         ...(search && {
           globalSearch: search.includes(",")
             ? search?.replaceAll(" ", "")?.split(",")
-            : search.trim()
+            : search?.trim()
         }),
         ...(searchByStyle && { styleId: searchByStyle }),
         ...(searchByTitle && { title: searchByTitle }),

@@ -54,7 +54,7 @@ function GlobalSearch({
             <img className="h-[21px] w-[23px]" src={Warning} alt="close SVG" />
           </div>
           <div className="text-sm font-[14px] text-[#4D4D4D]">
-             please enter a maximum of 500 Style IDs
+             Please enter a maximum of 500 Style IDs
           </div>
           <div className="flex items-center ml-auto space-x-2">
             <Button onClick={()=> setSearchCount(false)}>
