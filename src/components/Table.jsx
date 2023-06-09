@@ -276,8 +276,8 @@ export default function Table({ search, fetchBulkStyleSearch }) {
       filters: {
         ...(search && {
           globalSearch: search?.replaceAll(" ", "")?.split(",")
-        }),
-      },
+        })
+      }
     };
     const response = await fetch(
       `${workFlowsUrl}/search?limit=${limit}&page=${currentPage}&unique=brand`,
@@ -296,38 +296,37 @@ export default function Table({ search, fetchBulkStyleSearch }) {
           .filter(Boolean)
           .map((item) => ({ brand: item }))
       );
-      setLoader(false);
     }
     if (!data?.success) {
       setShowToast(true);
-      setLoader(false);
     }
   }
 
   async function getStatus() {
     const status = [];
-      switch (currentTab) {
-        case "Unassigned":
-          status.push("WAITING_FOR_WRITER");
-          break;
-        case "Completed":
-          status.push("WRITING_COMPLETE", "EDITING_COMPLETE");
-          break;
-        case "Assigned":
-          status.push("ASSIGNED_TO_WRITER", "ASSIGNED_TO_EDITOR");
-          break;
-        case "In Progress":
-          status.push("WRITING_IN_PROGRESS", "EDITING_IN_PROGRESS");
-          break;
-        default:
-          status;
-      }
+    switch (currentTab) {
+      case "Unassigned":
+        status.push("WAITING_FOR_WRITER");
+        break;
+      case "Completed":
+        status.push("WRITING_COMPLETE", "EDITING_COMPLETE");
+        break;
+      case "Assigned":
+        status.push("ASSIGNED_TO_WRITER", "ASSIGNED_TO_EDITOR");
+        break;
+      case "In Progress":
+        status.push("WRITING_IN_PROGRESS", "EDITING_IN_PROGRESS");
+        break;
+      default:
+        status;
+    }
     const body = {
       filters: {
         ...(search && {
-          globalSearch: search.split(",").length && search?.replaceAll(" ", "")?.split(",") 
-        }),
-      },
+          globalSearch:
+            search.split(",").length && search?.replaceAll(" ", "")?.split(",")
+        })
+      }
     };
     const response = await fetch(
       `${workFlowsUrl}/search?limit=10&page=${currentPage}&unique=status`,
@@ -341,7 +340,7 @@ export default function Table({ search, fetchBulkStyleSearch }) {
     );
     const data = await response.json();
     if (data?.success) {
-      search == "" ? setStatus(status) :  setStatus(data?.data?.uniqueValues);
+      search == "" ? setStatus(status) : setStatus(data?.data?.uniqueValues);
     }
     if (!data?.success) {
       setShowToast(true);
@@ -353,8 +352,8 @@ export default function Table({ search, fetchBulkStyleSearch }) {
       filters: {
         ...(search && {
           globalSearch: search?.replaceAll(" ", "")?.split(",")
-        }),
-      },
+        })
+      }
     };
     const response = await fetch(
       `${workFlowsUrl}/search?limit=${limit}&page=${currentPage}&unique=assignee`,
