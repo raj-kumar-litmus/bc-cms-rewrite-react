@@ -186,6 +186,12 @@ export default function Table({ search, fetchBulkStyleSearch }) {
     }
   }, [showToast]);
 
+  const searchString = (search) => {
+    return search.includes(",")
+      ? search?.replaceAll(" ", "")?.split(",")
+      : search?.trim();
+  };
+
   async function getCustomers() {
     var date = new Date(searchByUpdatedAt);
     const newDate = date.toDateString().split(" ");
@@ -273,9 +279,7 @@ export default function Table({ search, fetchBulkStyleSearch }) {
     const body = {
       filters: {
         ...(search && {
-          globalSearch: search.includes(",")
-            ? search?.replaceAll(" ", "")?.split(",")
-            : search?.trim()
+          globalSearch: searchString
         })
       }
     };
@@ -323,9 +327,7 @@ export default function Table({ search, fetchBulkStyleSearch }) {
     const body = {
       filters: {
         ...(search && {
-          globalSearch: search.includes(",")
-            ? search?.replaceAll(" ", "")?.split(",")
-            : search?.trim()
+          globalSearch: searchString
         })
       }
     };
@@ -352,9 +354,7 @@ export default function Table({ search, fetchBulkStyleSearch }) {
     const body = {
       filters: {
         ...(search && {
-          globalSearch: search.includes(",")
-            ? search?.replaceAll(" ", "")?.split(",")
-            : search?.trim()
+          globalSearch: searchString
         })
       }
     };
