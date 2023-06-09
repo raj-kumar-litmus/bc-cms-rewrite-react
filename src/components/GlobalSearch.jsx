@@ -49,12 +49,12 @@ function GlobalSearch({
         </Button>
       </div>
       {(searchCount && searchValue)  && (
-        <div className="flex items-center w-full p-4 bg-[#FC555619] text-grey-20 rounded shadow mt-2 border border-[#F95455] h-[75px]">
+        <div className="flex items-center w-full px-4 py-4 bg-[#FC555619] text-grey-20 rounded shadow mt-2 border border-[#F95455]">
           <div className="mr-2">
             <img className="h-[21px] w-[23px]" src={Warning} alt="close SVG" />
           </div>
           <div className="text-sm font-[14px] text-[#4D4D4D]">
-            You have entered more than 500 styles. Please remove 501 styles
+             Please enter 500 styles.
           </div>
           <div className="flex items-center ml-auto space-x-2">
             <Button onClick={()=> setSearchCount(false)}>
