@@ -36,12 +36,7 @@ import Clear from "../logos/ClearFilters.svg";
 import { isAllEqual } from "../utils";
 import CheckBox from "./CheckBox";
 
-export default function Table({
-  search,
-  fetchBulkStyleSearch,
-  getGlobalSearch,
-  getSearchedStyles
-}) {
+export default function Table({ search, fetchBulkStyleSearch }) {
   const [brands, setBrands] = useState([]);
   const [assigneeList, setAssignee] = useState([]);
   const [statuses, setStatus] = useState([]);
@@ -122,7 +117,10 @@ export default function Table({
     workflowCount,
     setWorkflowCount,
     assigneeSort,
-    setAssigneeSort
+    setAssigneeSort,
+    debouncedStyle,
+    setDebouncedStyle,
+    showStyleFilter
   } = useContext(DashBoardContext);
 
   const toastBR = useRef(null);
@@ -195,8 +193,6 @@ export default function Table({
     const newDate = date.toDateString().split(" ");
     const finalDate = `${newDate[3]}-${newDate[1]}-${newDate[2]}`;
     const newSelectedBrand = selectedBrand.map((item) => item.brand);
-    const newSelectedStyleId = selectedStyleId.map((item) => item.styleId);
-
     const status = [];
     switch (currentTab) {
       case "Unassigned":
@@ -216,7 +212,7 @@ export default function Table({
     }
     const body = {
       filters: {
-        ...(newSelectedStyleId.length && { styleId: newSelectedStyleId }),
+        ...(searchByStyle && { styleId: searchByStyle }),
         ...(searchByTitle && { title: searchByTitle }),
         ...(newSelectedBrand.length && { brand: newSelectedBrand }),
         ...(searchByUpdatedBy && { lastUpdatedBy: searchByUpdatedBy }),
@@ -392,11 +388,7 @@ export default function Table({
       }
       getCustomers();
     } else {
-      if (search.includes(",")) {
-        fetchBulkStyleSearch();
-      } else {
-        getGlobalSearch();
-      }
+      fetchBulkStyleSearch();
     }
   }, [
     searchByStyle,
@@ -434,13 +426,6 @@ export default function Table({
     setWorkflowCount(customers?.pagination?.total);
     applyFilters();
   }, [customers]);
-
-  // const handleStyleChanges = (e) => {
-  //   setDebouncedStyle(e.target.value);
-  //   setTimeout(() => {
-  //     setSearchByStyle(e.target.value);
-  //   }, 1000);
-  // };
 
   const handleTitleChange = (e) => {
     setDebouncedTitle(e.target.value);
@@ -797,29 +782,23 @@ export default function Table({
     );
   };
 
-  const styleListForDropDown = (option) => {
-    return (
-      <div className="flex align-items-center gap-2">
-        <span>{option.styleId}</span>
-      </div>
-    );
+  const handleStyleChanges = (e) => {
+    setDebouncedStyle(e.target.value);
+    setTimeout(() => {
+      setSearchByStyle(e.target.value);
+    }, 1000);
   };
+
   const styleRowFilterTemplate = () => {
     return (
-      <div>
-      <MultiSelect
-        value={selectedStyleId}
-        showSelectAll={false}
-        options={getSearchedStyles}
-        itemTemplate={styleListForDropDown}
-        onChange={(e)=>handleStyleId(e.value)}
-        optionLabel="styleId"
-        placeholder="Select"
-        filter
-        maxSelectedLabels={1}
-        style={{ width: "100px" }}
-      />
-    </div>
+      <>
+        {showStyleFilter && (
+          <span className="p-input-icon-left w-[100%] min-w-[80px]">
+            <i className="pi pi-search" />
+            <InputText value={debouncedStyle} onChange={handleStyleChanges} />
+          </span>
+        )}
+      </>
     );
   };
 
@@ -885,7 +864,7 @@ export default function Table({
       <span>
         {(selectedBrand.length ||
           searchByStatus.length ||
-          selectedStyleId.length||
+          selectedStyleId.length ||
           searchByAssignee ||
           searchByTitle ||
           searchByStyle ||
@@ -1395,10 +1374,7 @@ export default function Table({
               filterElement={dateFilterTemplate}
             />
             <Column body={(e) => handleRowSelectIcons(e, "edit")} />
-            {/* {currentTab !== "Completed" && ( */}
             <Column body={(e) => handleRowSelectIcons(e, "assign")} />
-            {/* )} */}
-            {/* {currentTab === "Completed" &&  */}
             <Column body={handleMoreIcon} />
             <Column
               header={handleFilterIcon}

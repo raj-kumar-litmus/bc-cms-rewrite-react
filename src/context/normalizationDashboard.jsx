@@ -45,6 +45,7 @@ function DashBoardProvider({ children }) {
   const [updatedBySort, setUpdatedBySort] = useState("desc");
   const [updatedAtSort, setUpdatedAtSort] = useState("desc");
   const [assigneeSort, setAssigneeSort] = useState("desc");
+  const [showStyleFilter, setShowStyleFilter] = useState(true);
   const {
     VITE_ADMIN_GROUP_NAME: ADMIN_GROUP_NAME,
     VITE_WRITER_GROUP_NAME: WRITER_GROUP_NAME,
@@ -78,6 +79,7 @@ function DashBoardProvider({ children }) {
     setDebouncedStyle("");
     setDebouncedUpdatedBy("");
     setAppliedFilters({});
+    setCurrentSort("")
   };
 
   return (
@@ -159,6 +161,8 @@ function DashBoardProvider({ children }) {
         setAssigneeSort,
         selectedStyleId,
        setSelectedStyleId,
+       showStyleFilter, 
+       setShowStyleFilter
       }}
     >
       {children}

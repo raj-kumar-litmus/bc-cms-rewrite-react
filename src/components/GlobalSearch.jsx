@@ -1,7 +1,7 @@
 import React from "react";
 import Button from "./Button";
 import Textarea from "../components/InputTextarea";
-import Warning from '../logos/Warning.svg';
+import Warning from "../logos/Warning.svg";
 
 function GlobalSearch({
   searchString,
@@ -15,9 +15,9 @@ function GlobalSearch({
   searchCount,
   setSearchCount
 }) {
-  const handleErrorClose=()=>{
-    setSearchCount(false)
-  }
+  const handleErrorClose = () => {
+    setSearchCount(false);
+  };
   return (
     <>
       <div className="flex relative">
@@ -51,29 +51,21 @@ function GlobalSearch({
           {searchString}{" "}
         </Button>
       </div>
-      {searchCount &&<div
-        className="flex items-center w-full p-4 bg-[#FC555619] text-grey-20 rounded shadow mt-2 border border-[#F95455] h-[75px]"
-      >
-        <div className="mr-2">
-        <img
-              className="h-[21px] w-[23px]"
-              src={Warning}
-              alt="close SVG"
-            />
+      {searchCount && (
+        <div className="flex items-center w-full p-4 bg-[#FC555619] text-grey-20 rounded shadow mt-2 border border-[#F95455] h-[75px]">
+          <div className="mr-2">
+            <img className="h-[21px] w-[23px]" src={Warning} alt="close SVG" />
+          </div>
+          <div className="text-sm font-[14px] text-[#4D4D4D]">
+            You have entered more than 500 styles. Please remove 501 styles
+          </div>
+          <div className="flex items-center ml-auto space-x-2">
+            <Button onClick={handleErrorClose}>
+              <img className="h-[12px] w-[12px]" src={img} alt="close SVG" />
+            </Button>
+          </div>
         </div>
-        <div className="text-sm font-[14px] text-[#4D4D4D]">You have entered more than 500 styles. Please remove 501 styles</div>
-        <div className="flex items-center ml-auto space-x-2">
-        <Button
-            onClick={handleErrorClose}
-          >
-            <img
-              className="h-[12px] w-[12px]"
-              src={img}
-              alt="close SVG"
-            />
-          </Button>
-        </div>
-      </div>}
+      )}
     </>
   );
 }
