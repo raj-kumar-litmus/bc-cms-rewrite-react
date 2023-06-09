@@ -165,6 +165,8 @@ function NormalizationDashboard() {
   const handleClear = () => {
     setShowTabs(true);
     setSearch("");
+    clearFilters()
+    setShowFilters(false);
   };
 
   return (

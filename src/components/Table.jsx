@@ -137,7 +137,7 @@ export default function Table({ search, fetchBulkStyleSearch }) {
     if (showFilters && isAdmin) {
       getAssignee();
     }
-  }, [showFilters]);
+  }, [showFilters, isAdmin]);
 
   const applyFilters = () => {
     const newDate = new Date(searchByUpdatedAt).toDateString().split(" ");
@@ -221,21 +221,6 @@ export default function Table({ search, fetchBulkStyleSearch }) {
         }),
         ...(searchByUpdatedAt && { lastUpdateTs: finalDate }),
         status: searchByStatus.length ? [searchByStatus] : status
-      },
-      orderBy: {
-        ...(currentSort == "Style" && { styleId: styleSort }),
-        ...(currentSort == "Title" && { title: titleSort }),
-        ...(currentSort == "Brand" && { brand: brandSort }),
-        ...(currentSort == "Updated By" && { lastUpdatedBy: updatedBySort }),
-        ...(currentSort == "Assignee" && { assignee: assigneeSort }),
-        ...(currentSort == "Status" && { status: statusSort }),
-        ...((currentSort == "Updated At" ||
-          (currentSort != "Style" &&
-            currentSort != "Title" &&
-            currentSort != "Brand" &&
-            currentSort != "Updated By" &&
-            currentSort != "Assignee" &&
-            currentSort != "Status")) && { lastUpdateTs: updatedAtSort })
       }
     };
     try {
@@ -287,10 +272,18 @@ export default function Table({ search, fetchBulkStyleSearch }) {
   }
 
   async function getBrands() {
+    const body = {
+      filters: {
+        ...(search && {
+          globalSearch: search?.replaceAll(" ", "")?.split(",")
+        }),
+      },
+    };
     const response = await fetch(
       `${workFlowsUrl}/search?limit=${limit}&page=${currentPage}&unique=brand`,
       {
         method: "POST",
+        body: JSON.stringify(body),
         headers: {
           "Content-type": "application/json; charset=UTF-8"
         }
@@ -303,15 +296,16 @@ export default function Table({ search, fetchBulkStyleSearch }) {
           .filter(Boolean)
           .map((item) => ({ brand: item }))
       );
+      setLoader(false);
     }
     if (!data?.success) {
       setShowToast(true);
+      setLoader(false);
     }
   }
 
   async function getStatus() {
     const status = [];
-    if (search == "") {
       switch (currentTab) {
         case "Unassigned":
           status.push("WAITING_FOR_WRITER");
@@ -328,20 +322,12 @@ export default function Table({ search, fetchBulkStyleSearch }) {
         default:
           status;
       }
-    } else {
-      status.push(
-        "WAITING_FOR_WRITER",
-        "WRITING_COMPLETE",
-        "EDITING_COMPLETE",
-        "ASSIGNED_TO_WRITER",
-        "ASSIGNED_TO_EDITOR",
-        "WRITING_IN_PROGRESS",
-        "EDITING_IN_PROGRESS"
-      );
-    }
-
     const body = {
-      filters: { status }
+      filters: {
+        ...(search && {
+          globalSearch: search.split(",").length && search?.replaceAll(" ", "")?.split(",") 
+        }),
+      },
     };
     const response = await fetch(
       `${workFlowsUrl}/search?limit=10&page=${currentPage}&unique=status`,
@@ -355,7 +341,7 @@ export default function Table({ search, fetchBulkStyleSearch }) {
     );
     const data = await response.json();
     if (data?.success) {
-      setStatus(data?.data?.uniqueValues);
+      search == "" ? setStatus(status) :  setStatus(data?.data?.uniqueValues);
     }
     if (!data?.success) {
       setShowToast(true);
@@ -363,10 +349,18 @@ export default function Table({ search, fetchBulkStyleSearch }) {
   }
 
   async function getAssignee() {
+    const body = {
+      filters: {
+        ...(search && {
+          globalSearch: search?.replaceAll(" ", "")?.split(",")
+        }),
+      },
+    };
     const response = await fetch(
       `${workFlowsUrl}/search?limit=${limit}&page=${currentPage}&unique=assignee`,
       {
         method: "POST",
+        body: JSON.stringify(body),
         headers: {
           "Content-type": "application/json; charset=UTF-8"
         }
@@ -1268,7 +1262,11 @@ export default function Table({ search, fetchBulkStyleSearch }) {
               filter
               filterElement={brandRowFilterTemplate}
             />
-            {((isAdmin && !isEditor && !isWriter&& currentTab !== "Unassigned") || !showTabs) && (
+            {((isAdmin &&
+              !isEditor &&
+              !isWriter &&
+              currentTab !== "Unassigned") ||
+              !showTabs) && (
               <Column
                 field="statusForUi"
                 header={
