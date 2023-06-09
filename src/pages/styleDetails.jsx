@@ -134,7 +134,7 @@ export default function StyleDetails({ quickFix = false, styleId }) {
       debugger;
       const response =
         (await fetch(
-          `${VITE_SERVER_HOST_NAME}/api/v1/dataNormalization/productInfo/${STYLE_ID}`
+          `${serverHostName}/api/v1/dataNormalization/productInfo/${STYLE_ID}`
         )) || {};
       const {
         data: {
