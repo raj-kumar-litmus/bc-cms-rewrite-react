@@ -133,8 +133,6 @@ export default function Table({ search, fetchBulkStyleSearch }) {
     if (showFilters) {
       getBrands();
       getStatus();
-    }
-    if (showFilters && isAdmin) {
       getAssignee();
     }
   }, [showFilters]);
@@ -785,12 +783,10 @@ export default function Table({ search, fetchBulkStyleSearch }) {
   const styleRowFilterTemplate = () => {
     return (
       <>
-        {showStyleFilter && (
           <span className="p-input-icon-left w-[100%] min-w-[80px]">
             <i className="pi pi-search" />
-            <InputText value={debouncedStyle} onChange={handleStyleChanges} />
+            <InputText value={debouncedStyle} onChange={handleStyleChanges} disabled={!showStyleFilter} />
           </span>
-        )}
       </>
     );
   };
