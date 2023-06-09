@@ -35,6 +35,7 @@ import ArrowSortUpLine from "../logos/ArrowSortUpLine.svg";
 import Clear from "../logos/ClearFilters.svg";
 import { isAllEqual } from "../utils";
 import CheckBox from "./CheckBox";
+import { searchString } from "../utils";
 
 export default function Table({ fetchBulkStyleSearch }) {
   const [brands, setBrands] = useState([]);
