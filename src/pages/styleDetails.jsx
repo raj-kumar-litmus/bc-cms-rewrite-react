@@ -33,11 +33,16 @@ export default function StyleDetails({ quickFix = false, styleId }) {
   const [searchParams] = useSearchParams();
   const STYLE_ID = searchParams.get("styleId");
 
-  const [bulletPoints, setBulletPoints] = useState(null);
-  const [listDescription, setListDescription] = useState(null);
+  const [bulletPoints, setBulletPoints] = useState("");
+  const [listDescription, setListDescription] = useState("");
   const [detailedDescription, setDetailedDescription] = useState(null);
-  const [productTitle, setProductTitle] = useState(null);
-  const [bottomLine, setBottomLine] = useState(null);
+  const [productTitle, setProductTitle] = useState("");
+  const [bottomLine, setBottomLine] = useState("");
+  const [fetchingProductInfo, setFetchingProductInfo] = useState(false);
+  const [competitiveCylistDescription, setCompetitiveCylistDescription] =
+    useState(null);
+  const [competitiveCylistBottomLine, setCompetitiveCylistBottomLine] =
+    useState("");
 
   useEffect(() => {
     (async () => {
@@ -71,7 +76,6 @@ export default function StyleDetails({ quickFix = false, styleId }) {
     if (genus && species) {
       (async () => {
         try {
-          setIsFetchingHattributes(true);
           const response =
             (await fetch(
               `${serverHostName}/api/v1/dataNormalization/genus/${genus}/species/${species}/hAttributes/${STYLE_ID}`
@@ -131,6 +135,7 @@ export default function StyleDetails({ quickFix = false, styleId }) {
 
   const fetchProductInfo = async () => {
     try {
+      setFetchingProductInfo(true);
       const response =
         (await fetch(
           `${serverHostName}/api/v1/dataNormalization/productInfo/${STYLE_ID}`
@@ -155,6 +160,12 @@ export default function StyleDetails({ quickFix = false, styleId }) {
       setDetailedDescription(copyApiResponse?.detailDescription);
       setProductTitle(copyApiResponse?.title);
       setBottomLine(copyApiResponse?.bottomLine);
+      setCompetitiveCylistDescription(
+        copyApiResponse?.competitiveCyclistDescription
+      );
+      setCompetitiveCylistBottomLine(
+        copyApiResponse?.competitiveCyclistBottomLine
+      );
 
       setDefaultGenus([
         {
@@ -172,19 +183,22 @@ export default function StyleDetails({ quickFix = false, styleId }) {
         genus: attributeApiResponse?.genusId,
         species: attributeApiResponse?.speciesId
       });
+      setFetchingProductInfo(false);
     } catch (err) {
+      setFetchingProductInfo(false);
       console.error(err);
     }
   };
 
   useEffect(() => {
+    setIsFetchingHattributes(true);
     fetchProductInfo();
   }, []);
 
   return (
     <>
       <NavBar />
-      <div className="mx-[50px] md:mx-[100px] lg:mx-[150px] mb-[200px] mt-[40px]">
+      <div className="mx-[50px] md:mx-[100px] lg:mx-[150px] mb-[200px] mt-10">
         <p
           aria-label="navigate-back"
           className="flex cursor-pointer"
@@ -193,7 +207,7 @@ export default function StyleDetails({ quickFix = false, styleId }) {
           <img src={BackLogo} alt="Go-Back Icon" />
           <span className="ml-[7px]"> Back</span>
         </p>
-        <div className="border-solid border border-gray-300 rounded-xl pt-[50px] pb-[50px] px-[50px] mt-[20px]">
+        <div className="border-solid border border-gray-300 rounded-xl pt-12 pb-12 px-12 mt-5">
           <div className="flex justify-between">
             <div className="flex-column">
               <p className="text-2xl">{STYLE_ID}</p>
@@ -209,7 +223,7 @@ export default function StyleDetails({ quickFix = false, styleId }) {
           </div>
           <div className="bg-gray-100 border border-gray-200 mt-[30px] rounded-xl  px-[28px] py-[30px]">
             {productInfo && (
-              <div className="grid grid-cols-4 gap-4 mt-[20px]">
+              <div className="grid grid-cols-4 gap-4 mt-5">
                 <div>
                   <p className="text-md font-light text-gray-600">Site</p>
                   <p>{}</p>
@@ -258,7 +272,7 @@ export default function StyleDetails({ quickFix = false, styleId }) {
             )}
             {!productInfo && <Loader className={"!h-full"} />}
           </div>
-          <div className="mt-[40px] flex-column">
+          <div className="mt-10 flex-column">
             <p className="text-xl">Category</p>
             <div className="flex mt-[5px]">
               <div className="mr-[20px] flex-1">
@@ -299,15 +313,16 @@ export default function StyleDetails({ quickFix = false, styleId }) {
               </div>
             </div>
           </div>
-          <div className="mt-[40px] flex-column">
+          <div className="mt-10 flex-column">
             <p className="text-xl">Harmonizing Attributes</p>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-[20px]">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-5">
               {!isFetchingHattributes &&
                 hattributes &&
                 Object.keys(hattributes).map((e) => {
                   return hattributes[e].filter((e) => e?.selected).length >
                     0 ? (
                     <MultiSelectDropDown
+                      key={e.text}
                       labelClassName={"mb-[8px] text-[14px] text-[#4D4D4D]"}
                       className={"text-[14px] text-[#4D4D4D] font-light"}
                       placeholder={`Select ${e}`}
@@ -328,6 +343,7 @@ export default function StyleDetails({ quickFix = false, styleId }) {
                     />
                   ) : (
                     <MultiSelectDropDown
+                      key={e.text}
                       labelClassName={"mb-[8px] text-[14px] text-[#4D4D4D]"}
                       className={"text-[14px] text-[#4D4D4D] font-light"}
                       placeholder={`Select ${e}`}
@@ -345,141 +361,146 @@ export default function StyleDetails({ quickFix = false, styleId }) {
               {isFetchingHattributes && <Loader className={"!h-full"} />}
             </div>
           </div>
-          <div className="mt-[40px] flex-column">
+          <div className="mt-10 flex-column">
             <p className="text-xl">Tech Specs</p>
-            <div className="grid grid-cols-3 gap-3 mt-[20px]">
+            <div className="grid grid-cols-3 gap-3 mt-5">
               {!isFetchingHattributes &&
                 techSpecs &&
-                techSpecs.map(({ label, value }) => (
+                techSpecs.map(({ label, value }, i) => (
                   <InputBox
-                    className={"w-[100%] mt-[20px] rounded-sm"}
+                    className={"w-[100%] mt-5 rounded-sm"}
                     label={label}
                     onChangeHandler={(e) => {
-                      console.log(e);
-                      console.log(e.currentTarget.id);
-                      const techSpecToChange = techSpecs.find(
-                        (l) => l.label === e.currentTarget.id
+                      setTechSpecs(
+                        techSpecs.map((spec, key) => {
+                          if (key === i) spec.value = e.target.value;
+                          return spec;
+                        })
                       );
-                      techSpecToChange.value = e.target.value;
-                      setTechSpecs(null);
-                      setTechSpecs(techSpecs);
                     }}
-                    val={value}
+                    val={value || ""}
                   />
                 ))}
               {isFetchingHattributes && <Loader className={"!h-full"} />}
             </div>
           </div>
-          <div className="mt-[40px] flex-column">
+          <div className="mt-10 flex-column">
             <p className="text-xl">Product Info</p>
-            <div className="flex">
-              <div className="mr-[20px] flex-1">
-                <InputBox
-                  className={"w-full mt-[20px] rounded-sm"}
-                  label="Product title"
-                  onChangeHandler={(e) => setProductTitle(e.target.value)}
-                  val={productTitle}
-                />
-              </div>
-              <div className="flex-1">
-                <InputBox
-                  className={"w-full mt-[20px] rounded-sm"}
-                  label="Top Line"
-                  onChangeHandler={(e) => setBottomLine(e.target.value)}
-                  val={bottomLine}
-                />
-              </div>
-            </div>
-            <div className={"mt-[40px] mb-[20px]"}>
-              <RichTextEditor
-                label="Detailed description"
-                onChange={(e) => setDetailedDescription(e)}
-                labelClassName={"text-gray-600 font-light"}
-                val={detailedDescription}
-                className={"h-[250px] pb-[50px] mt-[10px]"}
-              />
-            </div>
-            <div className="mt-[50px]">
-              <Textarea
-                label="List Description"
-                className={"w-full"}
-                rows={5}
-                onChange={(e) => setListDescription(e.target.value)}
-                val={listDescription}
-              />
-            </div>
-            <div className="mt-[50px]">
-              <Textarea
-                label="Bullet Points"
-                className={"w-full"}
-                rows={5}
-                onChange={(e) => setBulletPoints(e.target.value)}
-                val={bulletPoints}
-              />
-            </div>
-            <div className="flex">
-              <div className="mr-[20px] flex-1 mt-[30px]">
-                <DropDown
-                  id="single-option-dropdown"
-                  isClearable={true}
-                  placeholder="Sizing Chart"
-                  defaultValue={null}
-                  options={null}
-                />
-              </div>
-              <div className="flex-1 mt-[25px]">
-                <InputBox
-                  className={"w-full mt-[30px] rounded-sm h-[37px]"}
-                  labelClassName={
-                    "!top-[34px] z-[1] bg-white !text-gray-900 !text-[10px]"
-                  }
-                  label="Competitive Cyclist Top Line"
-                  val={
-                    productInfo?.copyApiResponse?.competitiveCyclistBottomLine
-                  }
-                />
-              </div>
-            </div>
-            <div className={"mt-[40px] mb-[20px]"}>
-              <RichTextEditor
-                label="Competitive Cyclist description"
-                labelClassName={"text-gray-600 font-light"}
-                val={
-                  productInfo?.copyApiResponse?.competitiveCyclistDescription
-                }
-                className={"h-[250px] pb-[50px] mt-[10px]"}
-              />
-            </div>
+            {!fetchingProductInfo && (
+              <>
+                <div className="flex">
+                  <div className="mr-[20px] flex-1">
+                    <InputBox
+                      className={"w-full mt-5 rounded-sm"}
+                      label="Product title"
+                      onChangeHandler={(e) => setProductTitle(e.target.value)}
+                      val={productTitle}
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <InputBox
+                      className={"w-full mt-5 rounded-sm"}
+                      label="Top Line"
+                      onChangeHandler={(e) => setBottomLine(e.target.value)}
+                      val={bottomLine}
+                    />
+                  </div>
+                </div>
+                <div className={"mt-10 mb-5"}>
+                  <RichTextEditor
+                    label="Detailed description"
+                    onChange={(e) => setDetailedDescription(e)}
+                    labelClassName={"text-gray-600 font-light"}
+                    val={detailedDescription}
+                    className={"h-[250px] pb-12 mt-[10px]"}
+                  />
+                </div>
+                <div className="mt-12">
+                  <Textarea
+                    label="List Description"
+                    containerClassName={"w-full"}
+                    className={"w-full"}
+                    rows={5}
+                    onChange={(e) => setListDescription(e.target.value)}
+                    val={listDescription}
+                  />
+                </div>
+                <div className="mt-12">
+                  <Textarea
+                    label="Bullet Points"
+                    containerClassName={"w-full"}
+                    className={"w-full"}
+                    rows={5}
+                    onChange={(e) => setBulletPoints(e.target.value)}
+                    val={bulletPoints}
+                  />
+                </div>
+                <div className="flex">
+                  <div className="mr-[20px] flex-1 mt-[30px]">
+                    <DropDown
+                      id="single-option-dropdown"
+                      isClearable={true}
+                      placeholder="Sizing Chart"
+                      defaultValue={null}
+                      options={null}
+                    />
+                  </div>
+                  <div className="flex-1 mt-[25px]">
+                    <InputBox
+                      className={"w-full mt-[30px] rounded-sm h-[37px]"}
+                      labelClassName={
+                        "!top-[34px] z-[1] bg-white !text-gray-900 !text-[10px]"
+                      }
+                      label="Competitive Cyclist Top Line"
+                      onChangeHandler={(e) =>
+                        setCompetitiveCylistBottomLine(e.target.value)
+                      }
+                      val={competitiveCylistBottomLine}
+                    />
+                  </div>
+                </div>
+                <div className={"mt-10 mb-5"}>
+                  <RichTextEditor
+                    label="Competitive Cyclist description"
+                    onChange={(e) => setCompetitiveCylistDescription(e)}
+                    labelClassName={"text-gray-600 font-light"}
+                    val={competitiveCylistDescription}
+                    className={"h-[250px] pb-12 mt-[10px]"}
+                  />
+                </div>
 
-            <div className="flex justify-center mt-[50px]">
-              {quick && (
-                <Button
-                  className={
-                    "bg-gray-900 border text-white rounded border-gray-800 w-[150px] h-[50px]"
-                  }
-                >
-                  Publish
-                </Button>
-              )}
-              {!quick && (
-                <>
-                  <Button
-                    className={
-                      "border rounded border-gray-800 w-[150px] h-[50px] mr-[20px]"
-                    }
-                  >
-                    Save for later
-                  </Button>
-                  <Button
-                    className={
-                      "bg-gray-900 border text-white rounded border-gray-800 w-[150px] h-[50px]"
-                    }
-                  >
-                    Submit
-                  </Button>
-                </>
-              )}
-            </div>
+                <div className="flex justify-center mt-12">
+                  {quick && (
+                    <Button
+                      className={
+                        "bg-gray-900 border text-white rounded border-gray-800 w-[150px] h-12"
+                      }
+                    >
+                      Publish
+                    </Button>
+                  )}
+                  {!quick && (
+                    <>
+                      <Button
+                        className={
+                          "border rounded border-gray-800 w-[150px] h-12 mr-[20px]"
+                        }
+                      >
+                        Save for later
+                      </Button>
+                      <Button
+                        className={
+                          "bg-gray-900 border text-white rounded border-gray-800 w-[150px] h-12"
+                        }
+                      >
+                        Submit
+                      </Button>
+                    </>
+                  )}
+                </div>
+              </>
+            )}
+            {fetchingProductInfo && <Loader className={"!h-full"} />}
           </div>
         </div>
       </div>
