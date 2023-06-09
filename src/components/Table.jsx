@@ -338,7 +338,7 @@ export default function Table({ search, fetchBulkStyleSearch }) {
     );
     const data = await response.json();
     if (data?.success) {
-      search == "" ? setStatus(status) : setStatus(data?.data?.uniqueValues);
+      !search ? setStatus(status) : setStatus(data?.data?.uniqueValues);
     }
     if (!data?.success) {
       setShowToast(true);
