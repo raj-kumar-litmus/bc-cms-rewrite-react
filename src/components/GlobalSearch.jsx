@@ -15,9 +15,6 @@ function GlobalSearch({
   searchCount,
   setSearchCount
 }) {
-  const handleErrorClose = () => {
-    setSearchCount(false);
-  };
   return (
     <>
       <div className="flex relative">
@@ -51,7 +48,7 @@ function GlobalSearch({
           {searchString}{" "}
         </Button>
       </div>
-      {searchCount && (
+      {(searchCount && searchValue)  && (
         <div className="flex items-center w-full p-4 bg-[#FC555619] text-grey-20 rounded shadow mt-2 border border-[#F95455] h-[75px]">
           <div className="mr-2">
             <img className="h-[21px] w-[23px]" src={Warning} alt="close SVG" />
@@ -60,7 +57,7 @@ function GlobalSearch({
             You have entered more than 500 styles. Please remove 501 styles
           </div>
           <div className="flex items-center ml-auto space-x-2">
-            <Button onClick={handleErrorClose}>
+            <Button onClick={()=> setSearchCount(false)}>
               <img className="h-[12px] w-[12px]" src={img} alt="close SVG" />
             </Button>
           </div>
