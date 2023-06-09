@@ -34,6 +34,7 @@ function DashBoardProvider({ children }) {
   const [debouncedUpdatedBy, setDebouncedUpdatedBy] = useState("");
   const [showTabs, setShowTabs] = useState(true);
   const [selectAll, setSelectAll] = useState(false);
+  const [search, setSearch] = useState("");
   const [reselectSelectedProducts, setReselectSelectedProducts] =
     useState(false);
   const [workflowCount, setWorkflowCount] = useState(0);
@@ -162,7 +163,9 @@ function DashBoardProvider({ children }) {
         selectedStyleId,
         setSelectedStyleId,
         showStyleFilter,
-        setShowStyleFilter
+        setShowStyleFilter,
+        search,
+        setSearch
       }}
     >
       {children}

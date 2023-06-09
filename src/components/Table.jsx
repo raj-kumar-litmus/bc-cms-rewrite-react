@@ -35,8 +35,9 @@ import ArrowSortUpLine from "../logos/ArrowSortUpLine.svg";
 import Clear from "../logos/ClearFilters.svg";
 import { isAllEqual } from "../utils";
 import CheckBox from "./CheckBox";
+import { searchString } from "../utils";
 
-export default function Table({ search, fetchBulkStyleSearch }) {
+export default function Table({ fetchBulkStyleSearch }) {
   const [brands, setBrands] = useState([]);
   const [assigneeList, setAssignee] = useState([]);
   const [statuses, setStatus] = useState([]);
@@ -120,7 +121,8 @@ export default function Table({ search, fetchBulkStyleSearch }) {
     setAssigneeSort,
     debouncedStyle,
     setDebouncedStyle,
-    showStyleFilter
+    showStyleFilter,
+    search
   } = useContext(DashBoardContext);
 
   const toastBR = useRef(null);
@@ -273,7 +275,7 @@ export default function Table({ search, fetchBulkStyleSearch }) {
     const body = {
       filters: {
         ...(search && {
-          globalSearch: search?.replaceAll(" ", "")?.split(",")
+          globalSearch: searchString(search)
         })
       }
     };
@@ -321,8 +323,7 @@ export default function Table({ search, fetchBulkStyleSearch }) {
     const body = {
       filters: {
         ...(search && {
-          globalSearch:
-            search.split(",").length && search?.replaceAll(" ", "")?.split(",")
+          globalSearch: searchString(search)
         })
       }
     };
@@ -349,7 +350,7 @@ export default function Table({ search, fetchBulkStyleSearch }) {
     const body = {
       filters: {
         ...(search && {
-          globalSearch: search?.replaceAll(" ", "")?.split(",")
+          globalSearch: searchString(search)
         })
       }
     };
@@ -783,10 +784,14 @@ export default function Table({ search, fetchBulkStyleSearch }) {
   const styleRowFilterTemplate = () => {
     return (
       <>
-          <span className="p-input-icon-left w-[100%] min-w-[80px]">
-            <i className="pi pi-search" />
-            <InputText value={debouncedStyle} onChange={handleStyleChanges} disabled={!showStyleFilter} />
-          </span>
+        <span className="p-input-icon-left w-[100%] min-w-[80px]">
+          <i className="pi pi-search" />
+          <InputText
+            value={debouncedStyle}
+            onChange={handleStyleChanges}
+            disabled={!showStyleFilter}
+          />
+        </span>
       </>
     );
   };
