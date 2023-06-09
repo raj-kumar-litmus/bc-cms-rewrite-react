@@ -74,7 +74,7 @@ export default function StyleDetails({ quickFix = false, styleId }) {
           setIsFetchingHattributes(true);
           const response =
             (await fetch(
-              `${serverHostName}/api/v1/dataNormalization/genus/${genus}/species/${species}/hAttributes`
+              `${serverHostName}/api/v1/dataNormalization/genus/${genus}/species/${species}/hAttributes/${STYLE_ID}`
             )) || {};
           const { data } = await response.json();
           setHattributes(data.hattributes);
