@@ -161,8 +161,8 @@ function NormalizationDashboard() {
     setShowFilters(false);
     setShowTabs(false);
     setLoader(true);
-    setShowStyleFilter(search?.replaceAll(" ", "")?.split(",").length > 1 ? false : true);
-  };
+    setShowStyleFilter(search?.split(",").length > 1 ? false : true);
+  }
 
   const handleClear = () => {
     setShowTabs(true);
