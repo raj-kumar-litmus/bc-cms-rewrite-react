@@ -30,7 +30,7 @@ root.render(
         <Route path="/" element={<SSOLogin />} />
         <Route
           path="/styleDetails"
-          element={<StyleDetails quickFix={false} styleId="CGHD23Y" />}
+          element={<StyleDetails quickFix={false} />}
         />
         <Route
           path="/menuChooser"

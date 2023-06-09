@@ -1,14 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 import { Editor } from "primereact/editor";
 
 export default function RichTextEditor({
   label,
   val,
+  onChange,
   className,
   labelClassName,
   isReadOnly = false
 }) {
-  const [text, setText] = useState(val || "");
   const COLOR_CODES = [
     "#e60000",
     "#ff9900",
@@ -122,9 +122,9 @@ export default function RichTextEditor({
       <Editor
         className={className}
         readOnly={isReadOnly}
-        value={text}
+        value={val}
         headerTemplate={header}
-        onTextChange={(e) => setText(e.htmlValue)}
+        onTextChange={(e) => onChange(e.htmlValue)}
       />
     </>
   );
