@@ -9,11 +9,11 @@ import AssignStyle from "../pages/assignStyle.jsx";
 import Table from "./Table.jsx";
 import useSessionStorage from "../hooks/useSessionStorage";
 import ClearSearch from "../logos/ClearSearch.svg";
+import { searchString } from "../utils";
 
 function NormalizationDashboard() {
   const navigate = useNavigate();
   const [accountDetails] = useSessionStorage("accountDetails");
-  const [search, setSearch] = useState("");
   const [searchCount, setSearchCount] = useState(false);
   const {
     searchByTitle,
@@ -44,7 +44,9 @@ function NormalizationDashboard() {
     updatedAtSort,
     assigneeSort,
     setCurrentPage,
-    setShowStyleFilter
+    setShowStyleFilter,
+    search,
+    setSearch
   } = useContext(DashBoardContext);
 
   useEffect(() => {
@@ -85,9 +87,7 @@ function NormalizationDashboard() {
     const body = {
       filters: {
         ...(search && {
-          globalSearch: search.includes(",")
-            ? search?.replaceAll(" ", "")?.split(",")
-            : search?.trim()
+          globalSearch: searchString(search)
         }),
         ...(searchByStyle && { styleId: searchByStyle }),
         ...(searchByTitle && { title: searchByTitle }),
@@ -162,7 +162,7 @@ function NormalizationDashboard() {
     setShowTabs(false);
     setLoader(true);
     setShowStyleFilter(search?.split(",").length > 1 ? false : true);
-  }
+  };
 
   const handleClear = () => {
     setShowTabs(true);

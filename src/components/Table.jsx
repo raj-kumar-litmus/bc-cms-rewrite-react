@@ -36,7 +36,7 @@ import Clear from "../logos/ClearFilters.svg";
 import { isAllEqual } from "../utils";
 import CheckBox from "./CheckBox";
 
-export default function Table({ search, fetchBulkStyleSearch }) {
+export default function Table({ fetchBulkStyleSearch }) {
   const [brands, setBrands] = useState([]);
   const [assigneeList, setAssignee] = useState([]);
   const [statuses, setStatus] = useState([]);
@@ -120,7 +120,8 @@ export default function Table({ search, fetchBulkStyleSearch }) {
     setAssigneeSort,
     debouncedStyle,
     setDebouncedStyle,
-    showStyleFilter
+    showStyleFilter,
+    search
   } = useContext(DashBoardContext);
 
   const toastBR = useRef(null);
@@ -185,12 +186,6 @@ export default function Table({ search, fetchBulkStyleSearch }) {
       showTopCenter();
     }
   }, [showToast]);
-
-  const searchString = (search) => {
-    return search.includes(",")
-      ? search?.replaceAll(" ", "")?.split(",")
-      : search?.trim();
-  };
 
   async function getCustomers() {
     var date = new Date(searchByUpdatedAt);
@@ -279,7 +274,7 @@ export default function Table({ search, fetchBulkStyleSearch }) {
     const body = {
       filters: {
         ...(search && {
-          globalSearch: searchString
+          globalSearch: searchString(search)
         })
       }
     };
@@ -327,7 +322,7 @@ export default function Table({ search, fetchBulkStyleSearch }) {
     const body = {
       filters: {
         ...(search && {
-          globalSearch: searchString
+          globalSearch: searchString(search)
         })
       }
     };
@@ -354,7 +349,7 @@ export default function Table({ search, fetchBulkStyleSearch }) {
     const body = {
       filters: {
         ...(search && {
-          globalSearch: searchString
+          globalSearch: searchString(search)
         })
       }
     };
