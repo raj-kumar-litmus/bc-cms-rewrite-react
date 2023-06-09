@@ -275,7 +275,7 @@ export default function Table({ search, fetchBulkStyleSearch }) {
         ...(search && {
           globalSearch: search.includes(",")
             ? search?.replaceAll(" ", "")?.split(",")
-            : search
+            : search.trim()
         })
       }
     };
@@ -325,7 +325,7 @@ export default function Table({ search, fetchBulkStyleSearch }) {
         ...(search && {
           globalSearch: search.includes(",")
             ? search?.replaceAll(" ", "")?.split(",")
-            : search
+            : search.trim()
         })
       }
     };
@@ -354,7 +354,7 @@ export default function Table({ search, fetchBulkStyleSearch }) {
         ...(search && {
           globalSearch: search.includes(",")
             ? search?.replaceAll(" ", "")?.split(",")
-            : search
+            : search.trim()
         })
       }
     };
