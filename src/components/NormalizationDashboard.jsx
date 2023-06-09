@@ -147,11 +147,9 @@ function NormalizationDashboard() {
   };
 
   const handleSearchChange = (e) => {
-    const countOfEnteredSearch = e.target.value
-      ?.replaceAll(" ", "")
-      ?.split(",");
-    setSearchCount(countOfEnteredSearch?.length > 500 ? true : false);
-    if (countOfEnteredSearch?.length <= 500) {
+    const countOfEnteredSearch = e.target.value?.split(",").length
+    setSearchCount(countOfEnteredSearch > 500 ? true : false);
+    if (countOfEnteredSearch <= 500) {
       setSearch(e.target.value);
     }
   };
