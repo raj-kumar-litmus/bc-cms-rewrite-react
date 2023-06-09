@@ -85,7 +85,9 @@ function NormalizationDashboard() {
     const body = {
       filters: {
         ...(search && {
-          globalSearch: search?.replaceAll(" ", "")?.split(",")
+          globalSearch: search.includes(",")
+            ? search?.replaceAll(" ", "")?.split(",")
+            : search
         }),
         ...(searchByStyle && { styleId: searchByStyle }),
         ...(searchByTitle && { title: searchByTitle }),
@@ -147,7 +149,7 @@ function NormalizationDashboard() {
   };
 
   const handleSearchChange = (e) => {
-    const countOfEnteredSearch = e.target.value?.split(",").length
+    const countOfEnteredSearch = e.target.value?.split(",").length;
     setSearchCount(countOfEnteredSearch > 500 ? true : false);
     if (countOfEnteredSearch <= 500) {
       setSearch(e.target.value);
@@ -165,7 +167,7 @@ function NormalizationDashboard() {
   const handleClear = () => {
     setShowTabs(true);
     setSearch("");
-    clearFilters()
+    clearFilters();
     setShowFilters(false);
   };
 

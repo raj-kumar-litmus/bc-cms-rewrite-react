@@ -273,7 +273,9 @@ export default function Table({ search, fetchBulkStyleSearch }) {
     const body = {
       filters: {
         ...(search && {
-          globalSearch: search?.replaceAll(" ", "")?.split(",")
+          globalSearch: search.includes(",")
+            ? search?.replaceAll(" ", "")?.split(",")
+            : search
         })
       }
     };
@@ -321,8 +323,9 @@ export default function Table({ search, fetchBulkStyleSearch }) {
     const body = {
       filters: {
         ...(search && {
-          globalSearch:
-            search.split(",").length && search?.replaceAll(" ", "")?.split(",")
+          globalSearch: search.includes(",")
+            ? search?.replaceAll(" ", "")?.split(",")
+            : search
         })
       }
     };
@@ -349,7 +352,9 @@ export default function Table({ search, fetchBulkStyleSearch }) {
     const body = {
       filters: {
         ...(search && {
-          globalSearch: search?.replaceAll(" ", "")?.split(",")
+          globalSearch: search.includes(",")
+            ? search?.replaceAll(" ", "")?.split(",")
+            : search
         })
       }
     };
@@ -783,10 +788,14 @@ export default function Table({ search, fetchBulkStyleSearch }) {
   const styleRowFilterTemplate = () => {
     return (
       <>
-          <span className="p-input-icon-left w-[100%] min-w-[80px]">
-            <i className="pi pi-search" />
-            <InputText value={debouncedStyle} onChange={handleStyleChanges} disabled={!showStyleFilter} />
-          </span>
+        <span className="p-input-icon-left w-[100%] min-w-[80px]">
+          <i className="pi pi-search" />
+          <InputText
+            value={debouncedStyle}
+            onChange={handleStyleChanges}
+            disabled={!showStyleFilter}
+          />
+        </span>
       </>
     );
   };
