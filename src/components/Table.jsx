@@ -137,7 +137,7 @@ export default function Table({ search, fetchBulkStyleSearch }) {
     if (showFilters && isAdmin) {
       getAssignee();
     }
-  }, [showFilters, isAdmin]);
+  }, [showFilters]);
 
   const applyFilters = () => {
     const newDate = new Date(searchByUpdatedAt).toDateString().split(" ");
