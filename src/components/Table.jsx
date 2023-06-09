@@ -935,10 +935,9 @@ export default function Table({ search, fetchBulkStyleSearch }) {
 
   const iconClickHandler = (e, type, rowData) => {
     if (type === "edit") {
-      navigate("/styleDetails", {
+      navigate(`/styleDetails?styleId=${rowData?.styleId}`, {
         state: {
-          quickFix: true,
-          styleId: rowData?.styleId
+          quickFix: true
         }
       });
     }
@@ -1131,10 +1130,9 @@ export default function Table({ search, fetchBulkStyleSearch }) {
 
   const onRowClick = ({ data }) => {
     if (userEmail === data.assignee) {
-      navigate("/styleDetails", {
+      navigate(`/styleDetails?styleId=${data?.styleId}`, {
         state: {
-          quickFix: false,
-          styleId: data?.styleId
+          quickFix: false
         }
       });
     }

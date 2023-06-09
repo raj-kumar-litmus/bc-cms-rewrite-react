@@ -10,10 +10,9 @@ function MoreIcon({ rowData }) {
     useContext(DashBoardContext);
   const navigate = useNavigate();
   const handleQuickFix = () => {
-    navigate("/styleDetails", {
+    navigate(`/styleDetails?styleId=${rowData?.styleId}`, {
       state: {
-        quickFix: true,
-        styleId: rowData?.styleId
+        quickFix: true
       }
     });
   };

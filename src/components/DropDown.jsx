@@ -2,22 +2,6 @@ import React, { useState } from "react";
 import { MultiSelect } from "react-multi-select-component";
 import DownIcon from "../logos/chevron-down-1.svg";
 
-//todo. to be removed later.
-const defaultOptions = [
-  { label: "Grapes", value: "grapes" },
-  { label: "Mango", value: "mango" },
-  { value: "purple", label: "Purple" },
-  { value: "orange", label: "Orange" },
-  { value: "yellow", label: "Yellow" },
-  { value: "blue", label: "Blue" },
-  { value: "green", label: "Green" },
-  { value: "pink", label: "Pink" },
-  { value: "black", label: "Black" },
-  { value: "white", label: "White" },
-  { value: "gray", label: "Gray" },
-  { label: "Strawberry", value: "strawberry", disabled: true }
-];
-
 const CloseButton = (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -56,7 +40,7 @@ const MultiSelectDropDown = ({
     <div>
       <p className={labelClassName}>{label}</p>
       <MultiSelect
-        options={options || defaultOptions}
+        options={options}
         labelledBy="dropdown"
         className={`custom-drop-down ${className}`}
         value={selected}

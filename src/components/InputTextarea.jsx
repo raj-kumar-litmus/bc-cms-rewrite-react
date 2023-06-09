@@ -1,7 +1,16 @@
 import React from "react";
 import { InputTextarea } from "primereact/inputtextarea";
 
-export default function Textarea({ label, val, className, labelClassName, placeholder, onChange, rows, cols }) {
+export default function Textarea({
+  label,
+  val,
+  className,
+  labelClassName,
+  placeholder,
+  onChange,
+  rows,
+  cols
+}) {
   return (
     <div className="w-[90%]">
       <span>
