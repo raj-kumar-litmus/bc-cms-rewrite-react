@@ -1,6 +1,6 @@
-const { VITE_SERVER_HOST_NAME: HOST_NAME } = process.env;
+import { properties } from "../properties";
 
-export const workFlowsUrl = `${HOST_NAME}/api/v1/workflows`;
+export const workFlowsUrl = `${properties.serverHostName}/api/v1/workflows`;
 
 export const status = {
   waitingForWriter: "WAITING_FOR_WRITER",
@@ -20,6 +20,13 @@ export const statusForUi = {
   ASSIGNED_TO_EDITOR: "Assigned To Editor",
   EDITING_IN_PROGRESS: "Editing In Progress",
   EDITING_COMPLETE: "Editing Complete"
+};
+
+export const tabStatus = {
+  Unassigned: ["WAITING_FOR_WRITER"],
+  Completed: ["WRITING_COMPLETE", "EDITING_COMPLETE"],
+  Assigned: ["ASSIGNED_TO_WRITER", "ASSIGNED_TO_EDITOR"],
+  "In Progress": ["WRITING_IN_PROGRESS", "EDITING_IN_PROGRESS"]
 };
 
 export const limit = 999;

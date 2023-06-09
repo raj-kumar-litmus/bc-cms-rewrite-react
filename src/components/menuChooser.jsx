@@ -5,13 +5,10 @@ import WriterInterfaceImg from "../logos/WriterInterfaceImg.svg";
 import SizingAppImg from "../logos/sizing-app-chooser.svg";
 import ChoosingAppArrow from "../logos/ChoosingApp-arrow.svg";
 import MenuChooserAppDetails from "./MenuChooserAppDetails";
+import { properties } from "../properties";
 
-const {
-  VITE_SIZING_GROUP_NAME: SIZING_APP_GROUP_NAME,
-  VITE_ADMIN_GROUP_NAME: ADMIN_GROUP_NAME,
-  VITE_WRITER_GROUP_NAME: WRITER_GROUP_NAME,
-  VITE_EDITOR_GROUP_NAME: EDITOR_GROUP_NAME
-} = process.env;
+const { sizingGroupName, adminGroupName, writerGroupName, editorGroupName } =
+  properties;
 
 function MenuChooser() {
   const [canAccessSizingApp, setAccessSizingApp] = useState(false);
@@ -21,11 +18,12 @@ function MenuChooser() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setAccessSizingApp(groups?.includes(SIZING_APP_GROUP_NAME));
+    sizingGroupName;
+    setAccessSizingApp(groups?.includes(sizingGroupName));
     setAccessWorkBenchApp(
-      groups?.includes(ADMIN_GROUP_NAME) ||
-        groups?.includes(WRITER_GROUP_NAME) ||
-        groups?.includes(EDITOR_GROUP_NAME)
+      groups?.includes(adminGroupName) ||
+        groups?.includes(writerGroupName) ||
+        groups?.includes(editorGroupName)
     );
   }, [groups, setAccessSizingApp, setAccessWorkBenchApp]);
 

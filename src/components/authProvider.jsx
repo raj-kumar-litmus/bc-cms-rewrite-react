@@ -2,8 +2,9 @@
 
 import { MsalAuthProvider, LoginType } from "react-aad-msal";
 import regeneratorRuntime from "regenerator-runtime";
+import { properties } from "../properties";
 
-const { VITE_CLIENT_ID: clientId, VITE_TENANT_ID: tenantId } = process.env;
+const { clientId, tenantId } = properties;
 
 // Msal Configurations
 const config = {

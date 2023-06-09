@@ -1,18 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { InputText } from "primereact/inputtext";
 
-export default function InputBox({ label, val, className, labelClassName }) {
-  const [value, setValue] = useState(val || "");
-
+export default function InputBox({
+  label,
+  val,
+  className,
+  labelClassName,
+  onChangeHandler
+}) {
   return (
     <div>
       <span className="p-float-label">
         <InputText
           id={label}
-          value={value}
+          value={val}
           aria-label="input-box"
           className={className}
-          onChange={(e) => setValue(e.target.value)}
+          onChange={onChangeHandler}
         />
         <label
           className={labelClassName || "!top-[22px] z-[1] bg-white"}

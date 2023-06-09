@@ -10,10 +10,11 @@ import GreenTick from "../logos/green-tick.svg";
 import RedCross from "../logos/red-cross-in-circle.svg";
 import useSessionStorage from "../hooks/useSessionStorage";
 import Loader from "../components/loader";
+import { properties } from "../properties";
 
 function AssignStyle() {
   const toastBR = useRef(null);
-  const { VITE_SERVER_HOST_NAME } = process.env;
+  const { serverHostName } = properties;
   const [options, setOptions] = useState([]);
   const [isFetching, setIsFetching] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
@@ -44,16 +45,28 @@ function AssignStyle() {
     isModalVisible,
     setShowFilters,
     clearFilters,
+    workflowCount,
+    selectAll,
+    appliedFilters,
+    setSelectedProducts,
     setIsModalVisible
   } = useContext(DashBoardContext) || {};
 
   const buildStyleStrings = () => {
-    if (styles.length < 10) {
+    if (selectAll) {
       setStylesString(styles.join(", "));
+      if (styles.length !== workflowCount) {
+        setMoreText(`+${workflowCount - styles.length} More`);
+      }
     } else {
-      const remaining = styles.length - 9;
-      setStylesString(`${styles.splice(0, 9).join(", ")}`);
-      setMoreText(`+${remaining} More`);
+      if (styles.length < 10) {
+        setStylesString(styles.join(", "));
+        setMoreText("");
+      } else {
+        const remaining = styles.length - 9;
+        setStylesString(`${styles.splice(0, 9).join(", ")}`);
+        setMoreText(`+${remaining} More`);
+      }
     }
   };
 
@@ -85,23 +98,31 @@ function AssignStyle() {
   };
 
   const assignStyleToUser = async () => {
+    const body = selectAll
+      ? JSON.stringify({
+          filters: appliedFilters,
+          assignments: {
+            [userGroup === "writers" ? "writer" : "editor"]: assignee
+          }
+        })
+      : JSON.stringify({
+          filters: {
+            id: workflowId
+          },
+          assignments: {
+            [userGroup === "writers" ? "writer" : "editor"]: assignee
+          }
+        });
     const requestOptions = {
       method: "PATCH",
-      body: JSON.stringify({
-        filters: {
-          id: workflowId
-        },
-        assignments: {
-          [userGroup === "writers" ? "writer" : "editor"]: assignee
-        }
-      }),
+      body,
       headers: {
         "Content-type": "application/json"
       }
     };
     try {
       setIsFetching(true);
-      const uri = `${VITE_SERVER_HOST_NAME}/api/v1/workflows/assign?email=${userEmail}`;
+      const uri = `${serverHostName}/api/v1/workflows/assign?email=${userEmail}`;
       const { status } = (await fetch(uri, requestOptions)) || {};
       styleAssignedHandler({
         error: status != 200,
@@ -112,6 +133,7 @@ function AssignStyle() {
       setShowLoader(false);
       setIsFetching(false);
       setCurrentPage(1);
+      setSelectedProducts([]);
       setShowFilters(false);
       clearFilters();
       if (currentTab === "Assigned") {
@@ -123,7 +145,7 @@ function AssignStyle() {
         setCurrentTab("Assigned");
       }
       return;
-    } catch (_) {
+    } catch (err) {
       styleAssignedHandler({
         styleId: styles,
         error: true,
@@ -146,12 +168,12 @@ function AssignStyle() {
   useEffect(() => {
     if (userGroup === "writers") {
       setHeader("Assign Writer for");
-      setUri(`${VITE_SERVER_HOST_NAME}/api/v1/groups/writers/members`);
+      setUri(`${serverHostName}/api/v1/groups/writers/members`);
       setPlaceHolder("Writer");
     }
     if (userGroup === "editors") {
       setHeader("Assign Editor for");
-      setUri(`${VITE_SERVER_HOST_NAME}/api/v1/groups/editors/members`);
+      setUri(`${serverHostName}/api/v1/groups/editors/members`);
       setPlaceHolder("Editor");
     }
   }, [userGroup]);
@@ -169,9 +191,9 @@ function AssignStyle() {
   }, [styles]);
 
   useEffect(() => {
-    setIsFetching(true);
-    setIsActiveDropdown(false);
-  }, []);
+    setIsFetching(!options.length > 0);
+    setIsActiveDropdown(options.length > 0);
+  }, [isModalVisible, options]);
 
   useEffect(() => {
     if (!isChecked && !assignee && !assigneeName) {

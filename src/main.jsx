@@ -5,9 +5,11 @@ import { DashBoardProvider } from "./context/normalizationDashboard";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
 import "../public/index.css";
+import { properties } from "./properties";
+console.log(`properties`);
+console.log(properties);
 
 const SSOLogin = lazy(() => import("./components/sso"));
-const Token = lazy(() => import("./components/token"));
 const MenuChooser = lazy(() => import("./components/menuChooser"));
 const NavBar = lazy(() => import("./components/NavBar"));
 const NormalizationDashboard = lazy(() =>
@@ -28,9 +30,8 @@ root.render(
         <Route path="/" element={<SSOLogin />} />
         <Route
           path="/styleDetails"
-          element={<StyleDetails quickFix={false} styleId="CGHD23Y" />}
+          element={<StyleDetails quickFix={false} />}
         />
-        <Route path="/redirect/web" element={<Token />} />
         <Route
           path="/menuChooser"
           element={

@@ -1,5 +1,6 @@
 import React, { useEffect, createContext, useState } from "react";
 import useSessionStorage from "../hooks/useSessionStorage";
+import { properties } from "../properties";
 
 const DashBoardContext = createContext(undefined);
 
@@ -22,15 +23,29 @@ function DashBoardProvider({ children }) {
   const [showToast, setShowToast] = useState(false);
   const [clearAllFilters, setClearAllFilters] = useState(false);
   const [selectedBrand, setSelectedBrand] = useState([]);
+  const [selectedStyleId, setSelectedStyleId] = useState([]);
   const [searchByStatus, setSearchByStatus] = useState([]);
   const [searchByAssignee, setSearchByAssignee] = useState("");
   const [searchByUpdatedAt, setsearchByUpdatedAt] = useState(null);
+  const [appliedFilters, setAppliedFilters] = useState({});
   const [searchByUpdatedBy, setsearchByUpdatedBy] = useState("");
   const [debouncedTitle, setDebouncedTitle] = useState("");
   const [debouncedStyle, setDebouncedStyle] = useState("");
   const [debouncedUpdatedBy, setDebouncedUpdatedBy] = useState("");
   const [showTabs, setShowTabs] = useState(true);
-
+  const [selectAll, setSelectAll] = useState(false);
+  const [reselectSelectedProducts, setReselectSelectedProducts] =
+    useState(false);
+  const [workflowCount, setWorkflowCount] = useState(0);
+  const [currentSort, setCurrentSort] = useState("");
+  const [styleSort, setStyleSort] = useState("desc");
+  const [titleSort, setTitleSort] = useState("desc");
+  const [brandSort, setBrandSort] = useState("desc");
+  const [statusSort, setStatusSort] = useState("desc");
+  const [updatedBySort, setUpdatedBySort] = useState("desc");
+  const [updatedAtSort, setUpdatedAtSort] = useState("desc");
+  const [assigneeSort, setAssigneeSort] = useState("desc");
+  const [showStyleFilter, setShowStyleFilter] = useState(true);
   const {
     VITE_ADMIN_GROUP_NAME: ADMIN_GROUP_NAME,
     VITE_WRITER_GROUP_NAME: WRITER_GROUP_NAME,
@@ -63,6 +78,8 @@ function DashBoardProvider({ children }) {
     setDebouncedTitle("");
     setDebouncedStyle("");
     setDebouncedUpdatedBy("");
+    setAppliedFilters({});
+    setCurrentSort("");
   };
 
   return (
@@ -72,6 +89,12 @@ function DashBoardProvider({ children }) {
         isAdmin,
         isWriter,
         isEditor,
+        selectAll,
+        setSelectAll,
+        workflowCount,
+        setWorkflowCount,
+        reselectSelectedProducts,
+        setReselectSelectedProducts,
         debouncedTitle,
         setDebouncedTitle,
         debouncedStyle,
@@ -82,6 +105,8 @@ function DashBoardProvider({ children }) {
         setsearchByUpdatedBy,
         searchByTitle,
         setSearchByTitle,
+        appliedFilters,
+        setAppliedFilters,
         searchByStyle,
         setSearchByStyle,
         showFilters,
@@ -117,7 +142,27 @@ function DashBoardProvider({ children }) {
         setsearchByUpdatedAt,
         showTabs,
         setShowTabs,
-        clearFilters
+        clearFilters,
+        currentSort,
+        setCurrentSort,
+        styleSort,
+        setStyleSort,
+        titleSort,
+        setTitleSort,
+        brandSort,
+        setBrandSort,
+        statusSort,
+        setStatusSort,
+        updatedBySort,
+        setUpdatedBySort,
+        updatedAtSort,
+        setUpdatedAtSort,
+        assigneeSort,
+        setAssigneeSort,
+        selectedStyleId,
+        setSelectedStyleId,
+        showStyleFilter,
+        setShowStyleFilter
       }}
     >
       {children}

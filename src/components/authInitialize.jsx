@@ -1,11 +1,12 @@
 import * as msal from "@azure/msal-browser";
+import { properties } from "../properties";
 
-const { VITE_CLIENT_ID: clientId, VITE_TENANT_ID: tenantId } = process.env;
-
+const { clientId, tenantId, postLogoutRedirectUri } = properties;
+console.log(postLogoutRedirectUri);
 const msalConfig = {
   auth: {
     clientId,
-    postLogoutRedirectUri: "https://bc-cms-rewrite-react.vercel.app/",
+    postLogoutRedirectUri: postLogoutRedirectUri,
     authority: `https://login.microsoftonline.com/${tenantId}`
   }
 };

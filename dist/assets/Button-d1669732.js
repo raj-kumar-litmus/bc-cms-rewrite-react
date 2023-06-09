@@ -1,0 +1,1 @@
+import{j as n}from"./index-753100cb.js";function u({onClick:t,ariaLabel:a,className:o,dataTestId:r,children:s,disabled:e=!1}){return n.jsx("button",{disabled:e,"aria-label":a,onClick:t,className:o,"data-testid":r,children:s})}export{u as B};

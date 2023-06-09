@@ -6,6 +6,7 @@ import NavBarSwitchingIcon from "../logos/NavBarSwitchingIcon.svg";
 import useSessionStorage from "../hooks/useSessionStorage";
 import Button from "./Button";
 import msalInstance from "./authInitialize";
+import { properties } from "../properties";
 
 function NavBar() {
   const navigate = useNavigate();
@@ -18,12 +19,10 @@ function NavBar() {
 
   const [groups] = useSessionStorage("userGroups");
   const [isAdmin, setIsAdmin] = useState(false);
-  const { VITE_ADMIN_GROUP_ID: ADMIN_GROUP_ID } = process.env;
 
   useEffect(() => {
-    setIsAdmin(groups?.includes(ADMIN_GROUP_ID));
-  }, [ADMIN_GROUP_ID, setIsAdmin]);
-
+    setIsAdmin(groups?.includes(properties.adminGroupName));
+  }, [properties.adminGroupId, setIsAdmin]);
 
   const signOut = () => {
     msalInstance
@@ -36,26 +35,26 @@ function NavBar() {
 
   return (
     <nav className="bg-[#FFFFFF] bg-op rounded shadow shadow-grey-70 border-b border-grey-30">
-    <div className="flex flex-wrap justify-between items-center mx-[5%] h-[70px]">
-      <div className="flex items-center">
-        <img src={BackcountryLogo} alt="Backcountry SVG" />
-      </div>
-      <div className="flex">
-        {(location.pathname !== "/menuChooser"  && isAdmin)&& (
-          <div className="flex flex-row">
-            <div className="mr-2">
-              <Button
-                dataTestId="manualflow-button"
-                onClick={() => navigate("/manualWorkFlowDashboard")}
-              >
-                <div className="bg-black text-white font-bold rounded-full border flex justify-center items-center text-[14px]  h-[40px] w-[40px]">
-                  {" "}
-                  +{" "}
-                </div>
-              </Button>
-            </div>
-            {/* switching App icon commented for now */}
-            {/* <div className="mr-2">
+      <div className="flex flex-wrap justify-between items-center mx-[5%] h-[70px]">
+        <div className="flex items-center">
+          <img src={BackcountryLogo} alt="Backcountry SVG" />
+        </div>
+        <div className="flex">
+          {location.pathname !== "/menuChooser" && isAdmin && (
+            <div className="flex flex-row">
+              <div className="mr-2">
+                <Button
+                  dataTestId="manualflow-button"
+                  onClick={() => navigate("/manualWorkFlowDashboard")}
+                >
+                  <div className="bg-black text-white font-bold rounded-full border flex justify-center items-center text-[14px]  h-[40px] w-[40px]">
+                    {" "}
+                    +{" "}
+                  </div>
+                </Button>
+              </div>
+              {/* switching App icon commented for now */}
+              {/* <div className="mr-2">
               <Button>
                 <img
                   className="px-1 h-31 w-31"
@@ -64,51 +63,51 @@ function NavBar() {
                 />
               </Button>
             </div> */}
+            </div>
+          )}
+
+          <div className="mr-2">
+            <Button onClick={handlPopup}>
+              <div className="bg-white font-bold flex text-[14px] justify-center items-center text-[#2C2C2C] rounded-full border border-[#2C2C2C] h-[40px] w-[40px]">
+                {name?.charAt(0)}
+              </div>
+            </Button>
           </div>
-        )}
+          {showPopup && (
+            <div className="relative right-[185px] top-[52px]">
+              <div className="bg-white shadow absolute text-center w-[172px] h-[190px]">
+                <div className="m-2">
+                  <div className="mb-1">
+                    <Button dataTestId={"show-popup-button"}>
+                      <div className="bg-white font-bold flex text-[18px] justify-center items-center text-[#2C2C2C] rounded-full border border-[#2C2C2C] h-[54px] w-[54px]">
+                        {name?.charAt(0)}
+                      </div>
+                    </Button>
+                  </div>
 
-        <div className="mr-2">
-          <Button onClick={handlPopup}>
-          <div className="bg-white font-bold flex text-[14px] justify-center items-center text-[#2C2C2C] rounded-full border border-[#2C2C2C] h-[40px] w-[40px]">
-              {name?.charAt(0)}
-          </div>
-          </Button>
-        </div>
-        {showPopup && (
-          <div className="relative right-[185px] top-[52px]">
-            <div className="bg-white shadow absolute text-center w-[172px] h-[190px]">
-              <div className="m-2">
-                <div className="mb-1">
-                  <Button
-                    dataTestId={"show-popup-button"}
-                  >
-                    <div className="bg-white font-bold flex text-[18px] justify-center items-center text-[#2C2C2C] rounded-full border border-[#2C2C2C] h-[54px] w-[54px]">
-                      {name?.charAt(0)}
-                    </div>
-                  </Button>
-                </div>
+                  <div className="mb-1">
+                    <p className="text-[18px] text-[#2C2C2C] font-bold">
+                      {name}
+                    </p>
+                  </div>
 
-                <div className="mb-1">
-                  <p className="text-[18px] text-[#2C2C2C] font-bold">{name}</p>
-                </div>
-
-                <div>
-                  <Button
-                    onClick={signOut}
-                    className={
-                      "bg-white text-black text-sm rounded border m-2 p-1 w-[94px] h-[39px]"
-                    }
-                  >
-                    Logout
-                  </Button>
+                  <div>
+                    <Button
+                      onClick={signOut}
+                      className={
+                        "bg-white text-black text-sm rounded border m-2 p-1 w-[94px] h-[39px]"
+                      }
+                    >
+                      Logout
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
-    </div>
-  </nav>
+    </nav>
   );
 }
 export default NavBar;

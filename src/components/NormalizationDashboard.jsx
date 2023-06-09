@@ -14,19 +14,37 @@ function NormalizationDashboard() {
   const navigate = useNavigate();
   const [accountDetails] = useSessionStorage("accountDetails");
   const [search, setSearch] = useState("");
+  const [searchCount, setSearchCount] = useState(false);
   const {
-    setSelectedProducts,
+    searchByTitle,
+    searchByStyle,
     setShowFilters,
-    setCurrentTab,
-    setCurrentPage,
-    isAdmin,
-    setCustomers,
     currentPage,
+    setCustomers,
+    setSelectedProducts,
+    isAdmin,
     setLoader,
     setShowToast,
+    selectedBrand,
+    searchByStatus,
+    searchByAssignee,
+    searchByUpdatedAt,
+    searchByUpdatedBy,
+    setAppliedFilters,
     clearFilters,
     showTabs,
-    setShowTabs
+    setCurrentTab,
+    setShowTabs,
+    currentSort,
+    styleSort,
+    titleSort,
+    brandSort,
+    statusSort,
+    updatedBySort,
+    updatedAtSort,
+    assigneeSort,
+    setCurrentPage,
+    setShowStyleFilter
   } = useContext(DashBoardContext);
 
   useEffect(() => {
@@ -47,26 +65,64 @@ function NormalizationDashboard() {
     setSelectedProducts([]);
     clearFilters();
     setShowFilters(false);
+    setAppliedFilters({});
   };
 
   const fetchBulkStyleSearch = async () => {
+    var date = new Date(searchByUpdatedAt);
+    const newDate = date.toDateString().split(" ");
+    const finalDate = `${newDate[3]}-${newDate[1]}-${newDate[2]}`;
+    const newSelectedBrand = selectedBrand.map((item) => item.brand);
+    const status = [
+      "WAITING_FOR_WRITER",
+      "WRITING_COMPLETE",
+      "EDITING_COMPLETE",
+      "ASSIGNED_TO_WRITER",
+      "ASSIGNED_TO_EDITOR",
+      "WRITING_IN_PROGRESS",
+      "EDITING_IN_PROGRESS"
+    ];
+    const body = {
+      filters: {
+        ...(search && {
+          globalSearch: search?.replaceAll(" ", "")?.split(",")
+        }),
+        ...(searchByStyle && { styleId: searchByStyle }),
+        ...(searchByTitle && { title: searchByTitle }),
+        ...(newSelectedBrand.length && { brand: newSelectedBrand }),
+        ...(searchByUpdatedBy && { lastUpdatedBy: searchByUpdatedBy }),
+        ...(searchByAssignee && { assignee: searchByAssignee }),
+        ...(searchByUpdatedAt && { lastUpdateTs: finalDate }),
+        ...(searchByStatus.length && {
+          status: searchByStatus.length ? [searchByStatus] : status
+        })
+      },
+      orderBy: {
+        ...(currentSort == "Style" && { styleId: styleSort }),
+        ...(currentSort == "Title" && { title: titleSort }),
+        ...(currentSort == "Brand" && { brand: brandSort }),
+        ...(currentSort == "Updated By" && { lastUpdatedBy: updatedBySort }),
+        ...(currentSort == "Assignee" && { assignee: assigneeSort }),
+        ...(currentSort == "Status" && { status: statusSort }),
+        ...((currentSort == "Updated At" ||
+          (currentSort != "Style" &&
+            currentSort != "Title" &&
+            currentSort != "Brand" &&
+            currentSort != "Updated By" &&
+            currentSort != "Assignee" &&
+            currentSort != "Status")) && { lastUpdateTs: updatedAtSort })
+      }
+    };
     try {
       const requestOptions = {
         method: "POST",
+        body: JSON.stringify(body),
         headers: {
           "Content-type": "application/json"
-        },
-        body: JSON.stringify({
-          filters: {
-            styleId: search.replaceAll(" ", "").split(",")
-          },
-          orderBy: {
-            styleId: "desc"
-          }
-        })
+        }
       };
       const response = await fetch(
-        `${workFlowsUrl}/search?limit=10&page=1`,
+        `${workFlowsUrl}/search?limit=10&page=${currentPage}`,
         requestOptions
       );
       if (response?.ok) {
@@ -90,56 +146,27 @@ function NormalizationDashboard() {
     }
   };
 
-  async function getGlobalSearch() {
-    try {
-      const response = await fetch(
-        `${workFlowsUrl}/search?limit=10&page=${currentPage}&globalSearch=${
-          search && search
-        }`,
-        {
-          method: "POST",
-          headers: {
-            "Content-type": "application/json; charset=UTF-8"
-          }
-        }
-      );
-      if (response?.ok) {
-        const data = await response.json();
-        if (data?.data?.workflows) {
-          data.data.workflows = data?.data.workflows.map((e) => ({
-            ...e,
-            statusForUi: statusForUi[e?.status],
-            lastUpdatedByWithoutDomain: e?.lastUpdatedBy?.split("@")[0],
-            nameWithoutDomain: e?.assignee?.split("@")[0]
-          }));
-        }
-        setCustomers(data?.data);
-        setLoader(false);
-      } else {
-        setLoader(false);
-        setShowToast(true);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
   const handleSearchChange = (e) => {
-    setSearch(e.target.value);
+    const countOfEnteredSearch = e.target.value?.split(",").length
+    setSearchCount(countOfEnteredSearch > 500 ? true : false);
+    if (countOfEnteredSearch <= 500) {
+      setSearch(e.target.value);
+    }
   };
+
   const handleSearchClick = () => {
+    clearFilters();
+    setShowFilters(false);
     setShowTabs(false);
     setLoader(true);
-    if (search.includes(",")) {
-      fetchBulkStyleSearch();
-    } else {
-      getGlobalSearch();
-    }
+    setShowStyleFilter(search?.split(",").length > 1 ? false : true);
   };
 
   const handleClear = () => {
     setShowTabs(true);
     setSearch("");
+    clearFilters()
+    setShowFilters(false);
   };
 
   return (
@@ -153,13 +180,17 @@ function NormalizationDashboard() {
               onClick={handleSearchClick}
               handleClear={handleClear}
               img={ClearSearch}
-              value={search}
+              searchValue={search}
               searchString={"Search"}
+              searchCount={searchCount}
+              setSearchCount={setSearchCount}
               inputClasses={
-                "!bg-white !text-[14px] !text-black !font-semibold w-full h-[64px] !pl-[2%] !pt-[18px] text-sm !placeholder-gray-20 !placeholder-opacity-1 !rounded !border !border-grey-30 !shadow"
+                "!pr-[5%] !bg-white !text-[14px] !text-black !font-semibold w-full h-[64px] !pl-[2%] !pt-[18px] text-sm !placeholder-gray-20 !placeholder-opacity-1 !rounded !border !border-grey-30 !shadow"
               }
               buttonClasses={
-                "text-white bg-black h-[64px] text-sm w-[10%] rounded ml-2"
+                !search
+                  ? "text-white bg-black bg-opacity-25 h-[64px] text-sm w-[10%] rounded ml-2"
+                  : "text-white bg-black h-[64px] text-sm w-[10%] rounded ml-2"
               }
             />
           </div>
@@ -169,7 +200,10 @@ function NormalizationDashboard() {
             )}
           </div>
           <div className="mt-[3%]">
-            <Table />
+            <Table
+              search={search}
+              fetchBulkStyleSearch={fetchBulkStyleSearch}
+            />
           </div>
           <AssignStyle />
         </div>
