@@ -124,7 +124,7 @@ export default function RichTextEditor({
         readOnly={isReadOnly}
         value={val}
         headerTemplate={header}
-        onTextChange={(e) => onChange(e.htmlValue)}
+        onTextChange={(e) => onChange(e.textValue)}
       />
     </>
   );

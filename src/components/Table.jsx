@@ -946,7 +946,8 @@ export default function Table({ fetchBulkStyleSearch }) {
     if (type === "edit") {
       navigate(`/styleDetails?styleId=${rowData?.styleId}`, {
         state: {
-          quickFix: true
+          quickFix: true,
+          workflowId:rowData?.id
         }
       });
     }

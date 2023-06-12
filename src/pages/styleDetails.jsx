@@ -11,6 +11,7 @@ import RichTextEditor from "../components/RichTextEditor";
 import BackLogo from "../logos/chevron-down.svg";
 import Loader from "../components/loader";
 import { properties } from "../properties";
+import { workFlowsUrl } from "../constants/index";
 
 export default function StyleDetails({ quickFix = false, styleId }) {
   const { serverHostName } = properties;
@@ -28,16 +29,20 @@ export default function StyleDetails({ quickFix = false, styleId }) {
   const [productInfo, setProductInfo] = useState(null);
   const [defaultGenus, setDefaultGenus] = useState(null);
   const [accountDetails] = useSessionStorage("accountDetails");
-  const { quickFix: quickFixFromLink } = location.state || {};
+  const { quickFix: quickFixFromLink, workflowId:workflowIdFromLink } = location.state || {};
   const quick = quickFixFromLink || quickFix;
   const [searchParams] = useSearchParams();
   const STYLE_ID = searchParams.get("styleId");
-
+  const [userEmail] = useSessionStorage("userEmail");
   const [bulletPoints, setBulletPoints] = useState(null);
   const [listDescription, setListDescription] = useState(null);
   const [detailedDescription, setDetailedDescription] = useState(null);
   const [productTitle, setProductTitle] = useState(null);
   const [bottomLine, setBottomLine] = useState(null);
+  const [competitiveCyclistDescription, setCompetitiveCyclistDescription] = useState(null);
+  const [competitiveCyclistTopline, setCompetitiveCyclistTopline] = useState(null);
+
+  // console.log("techSpecs>>",techSpecs)
 
   useEffect(() => {
     (async () => {
@@ -78,7 +83,7 @@ export default function StyleDetails({ quickFix = false, styleId }) {
             )) || {};
           const { data } = await response.json();
           setHattributes(data.hattributes);
-          setTechSpecs(data.techSpecs);
+          setTechSpecs(data?.techSpecs);
           setIsFetchingHattributes(false);
         } catch (err) {
           console.log(err);
@@ -87,6 +92,18 @@ export default function StyleDetails({ quickFix = false, styleId }) {
       })();
     }
   }, [values]);
+  // const test = techSpecs?.map((item) => ({
+  //   ...item,
+  //     ...(item?.label == "material" && {material: item?.value})
+  //   }))
+  // console.log("test>>",test)
+
+  // console.log("techSpecs map>>",techSpecs?.map((item) => ({
+  //   ...item,
+  //   ...(item?.label == "material" && {material: item?.value})
+  // })))
+  
+
 
   const onGenusChangeHandler = async (e) => {
     try {
@@ -97,6 +114,11 @@ export default function StyleDetails({ quickFix = false, styleId }) {
         genus: e.value,
         species: null
       });
+      setGenus(
+        {
+          value: e.value,
+          label: e.label
+        })
       const response =
         (await fetch(
           `${serverHostName}/api/v1/dataNormalization/genus/${e.value}/species`
@@ -155,6 +177,8 @@ export default function StyleDetails({ quickFix = false, styleId }) {
       setDetailedDescription(copyApiResponse?.detailDescription);
       setProductTitle(copyApiResponse?.title);
       setBottomLine(copyApiResponse?.bottomLine);
+      setCompetitiveCyclistDescription(copyApiResponse?.competitiveCyclistDescription)
+      setCompetitiveCyclistTopline(copyApiResponse?.competitiveCyclistBottomLine)
 
       setDefaultGenus([
         {
@@ -170,7 +194,9 @@ export default function StyleDetails({ quickFix = false, styleId }) {
       ]);
       setValues({
         genus: attributeApiResponse?.genusId,
-        species: attributeApiResponse?.speciesId
+        genusValue:attributeApiResponse?.genusName,
+        species: attributeApiResponse?.speciesId,
+        speciesValue: attributeApiResponse?.speciesName
       });
     } catch (err) {
       console.error(err);
@@ -180,6 +206,77 @@ export default function StyleDetails({ quickFix = false, styleId }) {
   useEffect(() => {
     fetchProductInfo();
   }, []);
+
+  const handlePublish= async()=>{
+    debugger
+    const techSpecsForBody = techSpecs && techSpecs?.map((item) => ({
+      ...(item?.label == "Material" && {material: item?.value}),
+      ...(item?.label == "Fit" && {Fit: item?.value})
+    }))
+    console.log("techSpecs inside API>>",techSpecsForBody)
+    const body = {
+      ...(bulletPoints && { bulletPoints: bulletPoints }),
+      ...(competitiveCyclistDescription && { competitiveCyclistDescription: competitiveCyclistDescription }),
+      ...(competitiveCyclistTopline && { competitiveCyclistTopline : competitiveCyclistTopline }),
+      ...(detailedDescription && { detailedDescription : detailedDescription }),
+      ...((genus?.label || productInfo?.attributeApiResponse?.genusName) && { genus : genus?.label ? genus?.label : productInfo?.attributeApiResponse?.genusName}),
+      ...(listDescription && { listDescription : listDescription }),
+      ...(productTitle && { productTitle : productTitle }),
+      ...(productTitle && { sizingChart : productTitle }),
+      ...(species?.label || defaultSpecies && { species  : values?.speciesValue ? values?.speciesValue : defaultSpecies  }),
+      ...(bottomLine && { topLine : bottomLine }),
+      ...(bottomLine && { versionReason : bottomLine }),
+      harmonizingData: {
+        ...(bulletPoints && { recommendedUse: bulletPoints }),
+        // "recommendedUse": [
+        //     "Ice climbing"
+        // ],
+        ropeDiameter: [
+            "<8.5mm"
+        ],
+        type: [
+            "Figure 8"
+        ],
+        techspecs: techSpecsForBody
+    },
+    };
+    try {
+      const response = await fetch(
+        `${workFlowsUrl}/6207056626fbb7a0b96f7093?email=${userEmail}`,
+        {
+          method: "PATCH",
+          body: JSON.stringify(body),
+          headers: {
+            "Content-type": "application/json; charset=UTF-8"
+          }
+        }
+      );
+      if (response?.ok) {
+        const data = await response.json();
+        }
+        // setLoader(false);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const handleCompetitiveCyclistDescription =(value)=>{
+    setCompetitiveCyclistDescription(value)
+  }
+
+  const handleCompetitiveCyclistTopline=(value)=>{
+    setCompetitiveCyclistTopline(value.target.value)
+  }
+
+  const handleTechSpace=(e, i)=>{
+    const { value, name} = e.target;
+    const newState = [...techSpecs];
+    newState[i] = {
+      ...newState[i],
+      [name]: value
+    }
+    setTechSpecs(newState);
+  }
 
   return (
     <>
@@ -350,20 +447,22 @@ export default function StyleDetails({ quickFix = false, styleId }) {
             <div className="grid grid-cols-3 gap-3 mt-[20px]">
               {!isFetchingHattributes &&
                 techSpecs &&
-                techSpecs.map(({ label, value }) => (
+                techSpecs?.map(({ label, value }, index) => (
                   <InputBox
                     className={"w-[100%] mt-[20px] rounded-sm"}
                     label={label}
-                    onChangeHandler={(e) => {
-                      console.log(e);
-                      console.log(e.currentTarget.id);
-                      const techSpecToChange = techSpecs.find(
-                        (l) => l.label === e.currentTarget.id
-                      );
-                      techSpecToChange.value = e.target.value;
-                      setTechSpecs(null);
-                      setTechSpecs(techSpecs);
-                    }}
+                    // onChangeHandler={(e) => {
+                    //   console.log(e);
+                    //   console.log(e.currentTarget.id);
+                    //   const techSpecToChange = techSpecs.find(
+                    //     (l) => l.label === e.currentTarget.id
+                    //   );
+                    //   techSpecToChange.value = e.target.value;
+                    //   setTechSpecs(null);
+                    //   setTechSpecs(value);
+                    // }}
+                    name={label}
+                    onChangeHandler={(e) => handleTechSpace(e, label, index)}
                     val={value}
                   />
                 ))}
@@ -429,13 +528,14 @@ export default function StyleDetails({ quickFix = false, styleId }) {
               </div>
               <div className="flex-1 mt-[25px]">
                 <InputBox
+                  onChangeHandler={handleCompetitiveCyclistTopline}
                   className={"w-full mt-[30px] rounded-sm h-[37px]"}
                   labelClassName={
                     "!top-[34px] z-[1] bg-white !text-gray-900 !text-[10px]"
                   }
                   label="Competitive Cyclist Top Line"
                   val={
-                    productInfo?.copyApiResponse?.competitiveCyclistBottomLine
+                    competitiveCyclistTopline
                   }
                 />
               </div>
@@ -444,8 +544,9 @@ export default function StyleDetails({ quickFix = false, styleId }) {
               <RichTextEditor
                 label="Competitive Cyclist description"
                 labelClassName={"text-gray-600 font-light"}
+                onChange={handleCompetitiveCyclistDescription}
                 val={
-                  productInfo?.copyApiResponse?.competitiveCyclistDescription
+                  competitiveCyclistDescription
                 }
                 className={"h-[250px] pb-[50px] mt-[10px]"}
               />
@@ -457,6 +558,7 @@ export default function StyleDetails({ quickFix = false, styleId }) {
                   className={
                     "bg-gray-900 border text-white rounded border-gray-800 w-[150px] h-[50px]"
                   }
+                  onClick={handlePublish}
                 >
                   Publish
                 </Button>
@@ -467,6 +569,7 @@ export default function StyleDetails({ quickFix = false, styleId }) {
                     className={
                       "border rounded border-gray-800 w-[150px] h-[50px] mr-[20px]"
                     }
+                    onClick={handlePublish}
                   >
                     Save for later
                   </Button>
