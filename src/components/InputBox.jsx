@@ -7,14 +7,12 @@ export default function InputBox({
   className,
   labelClassName,
   onChangeHandler,
-  name
 }) {
   return (
     <div>
       <span className="p-float-label">
         <InputText
           id={label}
-          name={name}
           value={val}
           aria-label="input-box"
           className={className}

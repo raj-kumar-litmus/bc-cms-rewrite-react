@@ -42,8 +42,6 @@ export default function StyleDetails({ quickFix = false, styleId }) {
   const [competitiveCyclistDescription, setCompetitiveCyclistDescription] = useState(null);
   const [competitiveCyclistTopline, setCompetitiveCyclistTopline] = useState(null);
 
-  // console.log("techSpecs>>",techSpecs)
-
   useEffect(() => {
     (async () => {
       try {
@@ -92,18 +90,6 @@ export default function StyleDetails({ quickFix = false, styleId }) {
       })();
     }
   }, [values]);
-  // const test = techSpecs?.map((item) => ({
-  //   ...item,
-  //     ...(item?.label == "material" && {material: item?.value})
-  //   }))
-  // console.log("test>>",test)
-
-  // console.log("techSpecs map>>",techSpecs?.map((item) => ({
-  //   ...item,
-  //   ...(item?.label == "material" && {material: item?.value})
-  // })))
-  
-
 
   const onGenusChangeHandler = async (e) => {
     try {
@@ -208,12 +194,18 @@ export default function StyleDetails({ quickFix = false, styleId }) {
   }, []);
 
   const handlePublish= async()=>{
-    debugger
     const techSpecsForBody = techSpecs && techSpecs?.map((item) => ({
       ...(item?.label == "Material" && {material: item?.value}),
-      ...(item?.label == "Fit" && {Fit: item?.value})
+      ...(item?.label == "Fit" && {Fit: item?.value}),
+      ...(item?.label == "Style" && {Style: item?.value}),
+      ...(item?.label == "Inseam" && {Inseam: item?.value}),
+      ...(item?.label == "Pockets" && {Pockets: item?.value}),
+      ...(item?.label == "Waist" && {Waist: item?.value}),
+      ...(item?.label == "Fly" && {Fly: item?.value}),
+      ...(item?.label == "Gusseted Crotch" && {GussetedCrotch: item?.value}),
+      ...(item?.label == "Activity" && {Activity: item?.value}),
+      ...(item?.label == "Manufacturer Warranty" && {ManufacturerWarranty: item?.value})
     }))
-    console.log("techSpecs inside API>>",techSpecsForBody)
     const body = {
       ...(bulletPoints && { bulletPoints: bulletPoints }),
       ...(competitiveCyclistDescription && { competitiveCyclistDescription: competitiveCyclistDescription }),
@@ -228,9 +220,6 @@ export default function StyleDetails({ quickFix = false, styleId }) {
       ...(bottomLine && { versionReason : bottomLine }),
       harmonizingData: {
         ...(bulletPoints && { recommendedUse: bulletPoints }),
-        // "recommendedUse": [
-        //     "Ice climbing"
-        // ],
         ropeDiameter: [
             "<8.5mm"
         ],
@@ -269,11 +258,11 @@ export default function StyleDetails({ quickFix = false, styleId }) {
   }
 
   const handleTechSpace=(e, i)=>{
-    const { value, name} = e.target;
+    const { value } = e.target;
     const newState = [...techSpecs];
     newState[i] = {
       ...newState[i],
-      [name]: value
+       value
     }
     setTechSpecs(newState);
   }
@@ -451,18 +440,7 @@ export default function StyleDetails({ quickFix = false, styleId }) {
                   <InputBox
                     className={"w-[100%] mt-[20px] rounded-sm"}
                     label={label}
-                    // onChangeHandler={(e) => {
-                    //   console.log(e);
-                    //   console.log(e.currentTarget.id);
-                    //   const techSpecToChange = techSpecs.find(
-                    //     (l) => l.label === e.currentTarget.id
-                    //   );
-                    //   techSpecToChange.value = e.target.value;
-                    //   setTechSpecs(null);
-                    //   setTechSpecs(value);
-                    // }}
-                    name={label}
-                    onChangeHandler={(e) => handleTechSpace(e, label, index)}
+                    onChangeHandler={(e) => handleTechSpace(e, index)}
                     val={value}
                   />
                 ))}
