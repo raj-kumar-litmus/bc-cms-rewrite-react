@@ -231,7 +231,7 @@ export default function StyleDetails({ quickFix = false, styleId }) {
     };
     try {
       const response = await fetch(
-        `${workFlowsUrl}/6207056626fbb7a0b96f7093?email=${userEmail}`,
+        `${workFlowsUrl}/${workflowIdFromLink}?email=${userEmail}`,
         {
           method: "PATCH",
           body: JSON.stringify(body),
@@ -265,6 +265,11 @@ export default function StyleDetails({ quickFix = false, styleId }) {
        value
     }
     setTechSpecs(newState);
+  }
+
+  const handleMulSelect=()=>{
+    debugger
+    
   }
 
   return (
@@ -404,6 +409,7 @@ export default function StyleDetails({ quickFix = false, styleId }) {
                           key: text,
                           label: text
                         }))}
+                        handleMulSelect={handleMulSelect}
                       options={hattributes[e].map(
                         ({ hattributevid, text }) => ({
                           value: hattributevid,

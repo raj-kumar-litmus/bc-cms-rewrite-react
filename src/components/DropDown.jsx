@@ -25,7 +25,8 @@ const MultiSelectDropDown = ({
   options,
   defaultValues,
   labelClassName,
-  className
+  className,
+  handleMulSelect
 }) => {
   const [selected, setSelected] = useState(defaultValues || []);
   const customValueRenderer = (selected) => {
@@ -36,6 +37,11 @@ const MultiSelectDropDown = ({
       : placeholder;
   };
 
+  const handleChange=(e)=>{
+    setSelected(e)
+    // handleMulSelect(e)
+  }
+
   return (
     <div>
       <p className={labelClassName}>{label}</p>
@@ -44,7 +50,7 @@ const MultiSelectDropDown = ({
         labelledBy="dropdown"
         className={`custom-drop-down ${className}`}
         value={selected}
-        onChange={setSelected}
+        onChange={(e)=>handleChange(e)}
         ClearSelectedIcon={CloseButton}
         ArrowRenderer={() => (
           <img className="px-1 py-1 h-31 w-31" src={DownIcon} />
