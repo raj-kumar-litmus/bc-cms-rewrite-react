@@ -51,6 +51,8 @@ export default function Table({ fetchBulkStyleSearch }) {
   const [tabChanged, setTabChanged] = useState(false);
   const [pageCount, setPageCount] = useState(1);
   const [defaultSort, setDefaultSort] = useState(ArrowSort);
+  const [allWorkFlows, setAllWorkFlows] = useState([]);
+  const [processingSelectAll, setProcessingSelectAll] = useState(false);
   const [userEmail] = useSessionStorage("userEmail");
   const navigate = useNavigate();
   const {
@@ -188,7 +190,7 @@ export default function Table({ fetchBulkStyleSearch }) {
     }
   }, [showToast]);
 
-  async function getCustomers() {
+  async function getCustomers(all = false) {
     var date = new Date(searchByUpdatedAt);
     const newDate = date.toDateString().split(" ");
     const finalDate = `${newDate[3]}-${newDate[1]}-${newDate[2]}`;
@@ -239,16 +241,27 @@ export default function Table({ fetchBulkStyleSearch }) {
       }
     };
     try {
-      const response = await fetch(
-        `${workFlowsUrl}/search?limit=10&page=${currentPage}`,
-        {
-          method: "POST",
-          body: JSON.stringify(body),
-          headers: {
-            "Content-type": "application/json; charset=UTF-8"
-          }
+      const uri = all
+        ? `${workFlowsUrl}/search?limit=${
+            customers?.pagination?.total + 1
+          }&page=${currentPage}`
+        : `${workFlowsUrl}/search?limit=10&page=${currentPage}`;
+      const response = await fetch(uri, {
+        method: "POST",
+        body: JSON.stringify(body),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8"
         }
-      );
+      });
+      if (all) {
+        if (response?.ok) {
+          const data = await response.json();
+          setAllWorkFlows(data?.data?.workflows);
+          setSelectedProducts(data?.data?.workflows);
+          setProcessingSelectAll(false);
+        }
+        return;
+      }
       if (response?.ok) {
         const data = await response.json();
         if (data?.data?.workflows) {
@@ -271,11 +284,12 @@ export default function Table({ fetchBulkStyleSearch }) {
                 (e) => !appliedFilters.excludeId.includes(e.id)
               )
             );
-          } else {
-            setSelectedProducts(data?.data?.workflows);
           }
+          if (selectAll) setSelectedProducts(data?.data?.workflows);
+          setProcessingSelectAll(false);
         } else {
           setSelectedProducts([]);
+          setProcessingSelectAll(false);
         }
       } else {
         setLoader(false);
@@ -430,9 +444,9 @@ export default function Table({ fetchBulkStyleSearch }) {
     if (customers?.pagination) {
       setPageCount(customers?.pagination?.pageCount);
     }
-    setWorkflowCount(customers?.pagination?.total);
+    if (selectAll) setWorkflowCount(customers?.pagination?.total);
     applyFilters();
-  }, [customers]);
+  }, [customers, selectAll]);
 
   const handleTitleChange = (e) => {
     setDebouncedTitle(e.target.value);
@@ -448,13 +462,22 @@ export default function Table({ fetchBulkStyleSearch }) {
     }, 1000);
   };
   useEffect(() => {
-    setCanAssignOrReAssign(isAllEqual(selectedProducts.map((e) => e.status)));
-    if (isAllEqual(selectedProducts.map((e) => e.statusForUi))) {
-      setSelectedStatus(selectedProducts[0]?.statusForUi);
+    if (!selectAll) {
+      setCanAssignOrReAssign(isAllEqual(selectedProducts.map((e) => e.status)));
+      if (isAllEqual(selectedProducts.map((e) => e.statusForUi))) {
+        setSelectedStatus(selectedProducts[0]?.statusForUi);
+      } else {
+        setSelectedStatus("");
+      }
     } else {
-      setSelectedStatus("");
+      setCanAssignOrReAssign(isAllEqual(allWorkFlows.map((e) => e.status)));
+      if (isAllEqual(allWorkFlows.map((e) => e.statusForUi))) {
+        setSelectedStatus(allWorkFlows[0]?.statusForUi);
+      } else {
+        setSelectedStatus("");
+      }
     }
-  }, [selectedProducts]);
+  }, [selectedProducts, selectAll, allWorkFlows]);
 
   useEffect(() => {
     if (canAssignOrReAssign && selectedProducts.length > 1) {
@@ -492,6 +515,9 @@ export default function Table({ fetchBulkStyleSearch }) {
   const renderHeader = () => {
     return (
       <>
+        {processingSelectAll && (
+          <p className="text-center text-xl mb-4">Processing Select All !</p>
+        )}
         {!showTabs && !loader && (
           <div className="mb-2">
             <span className="text-sm text-[#4D4D4D]">Showing </span>
@@ -503,182 +529,186 @@ export default function Table({ fetchBulkStyleSearch }) {
         <>
           {" "}
           {showTabs ? (
-            <div className="flex justify-content-end gap-4">
-              {selectedProducts.length > 1 && canAssignOrReAssign && (
-                <>
-                  {currentTab == "Completed" && (
-                    <button
-                      className="flex"
-                      onClick={() => {
-                        setAssigneeType("writers");
-                        setStyleId(selectedProducts.map((e) => e?.styleId));
-                        setIsModalVisible(true);
-                        if (selectAll) {
-                          applyFilters();
-                        }
-                      }}
-                    >
-                      <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
-                        <img
-                          alt={`AssignToWriter svg`}
-                          src={AssignToWriter}
-                          className="w-[15px] h-[15px]"
-                        />
-                      </span>
-                      <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">
-                        Assign To Writer
-                      </span>
-                    </button>
-                  )}
+            <div className={`flex items-center justify-content-end gap-4`}>
+              {!processingSelectAll &&
+                selectedProducts.length > 1 &&
+                canAssignOrReAssign && (
+                  <>
+                    {currentTab == "Completed" && (
+                      <button
+                        className="flex items-center"
+                        onClick={() => {
+                          setAssigneeType("writers");
+                          setStyleId(selectedProducts.map((e) => e?.styleId));
+                          setIsModalVisible(true);
+                          if (selectAll) {
+                            applyFilters();
+                          }
+                        }}
+                      >
+                        <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
+                          <img
+                            alt={`AssignToWriter svg`}
+                            src={AssignToWriter}
+                            className="w-[15px] h-[15px]"
+                          />
+                        </span>
+                        <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">
+                          Assign To Writer
+                        </span>
+                      </button>
+                    )}
 
-                  {currentTab == "Completed" && (
-                    <button
-                      className="flex"
-                      onClick={() => {
-                        setAssigneeType("editors");
-                        assignHeaderIconClickHandler();
-                      }}
-                    >
-                      <span className="bg-white flex rounded-full justify-center items-center border w-[30px] h-[30px] border-grey-30 mr-1">
-                        <img
-                          alt={`AssignToEditor svg`}
-                          src={AssignToEditor}
-                          className="w-[15px] h-[15px]"
-                        />
-                      </span>
-                      <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">
-                        Assign To Editor
-                      </span>
-                    </button>
-                  )}
+                    {currentTab == "Completed" && (
+                      <button
+                        className="flex items-center"
+                        onClick={() => {
+                          setAssigneeType("editors");
+                          assignHeaderIconClickHandler();
+                        }}
+                      >
+                        <span className="bg-white flex rounded-full justify-center items-center border w-[30px] h-[30px] border-grey-30 mr-1">
+                          <img
+                            alt={`AssignToEditor svg`}
+                            src={AssignToEditor}
+                            className="w-[15px] h-[15px]"
+                          />
+                        </span>
+                        <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">
+                          Assign To Editor
+                        </span>
+                      </button>
+                    )}
 
-                  {currentTab == "Unassigned" && (
-                    <button
-                      className="flex"
-                      onClick={assignHeaderIconClickHandler}
-                    >
-                      <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
-                        <img
-                          alt={`AssigneEdit svg`}
-                          src={AssigneEdit}
-                          className="w-[15px] h-[15px]"
-                        />
-                      </span>
-                      <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">
-                        Assign
-                      </span>
-                    </button>
-                  )}
+                    {currentTab == "Unassigned" && (
+                      <button
+                        className="flex items-center"
+                        onClick={assignHeaderIconClickHandler}
+                      >
+                        <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
+                          <img
+                            alt={`AssigneEdit svg`}
+                            src={AssigneEdit}
+                            className="w-[15px] h-[15px]"
+                          />
+                        </span>
+                        <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">
+                          Assign
+                        </span>
+                      </button>
+                    )}
 
-                  {(currentTab == "Assigned" ||
-                    currentTab == "In Progress") && (
-                    <button
-                      className="flex"
-                      onClick={assignHeaderIconClickHandler}
-                    >
-                      <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
-                        <img
-                          alt={`ReAssign svg`}
-                          src={ReAssign}
-                          className="w-[15px] h-[15px]"
-                        />
-                      </span>
-                      <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">
-                        Reassign
-                      </span>
-                    </button>
-                  )}
-                </>
-              )}
+                    {(currentTab == "Assigned" ||
+                      currentTab == "In Progress") && (
+                      <button
+                        className="flex items-center"
+                        onClick={assignHeaderIconClickHandler}
+                      >
+                        <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
+                          <img
+                            alt={`ReAssign svg`}
+                            src={ReAssign}
+                            className="w-[15px] h-[15px]"
+                          />
+                        </span>
+                        <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">
+                          Reassign
+                        </span>
+                      </button>
+                    )}
+                  </>
+                )}
             </div>
           ) : (
             <div className="flex justify-content-end gap-4">
-              {selectedProducts.length > 1 && canAssignOrReAssign && (
-                <>
-                  {(selectedStatus == "Writing Complete" ||
-                    selectedStatus == "Editing Complete") && (
-                    <button
-                      className="flex"
-                      onClick={() => {
-                        setAssigneeType("writers");
-                        assignHeaderIconClickHandler();
-                      }}
-                    >
-                      <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
-                        <img
-                          alt={`AssignToWriter svg`}
-                          src={AssignToWriter}
-                          className="w-[15px] h-[15px]"
-                        />
-                      </span>
-                      <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">
-                        Assign To Writer
-                      </span>
-                    </button>
-                  )}
+              {!processingSelectAll &&
+                selectedProducts.length > 1 &&
+                canAssignOrReAssign && (
+                  <>
+                    {(selectedStatus == "Writing Complete" ||
+                      selectedStatus == "Editing Complete") && (
+                      <button
+                        className="flex items-center"
+                        onClick={() => {
+                          setAssigneeType("writers");
+                          assignHeaderIconClickHandler();
+                        }}
+                      >
+                        <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
+                          <img
+                            alt={`AssignToWriter svg`}
+                            src={AssignToWriter}
+                            className="w-[15px] h-[15px]"
+                          />
+                        </span>
+                        <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">
+                          Assign To Writer
+                        </span>
+                      </button>
+                    )}
 
-                  {(selectedStatus == "Writing Complete" ||
-                    selectedStatus == "Editing Complete") && (
-                    <button
-                      className="flex"
-                      onClick={() => {
-                        setAssigneeType("editors");
-                        assignHeaderIconClickHandler();
-                      }}
-                    >
-                      <span className="bg-white flex rounded-full justify-center items-center border w-[30px] h-[30px] border-grey-30 mr-1">
-                        <img
-                          alt={`AssignToEditor svg`}
-                          src={AssignToEditor}
-                          className="w-[15px] h-[15px]"
-                        />
-                      </span>
-                      <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">
-                        Assign To Editor
-                      </span>
-                    </button>
-                  )}
+                    {(selectedStatus == "Writing Complete" ||
+                      selectedStatus == "Editing Complete") && (
+                      <button
+                        className="flex items-center"
+                        onClick={() => {
+                          setAssigneeType("editors");
+                          assignHeaderIconClickHandler();
+                        }}
+                      >
+                        <span className="bg-white flex rounded-full justify-center items-center border w-[30px] h-[30px] border-grey-30 mr-1">
+                          <img
+                            alt={`AssignToEditor svg`}
+                            src={AssignToEditor}
+                            className="w-[15px] h-[15px]"
+                          />
+                        </span>
+                        <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">
+                          Assign To Editor
+                        </span>
+                      </button>
+                    )}
 
-                  {selectedStatus == "Waiting For Writer" && (
-                    <button
-                      className="flex"
-                      onClick={assignHeaderIconClickHandler}
-                    >
-                      <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
-                        <img
-                          alt={`AssigneEdit svg`}
-                          src={AssigneEdit}
-                          className="w-[15px] h-[15px]"
-                        />
-                      </span>
-                      <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">
-                        Assign
-                      </span>
-                    </button>
-                  )}
+                    {selectedStatus == "Waiting For Writer" && (
+                      <button
+                        className="flex items-center"
+                        onClick={assignHeaderIconClickHandler}
+                      >
+                        <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
+                          <img
+                            alt={`AssigneEdit svg`}
+                            src={AssigneEdit}
+                            className="w-[15px] h-[15px]"
+                          />
+                        </span>
+                        <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">
+                          Assign
+                        </span>
+                      </button>
+                    )}
 
-                  {(selectedStatus == "Assigned To Writer" ||
-                    selectedStatus == "Assigned To Editor" ||
-                    selectedStatus == "Writing In Progress" ||
-                    selectedStatus == "Editing In Progress") && (
-                    <button
-                      className="flex"
-                      onClick={assignHeaderIconClickHandler}
-                    >
-                      <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
-                        <img
-                          alt={`ReAssign svg`}
-                          src={ReAssign}
-                          className="w-[15px] h-[15px]"
-                        />
-                      </span>
-                      <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">
-                        Reassign
-                      </span>
-                    </button>
-                  )}
-                </>
-              )}
+                    {(selectedStatus == "Assigned To Writer" ||
+                      selectedStatus == "Assigned To Editor" ||
+                      selectedStatus == "Writing In Progress" ||
+                      selectedStatus == "Editing In Progress") && (
+                      <button
+                        className="flex items-center"
+                        onClick={assignHeaderIconClickHandler}
+                      >
+                        <span className="bg-white flex rounded-full justify-center items-center border w-[32px] h-[32px] border-grey-30 mr-1">
+                          <img
+                            alt={`ReAssign svg`}
+                            src={ReAssign}
+                            className="w-[15px] h-[15px]"
+                          />
+                        </span>
+                        <span className="text-sm text-[#2C2C2C] font-semibold text-opacity-1">
+                          Reassign
+                        </span>
+                      </button>
+                    )}
+                  </>
+                )}
             </div>
           )}
         </>
@@ -1167,7 +1197,12 @@ export default function Table({ fetchBulkStyleSearch }) {
           : [e.data.id]
       });
       setWorkflowCount(workflowCount - 1);
+      setAllWorkFlows(allWorkFlows.filter((l) => l.id !== e.data.id));
     }
+  };
+
+  const fetchAllWorkflows = async () => {
+    await getCustomers(true);
   };
 
   const onRowSelectHandler = (e) => {
@@ -1177,8 +1212,24 @@ export default function Table({ fetchBulkStyleSearch }) {
         excludeId: appliedFilters.excludeId.filter((el) => el !== e.data.id)
       });
       setWorkflowCount(workflowCount + 1);
+      if (allWorkFlows.filter((l) => l.id === e.data.id).length === 0) {
+        setAllWorkFlows(allWorkFlows.concat(e.data));
+      }
     }
   };
+
+  const onSelectAllHandler = (e) => {
+    if (e.target.checked) {
+      setSelectAll(true);
+      setProcessingSelectAll(true);
+      fetchAllWorkflows();
+    } else {
+      setSelectedProducts([]);
+      setSelectAll(false);
+      setAppliedFilters({});
+    }
+  };
+
   return (
     <>
       <div className="mb-[4px]">{renderHeader()}</div>
@@ -1208,23 +1259,13 @@ export default function Table({ fetchBulkStyleSearch }) {
           >
             {isAdmin && (
               <Column
-                onClick={() => console.log("hellloeoeo")}
-                cellEditValidator={(e) => console.log(e)}
                 header={
                   <CheckBox
                     inputClassName={
                       "w-5 h-5 border solid border-gray-600 accent-gray-900"
                     }
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        setSelectAll(true);
-                        setSelectedProducts(customers?.workflows);
-                      } else {
-                        setSelectAll(false);
-                        setSelectedProducts([]);
-                        setAppliedFilters({});
-                      }
-                    }}
+                    value={selectAll}
+                    onChange={onSelectAllHandler}
                   />
                 }
                 selectionMode="multiple"

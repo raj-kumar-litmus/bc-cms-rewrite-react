@@ -12,19 +12,19 @@ function Pagination({ count, preText, nextText, className }) {
   const pages = Array.from(Array(count).keys(), (item) => item + 1);
 
   const onPageChange = (pageNumber) => {
-    if (selectAll) setReselectSelectedProducts(true);
+    setReselectSelectedProducts(true);
     setCurrentPage(pageNumber.target.innerText);
   };
   const onPrevClick = () => {
     if (currentPage > 1) {
       setCurrentPage(parseInt(currentPage) - 1);
-      if (selectAll) setReselectSelectedProducts(true);
+      setReselectSelectedProducts(true);
     }
   };
   const onNextClick = () => {
     if (count > currentPage) {
       setCurrentPage(parseInt(currentPage) + 1);
-      if (selectAll) setReselectSelectedProducts(true);
+      setReselectSelectedProducts(true);
     }
   };
 

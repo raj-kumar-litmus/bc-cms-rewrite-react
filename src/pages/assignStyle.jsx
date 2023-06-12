@@ -225,7 +225,9 @@ function AssignStyle() {
           <p>
             {errorToast
               ? `Please refresh the page or try again later`
-              : `${toastAssignee} assigned as the ${userGroup} for ${styles}`}
+              : `${toastAssignee} assigned as the ${
+                  userGroup === "writers" ? "Writer" : "Editor"
+                } for ${styleString} ${moreText}`}
           </p>
         </div>
       </div>

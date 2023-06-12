@@ -46,7 +46,8 @@ function NormalizationDashboard() {
     setCurrentPage,
     setShowStyleFilter,
     search,
-    setSearch
+    setSearch,
+    setSelectAll
   } = useContext(DashBoardContext);
 
   useEffect(() => {
@@ -68,6 +69,7 @@ function NormalizationDashboard() {
     clearFilters();
     setShowFilters(false);
     setAppliedFilters({});
+    setSelectAll(false);
   };
 
   const fetchBulkStyleSearch = async () => {
