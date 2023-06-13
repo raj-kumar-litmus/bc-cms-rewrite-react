@@ -42,6 +42,8 @@ export default function StyleDetails({ quickFix = false, styleId }) {
   const [competitiveCyclistDescription, setCompetitiveCyclistDescription] = useState(null);
   const [competitiveCyclistTopline, setCompetitiveCyclistTopline] = useState(null);
 
+  console.log("workflowIdFromLink>>",workflowIdFromLink)
+
   useEffect(() => {
     (async () => {
       try {
@@ -206,6 +208,7 @@ export default function StyleDetails({ quickFix = false, styleId }) {
       ...(item?.label == "Activity" && {Activity: item?.value}),
       ...(item?.label == "Manufacturer Warranty" && {ManufacturerWarranty: item?.value})
     }))
+    console.log("techSpecsForBody>>",techSpecsForBody)
     const body = {
       ...(bulletPoints && { bulletPoints: bulletPoints }),
       ...(competitiveCyclistDescription && { competitiveCyclistDescription: competitiveCyclistDescription }),
@@ -226,12 +229,12 @@ export default function StyleDetails({ quickFix = false, styleId }) {
         type: [
             "Figure 8"
         ],
-        techspecs: techSpecsForBody
     },
+     ...(techSpecsForBody && { techspecs : techSpecsForBody })
     };
     try {
       const response = await fetch(
-        `${workFlowsUrl}/${workflowIdFromLink}?email=${userEmail}`,
+        `${workFlowsUrl}/648179786eff2a0bc51ca9cf?email=${userEmail}`,
         {
           method: "PATCH",
           body: JSON.stringify(body),
