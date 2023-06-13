@@ -5,6 +5,7 @@ export default function InputBox({
   label,
   val,
   className,
+  isDisabled = false,
   labelClassName,
   onChangeHandler
 }) {
@@ -12,6 +13,7 @@ export default function InputBox({
     <div>
       <span className="p-float-label">
         <InputText
+          disabled={isDisabled}
           id={label}
           value={val}
           aria-label="input-box"

@@ -22,12 +22,12 @@ const CloseButton = (
 const MultiSelectDropDown = ({
   label,
   placeholder,
+  values,
+  onChangeHandler,
   options,
-  defaultValues,
   labelClassName,
   className
 }) => {
-  const [selected, setSelected] = useState(defaultValues || []);
   const customValueRenderer = (selected) => {
     return selected.length
       ? selected.map(({ label }, index) =>
@@ -43,8 +43,8 @@ const MultiSelectDropDown = ({
         options={options}
         labelledBy="dropdown"
         className={`custom-drop-down ${className}`}
-        value={selected}
-        onChange={setSelected}
+        value={values || {}}
+        onChange={onChangeHandler}
         ClearSelectedIcon={CloseButton}
         ArrowRenderer={() => (
           <img className="px-1 py-1 h-31 w-31" src={DownIcon} />

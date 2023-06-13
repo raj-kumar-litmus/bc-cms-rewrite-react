@@ -33,11 +33,9 @@ export default function StyleDetails({ quickFix = false, styleId }) {
   const [searchParams] = useSearchParams();
   const STYLE_ID = searchParams.get("styleId");
 
-  const [bulletPoints, setBulletPoints] = useState(null);
-  const [listDescription, setListDescription] = useState(null);
   const [detailedDescription, setDetailedDescription] = useState(null);
-  const [productTitle, setProductTitle] = useState(null);
-  const [bottomLine, setBottomLine] = useState(null);
+  const [competitiveCylistDescription, setCompetitiveCylistDescription] =
+    useState(null);
 
   useEffect(() => {
     (async () => {
@@ -61,14 +59,18 @@ export default function StyleDetails({ quickFix = false, styleId }) {
   }, []);
 
   useEffect(() => {
+    fetchProductInfo();
+  }, []);
+
+  useEffect(() => {
     if (!accountDetails?.idTokenClaims?.exp) {
       navigate("/");
     }
   }, [accountDetails]);
 
   useEffect(() => {
-    const { genus, species } = values;
-    if (genus && species) {
+    const { genus, species, hattributes } = values;
+    if (genus && species && !hattributes) {
       (async () => {
         try {
           setIsFetchingHattributes(true);
@@ -81,12 +83,40 @@ export default function StyleDetails({ quickFix = false, styleId }) {
           setTechSpecs(data.techSpecs);
           setIsFetchingHattributes(false);
         } catch (err) {
-          console.log(err);
           setIsFetchingHattributes(false);
         }
       })();
     }
   }, [values]);
+
+  useEffect(() => {
+    if (productInfo?.attributeApiResponse?.speciesId) {
+      setDefaultSpecies([
+        {
+          value: productInfo?.attributeApiResponse?.speciesId,
+          label: productInfo?.attributeApiResponse?.speciesName
+        }
+      ]);
+    }
+  }, [productInfo]);
+
+  useEffect(() => {
+    if (hattributes || techSpecs) {
+      setValues({
+        ...values,
+        hattributes: Object.keys(hattributes).reduce(
+          (acc, el) => ({
+            ...acc,
+            [el]: hattributes[el]
+              .filter((e) => e.selected)
+              .map((e) => ({ value: e.hattributevid, label: e.text }))
+          }),
+          {}
+        ),
+        ...(techSpecs && { techSpecs })
+      });
+    }
+  }, [hattributes, techSpecs]);
 
   const onGenusChangeHandler = async (e) => {
     try {
@@ -111,7 +141,7 @@ export default function StyleDetails({ quickFix = false, styleId }) {
       setDefaultSpecies([
         {
           value: data.label[0].dattributevid,
-          label: data.label[0].name
+          label: data.label[0].text
         }
       ]);
       setIsFetchingSpecies(false);
@@ -142,7 +172,7 @@ export default function StyleDetails({ quickFix = false, styleId }) {
           attributeApiResponse,
           sizingChart
         }
-      } = (await response.json()) || {};
+      } = (await response.json()) || { data: {} };
       setProductInfo({
         copyApiResponse,
         merchApiResponse,
@@ -150,11 +180,19 @@ export default function StyleDetails({ quickFix = false, styleId }) {
         sizingChart
       });
 
-      setBulletPoints(copyApiResponse?.bulletPoints);
-      setListDescription(copyApiResponse?.listDescription);
+      setValues({
+        ...values,
+        bulletPoints: copyApiResponse?.bulletPoints,
+        listDescription: copyApiResponse?.listDescription,
+        productTitle: copyApiResponse?.title,
+        bottomLine: copyApiResponse?.bottomLine,
+        competitiveCyclistBottomLine:
+          copyApiResponse?.competitiveCyclistBottomLine,
+        competitiveCyclistDescription:
+          copyApiResponse?.competitiveCyclistDescription
+      });
+
       setDetailedDescription(copyApiResponse?.detailDescription);
-      setProductTitle(copyApiResponse?.title);
-      setBottomLine(copyApiResponse?.bottomLine);
 
       setDefaultGenus([
         {
@@ -162,6 +200,25 @@ export default function StyleDetails({ quickFix = false, styleId }) {
           label: attributeApiResponse?.genusName
         }
       ]);
+      if (
+        !attributeApiResponse?.speciesId ||
+        !attributeApiResponse?.speciesName
+      ) {
+        setIsFetchingHattributes(true);
+        const response =
+          (await fetch(
+            `${serverHostName}/api/v1/dataNormalization/genus/${attributeApiResponse.genusId}/hAttributes/${STYLE_ID}`
+          )) || {};
+        const { data } = (await response.json()) || {};
+        setHattributes(data.hattributes);
+        setTechSpecs(data.techSpecs);
+        setIsFetchingHattributes(false);
+        setValues({
+          ...values,
+          genus: attributeApiResponse?.genusId
+        });
+        return;
+      }
       setDefaultSpecies([
         {
           value: attributeApiResponse?.speciesId,
@@ -169,6 +226,7 @@ export default function StyleDetails({ quickFix = false, styleId }) {
         }
       ]);
       setValues({
+        ...values,
         genus: attributeApiResponse?.genusId,
         species: attributeApiResponse?.speciesId
       });
@@ -176,10 +234,6 @@ export default function StyleDetails({ quickFix = false, styleId }) {
       console.error(err);
     }
   };
-
-  useEffect(() => {
-    fetchProductInfo();
-  }, []);
 
   return (
     <>
@@ -283,13 +337,8 @@ export default function StyleDetails({ quickFix = false, styleId }) {
                     classNamePrefix="species-dropdown"
                     options={species}
                     onChange={onSpeciesChangeHandler}
-                    defaultValue={[
-                      {
-                        value: productInfo?.attributeApiResponse?.speciesId,
-                        label: productInfo?.attributeApiResponse?.speciesName
-                      }
-                    ]}
-                    isClearable={true}
+                    defaultValue={defaultSpecies}
+                    isClearable={false}
                     placeholder="Species"
                   />
                 )}
@@ -302,25 +351,28 @@ export default function StyleDetails({ quickFix = false, styleId }) {
           <div className="mt-[40px] flex-column">
             <p className="text-xl">Harmonizing Attributes</p>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-[20px]">
-              {!isFetchingHattributes &&
-                hattributes &&
-                Object.keys(hattributes).map((e) => {
-                  return hattributes[e].filter((e) => e?.selected).length >
-                    0 ? (
+              {values &&
+                values.hattributes &&
+                Object.keys(values.hattributes).map((e) => {
+                  return values.hattributes[e].length > 0 ? (
                     <MultiSelectDropDown
                       labelClassName={"mb-[8px] text-[14px] text-[#4D4D4D]"}
                       className={"text-[14px] text-[#4D4D4D] font-light"}
                       placeholder={`Select ${e}`}
-                      defaultValues={hattributes[e]
-                        .filter((e) => e?.selected)
-                        .map(({ hattributevid, text }) => ({
-                          value: hattributevid,
-                          key: text,
-                          label: text
-                        }))}
+                      values={values.hattributes[e]}
+                      onChangeHandler={(l) => {
+                        setValues({
+                          ...values,
+                          hattributes: {
+                            ...values.hattributes,
+                            [e]: l
+                          }
+                        });
+                      }}
                       options={hattributes[e].map(
                         ({ hattributevid, text }) => ({
                           value: hattributevid,
+                          key: text,
                           label: text
                         })
                       )}
@@ -331,6 +383,16 @@ export default function StyleDetails({ quickFix = false, styleId }) {
                       labelClassName={"mb-[8px] text-[14px] text-[#4D4D4D]"}
                       className={"text-[14px] text-[#4D4D4D] font-light"}
                       placeholder={`Select ${e}`}
+                      values={values.hattributes[e]}
+                      onChangeHandler={(l) => {
+                        setValues({
+                          ...values,
+                          hattributes: {
+                            ...values.hattributes,
+                            [e]: l
+                          }
+                        });
+                      }}
                       options={hattributes[e].map(
                         ({ hattributevid, text }) => ({
                           value: hattributevid,
@@ -349,20 +411,20 @@ export default function StyleDetails({ quickFix = false, styleId }) {
             <p className="text-xl">Tech Specs</p>
             <div className="grid grid-cols-3 gap-3 mt-[20px]">
               {!isFetchingHattributes &&
-                techSpecs &&
-                techSpecs.map(({ label, value }) => (
+                Array.isArray(values.techSpecs) &&
+                values.techSpecs.map(({ label, value }) => (
                   <InputBox
                     className={"w-[100%] mt-[20px] rounded-sm"}
                     label={label}
                     onChangeHandler={(e) => {
-                      console.log(e);
-                      console.log(e.currentTarget.id);
-                      const techSpecToChange = techSpecs.find(
+                      const techSpecs = [...values.techSpecs];
+                      techSpecs.find(
                         (l) => l.label === e.currentTarget.id
-                      );
-                      techSpecToChange.value = e.target.value;
-                      setTechSpecs(null);
-                      setTechSpecs(techSpecs);
+                      ).value = e.target.value;
+                      setValues({
+                        ...values,
+                        techSpecs
+                      });
                     }}
                     val={value}
                   />
@@ -375,18 +437,29 @@ export default function StyleDetails({ quickFix = false, styleId }) {
             <div className="flex">
               <div className="mr-[20px] flex-1">
                 <InputBox
+                  isDisabled={true}
                   className={"w-full mt-[20px] rounded-sm"}
                   label="Product title"
-                  onChangeHandler={(e) => setProductTitle(e.target.value)}
-                  val={productTitle}
+                  onChangeHandler={(e) => {
+                    setValues({
+                      ...values,
+                      productTitle: e.target.value
+                    });
+                  }}
+                  val={values.productTitle}
                 />
               </div>
               <div className="flex-1">
                 <InputBox
                   className={"w-full mt-[20px] rounded-sm"}
                   label="Top Line"
-                  onChangeHandler={(e) => setBottomLine(e.target.value)}
-                  val={bottomLine}
+                  onChangeHandler={(e) => {
+                    setValues({
+                      ...values,
+                      bottomLine: e.target.value
+                    });
+                  }}
+                  val={values.bottomLine}
                 />
               </div>
             </div>
@@ -402,19 +475,37 @@ export default function StyleDetails({ quickFix = false, styleId }) {
             <div className="mt-[50px]">
               <Textarea
                 label="List Description"
+                labelClassName={
+                  "!top-[12px] !left-[15px] !z-1 !bg-white !relative !text-[14px] !text-[#4D4D4D]"
+                }
+                containerClassName={"!w-full"}
                 className={"w-full"}
                 rows={5}
-                onChange={(e) => setListDescription(e.target.value)}
-                val={listDescription}
+                onChange={(e) => {
+                  setValues({
+                    ...values,
+                    listDescription: e.target.value
+                  });
+                }}
+                val={values.listDescription}
               />
             </div>
             <div className="mt-[50px]">
               <Textarea
                 label="Bullet Points"
+                labelClassName={
+                  "!top-[12px] !left-[15px] !z-1 !bg-white !relative !text-[14px] !text-[#4D4D4D]"
+                }
+                containerClassName={"!w-full"}
                 className={"w-full"}
                 rows={5}
-                onChange={(e) => setBulletPoints(e.target.value)}
-                val={bulletPoints}
+                onChange={(e) => {
+                  setValues({
+                    ...values,
+                    bulletPoints: e.target.value
+                  });
+                }}
+                val={values.bulletPoints}
               />
             </div>
             <div className="flex">
@@ -434,9 +525,13 @@ export default function StyleDetails({ quickFix = false, styleId }) {
                     "!top-[34px] z-[1] bg-white !text-gray-900 !text-[10px]"
                   }
                   label="Competitive Cyclist Top Line"
-                  val={
-                    productInfo?.copyApiResponse?.competitiveCyclistBottomLine
-                  }
+                  onChange={(e) => {
+                    setValues({
+                      ...values,
+                      competitiveCyclistBottomLine: e.target.value
+                    });
+                  }}
+                  val={values.competitiveCyclistBottomLine}
                 />
               </div>
             </div>
@@ -444,9 +539,8 @@ export default function StyleDetails({ quickFix = false, styleId }) {
               <RichTextEditor
                 label="Competitive Cyclist description"
                 labelClassName={"text-gray-600 font-light"}
-                val={
-                  productInfo?.copyApiResponse?.competitiveCyclistDescription
-                }
+                onChange={(e) => setCompetitiveCylistDescription(e)}
+                val={competitiveCylistDescription}
                 className={"h-[250px] pb-[50px] mt-[10px]"}
               />
             </div>

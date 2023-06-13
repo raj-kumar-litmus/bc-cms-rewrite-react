@@ -6,14 +6,21 @@ export default function Textarea({
   val,
   className,
   labelClassName,
+  containerClassName,
   placeholder,
   onChange,
   rows,
   cols
 }) {
   return (
-    <div className="w-[90%]">
+    <div className={containerClassName || "w-[90%]"}>
       <span>
+        <label
+          className={labelClassName || "!top-[2px] !left-[15px] z-1 bg-white"}
+          htmlFor={label}
+        >
+          {label}
+        </label>
         <InputTextarea
           id={label}
           aria-label="text-area"
@@ -24,12 +31,6 @@ export default function Textarea({
           cols={cols}
           placeholder={placeholder}
         />
-        <label
-          className={labelClassName || "!top-[2px] !left-[15px] z-1 bg-white"}
-          htmlFor={label}
-        >
-          {label}
-        </label>
       </span>
     </div>
   );

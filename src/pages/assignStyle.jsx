@@ -37,6 +37,7 @@ function AssignStyle() {
   const {
     assigneeType: userGroup,
     workflowId,
+    allWorkFlows,
     styleId: styles,
     setStyleId,
     currentTab,
@@ -54,18 +55,21 @@ function AssignStyle() {
 
   const buildStyleStrings = () => {
     if (selectAll) {
-      setStylesString(styles.join(", "));
-      if (styles.length !== workflowCount) {
-        setMoreText(`+${workflowCount - styles.length} More`);
-      }
+      setMoreText(
+        allWorkFlows.length > 10 ? `+${allWorkFlows.length - 10} More` : ""
+      );
+      setStylesString(
+        styles.length < 11
+          ? styles.join(", ")
+          : `${styles.splice(0, 10).join(", ")}`
+      );
     } else {
-      if (styles.length < 10) {
+      if (styles.length < 11) {
         setStylesString(styles.join(", "));
         setMoreText("");
       } else {
-        const remaining = styles.length - 9;
-        setStylesString(`${styles.splice(0, 9).join(", ")}`);
-        setMoreText(`+${remaining} More`);
+        setStylesString(`${styles.splice(0, 10).join(", ")}`);
+        setMoreText(`+${styles.length - 10} More`);
       }
     }
   };
@@ -191,8 +195,10 @@ function AssignStyle() {
   }, [styles]);
 
   useEffect(() => {
-    setIsFetching(!options.length > 0);
-    setIsActiveDropdown(options.length > 0);
+    if (Array.isArray(options)) {
+      setIsFetching(!options.length > 0);
+      setIsActiveDropdown(options.length > 0);
+    }
   }, [isModalVisible, options]);
 
   useEffect(() => {

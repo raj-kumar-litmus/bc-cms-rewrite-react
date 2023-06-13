@@ -68,3 +68,6 @@
 .p-column-header-content .p-component .p-checkbox-box {
   @apply hidden;
 }
+.p-filter-column .p-checkbox {
+  @apply hidden; 
+}

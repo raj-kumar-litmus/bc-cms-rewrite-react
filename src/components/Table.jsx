@@ -51,7 +51,6 @@ export default function Table({ fetchBulkStyleSearch }) {
   const [tabChanged, setTabChanged] = useState(false);
   const [pageCount, setPageCount] = useState(1);
   const [defaultSort, setDefaultSort] = useState(ArrowSort);
-  const [allWorkFlows, setAllWorkFlows] = useState([]);
   const [processingSelectAll, setProcessingSelectAll] = useState(false);
   const [userEmail] = useSessionStorage("userEmail");
   const navigate = useNavigate();
@@ -117,6 +116,8 @@ export default function Table({ fetchBulkStyleSearch }) {
     reselectSelectedProducts,
     selectAll,
     setSelectAll,
+    allWorkFlows,
+    setAllWorkFlows,
     workflowCount,
     setWorkflowCount,
     assigneeSort,
@@ -529,7 +530,7 @@ export default function Table({ fetchBulkStyleSearch }) {
         <>
           {" "}
           {showTabs ? (
-            <div className={`flex items-center justify-content-end gap-4`}>
+            <div className="flex items-center justify-content-end gap-4 cursor-pointer">
               {!processingSelectAll &&
                 selectedProducts.length > 1 &&
                 canAssignOrReAssign && (

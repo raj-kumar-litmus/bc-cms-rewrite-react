@@ -47,6 +47,7 @@ function DashBoardProvider({ children }) {
   const [updatedAtSort, setUpdatedAtSort] = useState("desc");
   const [assigneeSort, setAssigneeSort] = useState("desc");
   const [showStyleFilter, setShowStyleFilter] = useState(true);
+  const [allWorkFlows, setAllWorkFlows] = useState([]);
   const {
     VITE_ADMIN_GROUP_NAME: ADMIN_GROUP_NAME,
     VITE_WRITER_GROUP_NAME: WRITER_GROUP_NAME,
@@ -121,6 +122,8 @@ function DashBoardProvider({ children }) {
         setCurrentPage,
         assigneeType,
         setAssigneeType,
+        allWorkFlows,
+        setAllWorkFlows,
         customers,
         setCustomers,
         selectedProducts,
